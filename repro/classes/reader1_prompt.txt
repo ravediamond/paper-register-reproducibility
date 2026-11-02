@@ -1,0 +1,23 @@
+You are sorting one failed reproduction of a robot-learning claim into one of three groups. Read the definition of the groups below and the one table row after it. Use only the row and the definition; do not look anything up.
+
+## The three classes (one sentence each)
+
+- **A — edge latency.** The claimed method works or may work, but on the €1,350 rig's edge GPU (Jetson Orin NX) it
+  does not meet the real-time budget the claim needs (time per call, per decision or per control step).
+- **B — zero-shot judges.** A model used without training on this rig to judge success, failure or progress (reward
+  model, VLM judge, verifier, failure detector) is no better than a trivial signal (episode length, a fixed threshold)
+  or misses the bar for catching failures.
+- **C — latent planners beaten by joints.** A learned latent (world-model state, imagined rollout, latent distance)
+  used to plan, rank or track progress does worse than the commanded joint positions or a copy-last / action-only
+  baseline.
+- **none** — the failure fits none of the three (say why in one line).
+
+A row gets exactly one letter. If two fit, pick the one the `ours` number measures.
+
+The row (CSV header, then the row; the last column is the one to fill):
+
+{ROW}
+
+Answer with exactly two lines and nothing else:
+label: <A, B, C or none>
+reason: <one line>

@@ -52,6 +52,29 @@ It carries no class, no owner note and no page link.
 > Please put one letter in the last column of each row, on your own, without looking anything up beyond the table.
 > It takes about 20 minutes. Please return the CSV; I will not change your answers.
 
+## Amendment 2026-11-02 (owner)
+
+Written before any label exists (no `labels_owner.csv`, no reader-1 or reader-2 file). It replaces Procedure step 1;
+steps 2–3, the bar and the bootstrap are unchanged.
+
+- **Reader 1 is a model, not the owner:** `gemini-3.8-flash` (the model road-to-robotics already uses for VLM labels,
+  `scripts/onset_vlm_label.py`), temperature 0.
+- **Input, blind and identical to the second reader's:** only the "three classes" section above and `form.csv` (no
+  register text beyond the form, no owner notes, no FEASIBILITY.md examples). One call per row, the row alone (the
+  form's header line and that row's line). The answer is one letter A/B/C/none plus one line of reason. The exact
+  prompt is `reader1_prompt.txt` (`{ROW}` is replaced by the two lines), sha256
+  `52518ad796d92b9a3cb47eadcce3643ab3f3ce76d8dc726340eb7cf42b91b2bd`, committed with this amendment.
+- **Stability:** 3 independent runs per row; the label is the majority; a row with three different answers is `none`
+  and flagged. Self-agreement is reported (rows where all 3 runs agree, out of 20).
+- **Output:** `labels_reader1_gemini.csv` (row, claim_id, label, the 3 raw answers, reasons, flag), written by
+  `label_gemini.py` and committed unchanged before anyone sees a second reader's labels.
+- **Reader 2 stays a human** (not the owner and not a model; unchanged). The κ ≥ 0.6 bar and the bootstrap are
+  unchanged; κ is now reader 1 (Gemini) vs the human reader.
+- **Paper wording:** the class column is "labels by a model (Gemini 3.8 Flash, majority of 3), checked against a blind
+  human reader"; never "the authors' labels".
+- **Owner veto:** the owner may veto a Gemini label only before reader 2's file arrives, row by row, committed as an
+  override with a reason; overrides are reported in the paper's appendix.
+
 ## Log
 
 - 2026-11-02: protocol and form written (WS-136). Owner labels: pending. Second reader: pending (owner to choose).
