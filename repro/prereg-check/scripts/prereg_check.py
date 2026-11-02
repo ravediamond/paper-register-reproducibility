@@ -122,6 +122,16 @@ def main():
         out.append({"section": sec, "date": r.get("Date"), "gate": gate[:70], "bar_commit": b[0] if b else None,
                     "bar_date": b[1][:16] if b else None, "bar_how": how, "result_commit": res[0] if res else None,
                     "result_date": res[1][:16] if res else None, "class": cls, "verdict": clean(r.get("Verdict", ""))[:40]})
+    # WS-136: the audited class (PREREG_AUDIT.md, prereg_audit.py) replaces the pickaxe class of the rows it resolved
+    audit = HERE / "prereg_audit.json"
+    for x in out:
+        x["class_v1"] = x["class"]
+    if audit.exists():
+        for a in json.loads(audit.read_text()):
+            x = out[a["row"]]
+            assert x["gate"] == a["gate"] and x["date"] == a["date"], (a["row"], x["gate"], a["gate"])
+            x.update({"class": a["class"], "bar_commit": a["bar_commit"], "bar_date": a["bar_date"],
+                      "result_commit": a["result_commit"], "result_date": a["result_date"], "bar_how": "audit (WS-136)"})
     (HERE / "prereg_check.json").write_text(json.dumps(out, indent=1))
     return out
 

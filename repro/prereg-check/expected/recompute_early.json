@@ -1,0 +1,152 @@
+[
+ {
+  "gate": "G14",
+  "metric": "failed episodes oscillating",
+  "source": "shared/gate/data/2026-10-18_g14/g14_episodes.csv",
+  "n_units": 25,
+  "estimate": 0.24,
+  "ci95": [
+   0.08,
+   0.4
+  ],
+  "bar": ">= 0.1",
+  "point_verdict": "pass",
+  "flip_under_ci": true,
+  "note": ""
+ },
+ {
+  "gate": "G15",
+  "metric": "premature rate (test)",
+  "source": "shared/gate/data/2026-10-19_g15/g15_summary.json",
+  "n_units": 34,
+  "estimate": 0.4853,
+  "ci95": [
+   0.4559,
+   0.5
+  ],
+  "bar": "<= 0.02",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "G15",
+  "metric": "missed rate (test)",
+  "source": "shared/gate/data/2026-10-19_g15/g15_summary.json",
+  "n_units": 34,
+  "estimate": 0.4667,
+  "ci95": [
+   0.42,
+   0.5
+  ],
+  "bar": "<= 0.1",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "W1-B",
+  "metric": "premature rate (test)",
+  "source": "shared/gate/data/2026-10-19_w1_screening/w1b_summary.json",
+  "n_units": 34,
+  "estimate": 0.2206,
+  "ci95": [
+   0.1471,
+   0.3088
+  ],
+  "bar": "<= 0.02",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "W1-B",
+  "metric": "missed rate (test)",
+  "source": "shared/gate/data/2026-10-19_w1_screening/w1b_summary.json",
+  "n_units": 34,
+  "estimate": 0.3111,
+  "ci95": [
+   0.1666,
+   0.4474
+  ],
+  "bar": "<= 0.1",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "G16-B",
+  "metric": "successes flagged",
+  "source": "shared/gate/data/2026-10-19_g16b/g16b_episodes.csv",
+  "n_units": 42,
+  "estimate": 0.9762,
+  "ci95": [
+   0.9286,
+   1.0
+  ],
+  "bar": "<= 0.0476",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "G16-B",
+  "metric": "failures flagged",
+  "source": "shared/gate/data/2026-10-19_g16b/g16b_episodes.csv",
+  "n_units": 8,
+  "estimate": 1.0,
+  "ci95": [
+   1.0,
+   1.0
+  ],
+  "bar": ">= 0.75",
+  "point_verdict": "pass",
+  "flip_under_ci": false,
+  "note": ""
+ },
+ {
+  "gate": "G9c",
+  "metric": "accuracy",
+  "source": "projects/vla-jepa-world-model/judge/results/g9c/g9c_results.json",
+  "n_units": 88,
+  "estimate": 0.8636,
+  "ci95": [
+   0.7841,
+   0.9318
+  ],
+  "bar": ">= 0.95",
+  "point_verdict": "fail",
+  "flip_under_ci": false,
+  "note": "rows rebuilt from counts"
+ },
+ {
+  "gate": "G9c-3",
+  "metric": "accuracy on judged",
+  "source": "projects/vla-jepa-world-model/judge/results/g9c3/g9c3_test_results.json",
+  "n_units": 87,
+  "estimate": 0.9425,
+  "ci95": [
+   0.8963,
+   0.9885
+  ],
+  "bar": ">= 0.95",
+  "point_verdict": "fail",
+  "flip_under_ci": true,
+  "note": "rows rebuilt from counts"
+ },
+ {
+  "gate": "Judge τ",
+  "metric": "false interventions on successes",
+  "source": "shared/gate/data/2026-10-19_judge_tau/judge_tau.json",
+  "n_units": 42,
+  "estimate": 0.0238,
+  "ci95": [
+   0.0,
+   0.0714
+  ],
+  "bar": "<= 0.05",
+  "point_verdict": "pass",
+  "flip_under_ci": true,
+  "note": "τ is fitted to meet this; the CI is descriptive"
+ }
+]

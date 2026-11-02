@@ -9,7 +9,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -21,7 +22,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -33,7 +35,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -45,7 +48,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works, slow"
+  "verdict": "works, slow",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -57,7 +61,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -69,7 +74,8 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -81,7 +87,8 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "no-bar",
-  "verdict": "closed: ignores the instruction on the t"
+  "verdict": "closed: ignores the instruction on the t",
+  "class_v1": "no-bar"
  },
  {
   "section": "1",
@@ -93,79 +100,86 @@
   "result_commit": null,
   "result_date": null,
   "class": "no-bar",
-  "verdict": "works"
+  "verdict": "works",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
   "date": "2026-10-08",
   "gate": "H0",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
+  "bar_commit": "7d3e124",
+  "bar_date": "2026-10-08T20:12",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "7d3e124",
+  "result_date": "2026-10-08T20:12",
   "class": "same-commit",
-  "verdict": "no-go"
+  "verdict": "no-go",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-08",
   "gate": "H3 plan",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
+  "bar_commit": "0a60893",
+  "bar_date": "2026-10-08T21:13",
+  "bar_how": "audit (WS-136)",
   "result_commit": null,
   "result_date": null,
-  "class": "unresolved",
-  "verdict": "superseded 2026-10-11 by C1"
+  "class": "not-run",
+  "verdict": "superseded 2026-10-11 by C1",
+  "class_v1": "unresolved"
  },
  {
   "section": "2",
   "date": "2026-10-08",
   "gate": "LeWM env",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
+  "bar_commit": "b83ef90",
+  "bar_date": "2026-10-08T23:21",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "b83ef90",
+  "result_date": "2026-10-08T23:21",
   "class": "same-commit",
-  "verdict": "pass"
+  "verdict": "pass",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-09",
   "gate": "MV 5-epoch",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "weak (too short)"
+  "bar_commit": null,
+  "bar_date": null,
+  "bar_how": "audit (WS-136)",
+  "result_commit": null,
+  "result_date": null,
+  "class": "no-bar",
+  "verdict": "weak (too short)",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-10",
   "gate": "Action corruption",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "weak at 5 epochs"
+  "bar_commit": null,
+  "bar_date": null,
+  "bar_how": "audit (WS-136)",
+  "result_commit": null,
+  "result_date": null,
+  "class": "no-bar",
+  "verdict": "weak at 5 epochs",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-11",
   "gate": "G0",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "pass"
+  "bar_commit": "bdd1dc1",
+  "bar_date": "2026-10-10T07:54",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "52a1074",
+  "result_date": "2026-10-11T09:59",
+  "class": "bar-first",
+  "verdict": "pass",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -177,7 +191,8 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "bar-first",
-  "verdict": "not proven (data confounded with policy)"
+  "verdict": "not proven (data confounded with policy)",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -189,31 +204,34 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "bar-first",
-  "verdict": "fail"
+  "verdict": "fail",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-12",
   "gate": "G1 probes",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "W2 pass on this item"
+  "bar_commit": "786ff14",
+  "bar_date": "2026-10-11T21:40",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "c8bb0ba",
+  "result_date": "2026-10-12T13:13",
+  "class": "bar-first",
+  "verdict": "W2 pass on this item",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-12",
   "gate": "G2 (Mac)",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "W1 ok, W2 too slow"
+  "bar_commit": "500e37a",
+  "bar_date": "2026-10-10T08:53",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "62a6cb5",
+  "result_date": "2026-10-12T12:17",
+  "class": "bar-first",
+  "verdict": "W1 ok, W2 too slow",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -225,7 +243,8 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "bar-first",
-  "verdict": "fail, so W3 not run"
+  "verdict": "fail, so W3 not run",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -237,7 +256,8 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "bar-first",
-  "verdict": "G1b measured kinematics, not world-model"
+  "verdict": "G1b measured kinematics, not world-model",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -249,43 +269,47 @@
   "result_commit": "5fc1779",
   "result_date": "2026-10-16T09:34",
   "class": "bar-first",
-  "verdict": "parked until G1 picks a winner"
+  "verdict": "parked until G1 picks a winner",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-13",
   "gate": "RoboJEPA Gate B",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "no-go on device; world model goes off-bo"
+  "bar_commit": "90d3c68",
+  "bar_date": "2026-10-13T16:10",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "2a24097",
+  "result_date": "2026-10-13T18:41",
+  "class": "bar-first",
+  "verdict": "no-go on device; world model goes off-bo",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-13",
   "gate": "RoboJEPA Gate B'",
-  "bar_commit": null,
-  "bar_date": null,
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "unresolved",
-  "verdict": "no-go; off-board host must be CUDA"
+  "bar_commit": "90d3c68",
+  "bar_date": "2026-10-13T16:10",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "2a24097",
+  "result_date": "2026-10-13T18:41",
+  "class": "bar-first",
+  "verdict": "no-go; off-board host must be CUDA",
+  "class_v1": "unresolved"
  },
  {
   "section": "2",
   "date": "2026-10-13",
   "gate": "RoboJEPA Gate A",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "no-go for the primary; 1B borderline on "
+  "bar_commit": "90d3c68",
+  "bar_date": "2026-10-13T16:10",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "20f820d",
+  "result_date": "2026-10-13T21:38",
+  "class": "bar-first",
+  "verdict": "no-go for the primary; 1B borderline on ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -293,71 +317,77 @@
   "gate": "G1b-RJ",
   "bar_commit": "96043cd",
   "bar_date": "2026-10-14T16:32",
-  "bar_how": "protocol file G1B_RJ_PROTOCOL.md",
+  "bar_how": "audit (WS-136)",
   "result_commit": null,
   "result_date": null,
-  "class": "unresolved",
-  "verdict": "cancelled as a gate 2026-10-15 (neither "
+  "class": "not-run",
+  "verdict": "cancelled as a gate 2026-10-15 (neither ",
+  "class_v1": "unresolved"
  },
  {
   "section": "2",
   "date": "2026-10-14",
   "gate": "G6a",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "done detector: unadopted sanity pass; st"
+  "bar_commit": "cb75bc6",
+  "bar_date": "2026-10-14T13:12",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "e36dd41",
+  "result_date": "2026-10-14T15:06",
+  "class": "bar-first",
+  "verdict": "done detector: unadopted sanity pass; st",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-15/16",
   "gate": "G9a-AB",
-  "bar_commit": "5fc1779",
-  "bar_date": "2026-10-16T09:34",
-  "bar_how": "pickaxe",
-  "result_commit": "5fc1779",
-  "result_date": "2026-10-16T09:34",
-  "class": "same-commit",
-  "verdict": "qualified pass (top camera, calibrated t"
+  "bar_commit": "2af6089",
+  "bar_date": "2026-10-14T22:50",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "98adbb9",
+  "result_date": "2026-10-16T08:12",
+  "class": "bar-first",
+  "verdict": "qualified pass (top camera, calibrated t",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-16",
   "gate": "G9a-AB complete (re-score of the 462 OOM episodes, top view, A6000 48 ",
-  "bar_commit": "f8b6120",
-  "bar_date": "2026-10-16T12:29",
-  "bar_how": "pickaxe",
-  "result_commit": "f8b6120",
-  "result_date": "2026-10-16T12:29",
-  "class": "same-commit",
-  "verdict": "fail: not a zero-shot judge"
+  "bar_commit": "2af6089",
+  "bar_date": "2026-10-14T22:50",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "e7dbdfc",
+  "result_date": "2026-10-16T10:35",
+  "class": "bar-first",
+  "verdict": "fail: not a zero-shot judge",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-16",
   "gate": "G9a-own (zero-shot baseline)",
-  "bar_commit": "873af0c",
-  "bar_date": "2026-10-16T15:30",
-  "bar_how": "pickaxe",
-  "result_commit": "873af0c",
+  "bar_commit": "0ed8f69",
+  "bar_date": "2026-10-12T14:27",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "996778f",
   "result_date": "2026-10-16T15:30",
-  "class": "same-commit",
-  "verdict": "fail (baseline for a LoRA on own data). "
+  "class": "bar-first",
+  "verdict": "fail (baseline for a LoRA on own data). ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-16",
   "gate": "G9c",
-  "bar_commit": "6395c2c",
-  "bar_date": "2026-10-16T16:10",
-  "bar_how": "\u00a73 pending entry",
-  "result_commit": "6395c2c",
-  "result_date": "2026-10-16T16:10",
-  "class": "same-commit",
-  "verdict": "fail (pre-registered); exploratory pass "
+  "bar_commit": "f6844d5",
+  "bar_date": "2026-10-16T15:49",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "6077e06",
+  "result_date": "2026-10-16T16:09",
+  "class": "bar-first",
+  "verdict": "fail (pre-registered); exploratory pass ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -369,55 +399,60 @@
   "result_commit": "229ffd3",
   "result_date": "2026-10-17T21:41",
   "class": "bar-first",
-  "verdict": "fail (too many invalid)"
+  "verdict": "fail (too many invalid)",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-16",
   "gate": "G9c-3",
-  "bar_commit": "229ffd3",
-  "bar_date": "2026-10-17T21:41",
-  "bar_how": "pickaxe",
-  "result_commit": "229ffd3",
-  "result_date": "2026-10-17T21:41",
-  "class": "same-commit",
-  "verdict": "narrow fail / operational pass"
+  "bar_commit": "d1ea58a",
+  "bar_date": "2026-10-16T16:38",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "22c5832",
+  "result_date": "2026-10-16T16:45",
+  "class": "bar-first",
+  "verdict": "narrow fail / operational pass",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-17",
   "gate": "G10",
-  "bar_commit": "229ffd3",
-  "bar_date": "2026-10-17T21:41",
-  "bar_how": "pickaxe",
-  "result_commit": "229ffd3",
-  "result_date": "2026-10-17T21:41",
-  "class": "same-commit",
-  "verdict": "PASS; world model acts as pre-execution "
+  "bar_commit": "983d055",
+  "bar_date": "2026-10-16T16:46",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "330c642",
+  "result_date": "2026-10-17T21:28",
+  "class": "bar-first",
+  "verdict": "PASS; world model acts as pre-execution ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-18",
   "gate": "G6b",
-  "bar_commit": "77a562e",
-  "bar_date": "2026-10-18T08:47",
-  "bar_how": "pickaxe",
-  "result_commit": "77a562e",
-  "result_date": "2026-10-18T08:47",
+  "bar_commit": "074d1c0",
+  "bar_date": "2026-10-18T08:29",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "074d1c0",
+  "result_date": "2026-10-18T08:29",
   "class": "same-commit",
-  "verdict": "FAIL"
+  "verdict": "FAIL",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-18",
   "gate": "G11 (Phase A)",
-  "bar_commit": "77a562e",
-  "bar_date": "2026-10-18T08:47",
-  "bar_how": "pickaxe",
-  "result_commit": "77a562e",
-  "result_date": "2026-10-18T08:47",
+  "bar_commit": "42fb616",
+  "bar_date": "2026-10-18T08:46",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "42fb616",
+  "result_date": "2026-10-18T08:46",
   "class": "same-commit",
-  "verdict": "PASS (Phase A); Phase B (live perturbati"
+  "verdict": "PASS (Phase A); Phase B (live perturbati",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -429,19 +464,21 @@
   "result_commit": "3823989",
   "result_date": "2026-10-18T18:48",
   "class": "no-bar",
-  "verdict": "timing valid, latents void"
+  "verdict": "timing valid, latents void",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
   "date": "2026-10-18",
   "gate": "G12",
-  "bar_commit": "77a562e",
-  "bar_date": "2026-10-18T08:47",
-  "bar_how": "pickaxe",
-  "result_commit": "77a562e",
-  "result_date": "2026-10-18T08:47",
+  "bar_commit": "42fb616",
+  "bar_date": "2026-10-18T08:46",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "42fb616",
+  "result_date": "2026-10-18T08:46",
   "class": "same-commit",
-  "verdict": "FAIL"
+  "verdict": "FAIL",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -453,19 +490,21 @@
   "result_commit": "8f965a6",
   "result_date": "2026-10-18T17:22",
   "class": "no-bar",
-  "verdict": "G12 void: REKI on the Orin is unmeasured"
+  "verdict": "G12 void: REKI on the Orin is unmeasured",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
   "date": "2026-10-18",
   "gate": "G14",
-  "bar_commit": "dd76bf1",
-  "bar_date": "2026-10-18T18:41",
-  "bar_how": "pickaxe",
+  "bar_commit": "c1cb25f",
+  "bar_date": "2026-10-18T16:31",
+  "bar_how": "audit (WS-136)",
   "result_commit": "dd76bf1",
   "result_date": "2026-10-18T18:41",
-  "class": "same-commit",
-  "verdict": "pass: registers stay (gated tier)"
+  "class": "bar-first",
+  "verdict": "pass: registers stay (gated tier)",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -477,7 +516,8 @@
   "result_commit": "dd76bf1",
   "result_date": "2026-10-18T18:41",
   "class": "no-bar",
-  "verdict": "measured (load only)"
+  "verdict": "measured (load only)",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -489,7 +529,8 @@
   "result_commit": "dd76bf1",
   "result_date": "2026-10-18T18:41",
   "class": "no-bar",
-  "verdict": "not run"
+  "verdict": "not run",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -501,43 +542,47 @@
   "result_commit": "dd76bf1",
   "result_date": "2026-10-18T18:41",
   "class": "no-bar",
-  "verdict": "not run"
+  "verdict": "not run",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "G13b (offline + timing)",
-  "bar_commit": "38daaf7",
-  "bar_date": "2026-10-19T12:20",
-  "bar_how": "pickaxe",
+  "bar_commit": "d75bc27",
+  "bar_date": "2026-10-18T16:58",
+  "bar_how": "audit (WS-136)",
   "result_commit": "38daaf7",
   "result_date": "2026-10-19T12:20",
-  "class": "same-commit",
-  "verdict": "propose 1+2 (gradient-free); exact not w"
+  "class": "bar-first",
+  "verdict": "propose 1+2 (gradient-free); exact not w",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "G15",
-  "bar_commit": "38daaf7",
-  "bar_date": "2026-10-19T12:20",
-  "bar_how": "pickaxe",
+  "bar_commit": "cbd596f",
+  "bar_date": "2026-10-18T21:57",
+  "bar_how": "audit (WS-136)",
   "result_commit": "38daaf7",
   "result_date": "2026-10-19T12:20",
-  "class": "same-commit",
-  "verdict": "fail \u2192 stage changes on the judge at res"
+  "class": "bar-first",
+  "verdict": "fail \u2192 stage changes on the judge at res",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "Judge \u03c4 (for G16)",
-  "bar_commit": "38daaf7",
-  "bar_date": "2026-10-19T12:20",
-  "bar_how": "pickaxe",
+  "bar_commit": "cbd596f",
+  "bar_date": "2026-10-18T21:57",
+  "bar_how": "audit (WS-136)",
   "result_commit": "38daaf7",
   "result_date": "2026-10-19T12:20",
-  "class": "same-commit",
-  "verdict": "fitted, judge not usable for G16 as is"
+  "class": "bar-first",
+  "verdict": "fitted, judge not usable for G16 as is",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -549,31 +594,34 @@
   "result_commit": "1da325a",
   "result_date": "2026-10-19T12:57",
   "class": "bar-first",
-  "verdict": "fail \u2192 drop the VLM judge from v1.0; G16"
+  "verdict": "fail \u2192 drop the VLM judge from v1.0; G16",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "G13b part 1+2 in vla.cpp",
-  "bar_commit": "8559829",
-  "bar_date": "2026-10-19T13:20",
-  "bar_how": "pickaxe",
+  "bar_commit": "d75bc27",
+  "bar_date": "2026-10-18T16:58",
+  "bar_how": "audit (WS-136)",
   "result_commit": "8559829",
   "result_date": "2026-10-19T13:20",
-  "class": "same-commit",
-  "verdict": "pass (feasible at vla.cpp speed); robot "
+  "class": "bar-first",
+  "verdict": "pass (feasible at vla.cpp speed); robot ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "G15-v2 dev fit",
-  "bar_commit": "75f81bf",
-  "bar_date": "2026-10-19T13:49",
-  "bar_how": "pickaxe",
-  "result_commit": "75f81bf",
-  "result_date": "2026-10-19T13:49",
-  "class": "same-commit",
-  "verdict": "design unusable on this gripper/object; "
+  "bar_commit": null,
+  "bar_date": null,
+  "bar_how": "audit (WS-136)",
+  "result_commit": null,
+  "result_date": null,
+  "class": "no-bar",
+  "verdict": "design unusable on this gripper/object; ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -585,7 +633,8 @@
   "result_commit": "75f81bf",
   "result_date": "2026-10-19T13:49",
   "class": "bar-first",
-  "verdict": "fail \u2192 W1 stays a reflex; G11-B's 2.2 / "
+  "verdict": "fail \u2192 W1 stays a reflex; G11-B's 2.2 / ",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -597,7 +646,8 @@
   "result_commit": "75f81bf",
   "result_date": "2026-10-19T13:49",
   "class": "bar-first",
-  "verdict": "fail (better than G15's 48.5 / 46.7)"
+  "verdict": "fail (better than G15's 48.5 / 46.7)",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -609,19 +659,21 @@
   "result_commit": "156eb30",
   "result_date": "2026-10-19T14:07",
   "class": "bar-first",
-  "verdict": "fail \u2192 W1 reflex in shadow mode on robot"
+  "verdict": "fail \u2192 W1 reflex in shadow mode on robot",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-19",
   "gate": "G15-v3 fit (S, D)",
-  "bar_commit": "e522896",
-  "bar_date": "2026-10-19T18:16",
-  "bar_how": "pickaxe",
-  "result_commit": "e522896",
-  "result_date": "2026-10-19T18:16",
-  "class": "same-commit",
-  "verdict": "params committed, \u03b8_c pending"
+  "bar_commit": null,
+  "bar_date": null,
+  "bar_how": "audit (WS-136)",
+  "result_commit": null,
+  "result_date": null,
+  "class": "no-bar",
+  "verdict": "params committed, \u03b8_c pending",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -633,7 +685,8 @@
   "result_commit": "83ca81a",
   "result_date": "2026-10-19T18:49",
   "class": "bar-first",
-  "verdict": "fail \u2192 W1 stays a logged signal"
+  "verdict": "fail \u2192 W1 stays a logged signal",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -645,7 +698,8 @@
   "result_commit": "83ca81a",
   "result_date": "2026-10-19T18:49",
   "class": "bar-first",
-  "verdict": "fail \u2192 shadow mode stays; registered ban"
+  "verdict": "fail \u2192 shadow mode stays; registered ban",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -657,7 +711,8 @@
   "result_commit": "d7c981e",
   "result_date": "2026-10-20T21:52",
   "class": "bar-first",
-  "verdict": "pass \u2192 write-up and a proposal (new gate"
+  "verdict": "pass \u2192 write-up and a proposal (new gate",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -669,7 +724,8 @@
   "result_commit": "c92ab01",
   "result_date": "2026-10-20T23:40",
   "class": "bar-first",
-  "verdict": "A pass, B fail, C fail \u2192 \u00a710: \"Flora's f"
+  "verdict": "A pass, B fail, C fail \u2192 \u00a710: \"Flora's f",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -681,7 +737,8 @@
   "result_commit": "a55f070",
   "result_date": "2026-10-22T19:31",
   "class": "bar-first",
-  "verdict": "not run: no verdict (zero-shot baseline "
+  "verdict": "not run: no verdict (zero-shot baseline ",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -693,7 +750,8 @@
   "result_commit": "5676474",
   "result_date": "2026-10-22T20:28",
   "class": "bar-first",
-  "verdict": "fail; does not test D-JEPA's claim (no e"
+  "verdict": "fail; does not test D-JEPA's claim (no e",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -705,19 +763,21 @@
   "result_commit": "7c4ff32",
   "result_date": "2026-10-22T20:35",
   "class": "bar-first",
-  "verdict": "control \u2265 line (small margin); four port"
+  "verdict": "control \u2265 line (small margin); four port",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-22",
   "gate": "21-task SmolVLA via vla.cpp: parity (for \u00a76)",
-  "bar_commit": "c0f1b0d",
-  "bar_date": "2026-10-22T21:17",
-  "bar_how": "pickaxe",
-  "result_commit": "c0f1b0d",
-  "result_date": "2026-10-22T21:17",
+  "bar_commit": "13f04d3",
+  "bar_date": "2026-10-22T21:01",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "13f04d3",
+  "result_date": "2026-10-22T21:01",
   "class": "same-commit",
-  "verdict": "pass (outlier reported); served with --m"
+  "verdict": "pass (outlier reported); served with --m",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -729,7 +789,8 @@
   "result_commit": "c0f1b0d",
   "result_date": "2026-10-22T21:17",
   "class": "no-bar",
-  "verdict": "measured; the monitor comparison waits f"
+  "verdict": "measured; the monitor comparison waits f",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -741,7 +802,8 @@
   "result_commit": "6100e80",
   "result_date": "2026-10-23T09:22",
   "class": "no-bar",
-  "verdict": "labels in use, bias disclosed"
+  "verdict": "labels in use, bias disclosed",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -753,7 +815,8 @@
   "result_commit": "6100e80",
   "result_date": "2026-10-23T09:22",
   "class": "bar-first",
-  "verdict": "not proven pending the onset check (ep 1"
+  "verdict": "not proven pending the onset check (ep 1",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -765,7 +828,8 @@
   "result_commit": "65ef27a",
   "result_date": "2026-10-23T13:01",
   "class": "bar-first",
-  "verdict": "reproduced; replaces W2 in G7 (deviation"
+  "verdict": "reproduced; replaces W2 in G7 (deviation",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -777,7 +841,8 @@
   "result_commit": "2d54055",
   "result_date": "2026-10-23T18:01",
   "class": "bar-first",
-  "verdict": "fact 7 is the full story: the paper's re"
+  "verdict": "fact 7 is the full story: the paper's re",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -789,7 +854,8 @@
   "result_commit": "fdda187",
   "result_date": "2026-10-23T18:49",
   "class": "no-bar",
-  "verdict": "corrected: data claim stands, port claim"
+  "verdict": "corrected: data claim stands, port claim",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -801,7 +867,8 @@
   "result_commit": "bdac79f",
   "result_date": "2026-10-23T18:52",
   "class": "no-bar",
-  "verdict": "cards filled"
+  "verdict": "cards filled",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -813,7 +880,8 @@
   "result_commit": "accd99d",
   "result_date": "2026-10-23T19:35",
   "class": "bar-first",
-  "verdict": "fail (no monitor at the bar); both W1 he"
+  "verdict": "fail (no monitor at the bar); both W1 he",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -825,7 +893,8 @@
   "result_commit": "b3f7b3a",
   "result_date": "2026-10-23T20:20",
   "class": "no-bar",
-  "verdict": "deterministic: the engine adds no noise;"
+  "verdict": "deterministic: the engine adds no noise;",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -837,7 +906,8 @@
   "result_commit": "b3f7b3a",
   "result_date": "2026-10-23T20:20",
   "class": "no-bar",
-  "verdict": "measured: offline the wrist helps match "
+  "verdict": "measured: offline the wrist helps match ",
+  "class_v1": "no-bar"
  },
  {
   "section": "2",
@@ -849,7 +919,8 @@
   "result_commit": "a057f59",
   "result_date": "2026-10-27T22:52",
   "class": "bar-first",
-  "verdict": "B1\u2013B3 met: anisotropic recovery as predi"
+  "verdict": "B1\u2013B3 met: anisotropic recovery as predi",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -861,7 +932,8 @@
   "result_commit": "d1d83ac",
   "result_date": "2026-10-27T23:14",
   "class": "bar-first",
-  "verdict": "fail (S1, S2): no operating point; the s"
+  "verdict": "fail (S1, S2): no operating point; the s",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -873,7 +945,8 @@
   "result_commit": "d1d83ac",
   "result_date": "2026-10-27T23:14",
   "class": "bar-first",
-  "verdict": "fail (S3 both S; S4 met at S = 30 only):"
+  "verdict": "fail (S3 both S; S4 met at S = 30 only):",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -885,7 +958,8 @@
   "result_commit": "db5460d",
   "result_date": "2026-10-28T01:17",
   "class": "bar-first",
-  "verdict": "B1\u2013B3 still met (verdict unchanged, numb"
+  "verdict": "B1\u2013B3 still met (verdict unchanged, numb",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -897,7 +971,8 @@
   "result_commit": "bb9f71c",
   "result_date": "2026-10-28T02:02",
   "class": "bar-first",
-  "verdict": "bars: H1 fail, H2 fail (ratio 1.35), H3 "
+  "verdict": "bars: H1 fail, H2 fail (ratio 1.35), H3 ",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -909,55 +984,60 @@
   "result_commit": "e02e755",
   "result_date": "2026-10-29T10:16",
   "class": "bar-first",
-  "verdict": "void (the graph check failed; no rollout"
+  "verdict": "void (the graph check failed; no rollout",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
   "date": "2026-10-25",
   "gate": "AW-0 Phase 1 (annotation, \u00a731)",
-  "bar_commit": "071a01a",
-  "bar_date": "2026-10-26T01:48",
-  "bar_how": "pickaxe",
-  "result_commit": "071a01a",
-  "result_date": "2026-10-26T01:48",
-  "class": "same-commit",
-  "verdict": "pass (gate 1)"
+  "bar_commit": "a5f3f96",
+  "bar_date": "2026-10-25T14:07",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "8f0e9ea",
+  "result_date": "2026-10-25T18:25",
+  "class": "bar-first",
+  "verdict": "pass (gate 1)",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-26",
   "gate": "AW-0 Phase 2 (slice planner, \u00a731)",
-  "bar_commit": "071a01a",
-  "bar_date": "2026-10-26T01:48",
-  "bar_how": "pickaxe",
+  "bar_commit": "a5f3f96",
+  "bar_date": "2026-10-25T14:07",
+  "bar_how": "audit (WS-136)",
   "result_commit": "071a01a",
   "result_date": "2026-10-26T01:48",
-  "class": "same-commit",
-  "verdict": "fail (accuracy, latency); gate 2 \u2192 owner"
+  "class": "bar-first",
+  "verdict": "fail (accuracy, latency); gate 2 \u2192 owner",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-26",
   "gate": "\u00a730 inverse dynamics (pre-registered 35f4600)",
-  "bar_commit": "c1eff06",
-  "bar_date": "2026-10-26T12:18",
-  "bar_how": "pickaxe",
-  "result_commit": "c1eff06",
-  "result_date": "2026-10-26T12:18",
-  "class": "same-commit",
-  "verdict": "NOT PROVEN (random-init control blocks; "
+  "bar_commit": "35f4600",
+  "bar_date": "2026-10-25T18:45",
+  "bar_how": "audit (WS-136)",
+  "result_commit": "003e09d",
+  "result_date": "2026-10-26T01:57",
+  "class": "bar-first",
+  "verdict": "NOT PROVEN (random-init control blocks; ",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
   "date": "2026-10-26",
   "gate": "REKI SO-101 frozen-VLM training (WS-025)",
-  "bar_commit": "265ae3c",
-  "bar_date": "2026-10-27T07:28",
-  "bar_how": "pickaxe",
+  "bar_commit": "69acea0",
+  "bar_date": "2026-10-26T10:41",
+  "bar_how": "audit (WS-136)",
   "result_commit": "265ae3c",
   "result_date": "2026-10-27T07:28",
-  "class": "same-commit",
-  "verdict": "trained (no on-robot number yet)"
+  "class": "bar-first",
+  "verdict": "trained (no on-robot number yet)",
+  "class_v1": "same-commit"
  },
  {
   "section": "2",
@@ -969,7 +1049,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "A1 fail, A3 fail"
+  "verdict": "A1 fail, A3 fail",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -981,7 +1062,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "fail; WS-049 verdict fail"
+  "verdict": "fail; WS-049 verdict fail",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -993,7 +1075,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "B-P1 pass, B-P2 pass"
+  "verdict": "B-P1 pass, B-P2 pass",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1005,7 +1088,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "fail; WS-059: replicates offline, does n"
+  "verdict": "fail; WS-059: replicates offline, does n",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1017,7 +1101,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "not proven"
+  "verdict": "not proven",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1029,7 +1114,8 @@
   "result_commit": "9a93340",
   "result_date": "2026-10-30T00:48",
   "class": "bar-first",
-  "verdict": "pass"
+  "verdict": "pass",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1041,7 +1127,8 @@
   "result_commit": "1e50aa8",
   "result_date": "2026-10-31T12:42",
   "class": "bar-first",
-  "verdict": "P1 pass, P2 fail, P3 fail: not adopted"
+  "verdict": "P1 pass, P2 fail, P3 fail: not adopted",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1053,7 +1140,8 @@
   "result_commit": "b23c364",
   "result_date": "2026-10-31T12:45",
   "class": "bar-first",
-  "verdict": "pass"
+  "verdict": "pass",
+  "class_v1": "bar-first"
  },
  {
   "section": "2",
@@ -1065,6 +1153,59 @@
   "result_commit": "b23c364",
   "result_date": "2026-10-31T12:45",
   "class": "bar-first",
-  "verdict": "pass; gate B (arm, raw vs S3) next"
+  "verdict": "pass; gate B (arm, raw vs S3) next",
+  "class_v1": "bar-first"
+ },
+ {
+  "section": "2",
+  "date": "2026-11-01",
+  "gate": "TOPReward vs elapsed time (WS-085, arXiv 2602.19313)",
+  "bar_commit": "6868fa5",
+  "bar_date": "2026-11-01T07:18",
+  "bar_how": "pickaxe",
+  "result_commit": "6868fa5",
+  "result_date": "2026-11-01T07:18",
+  "class": "same-commit",
+  "verdict": "below elapsed time (full and 50 % cut)",
+  "class_v1": "same-commit"
+ },
+ {
+  "section": "2",
+  "date": "2026-11-01",
+  "gate": "RACE diagnostic (WS-086, arXiv 2610.05719)",
+  "bar_commit": "7e29306",
+  "bar_date": "2026-11-01T00:14",
+  "bar_how": "protocol file PROTOCOL.md",
+  "result_commit": "6868fa5",
+  "result_date": "2026-11-01T07:18",
+  "class": "bar-first",
+  "verdict": "not seen",
+  "class_v1": "bar-first"
+ },
+ {
+  "section": "2",
+  "date": "2026-11-01",
+  "gate": "VLA-Corrector (ZJU) monitor (WS-087, arXiv 2607.01804)",
+  "bar_commit": "b8baece",
+  "bar_date": "2026-11-01T00:17",
+  "bar_how": "protocol file PROTOCOL.md",
+  "result_commit": "6868fa5",
+  "result_date": "2026-11-01T07:18",
+  "class": "bar-first",
+  "verdict": "fail",
+  "class_v1": "bar-first"
+ },
+ {
+  "section": "2",
+  "date": "2026-11-01",
+  "gate": "Execution gap C1 + C2 (WS-088, WS-082 C1/C2)",
+  "bar_commit": "5ca5880",
+  "bar_date": "2026-11-01T00:28",
+  "bar_how": "protocol file PROTOCOL.md",
+  "result_commit": "6868fa5",
+  "result_date": "2026-11-01T07:18",
+  "class": "bar-first",
+  "verdict": "C1 not sub-servo, C2 not seen",
+  "class_v1": "bar-first"
  }
 ]
