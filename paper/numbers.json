@@ -1,0 +1,338 @@
+{
+ "acc_bar": {
+  "value": "95",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 bar '>= 0.95' x 100"
+ },
+ "acc_est": {
+  "value": "94.2",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 100 estimate"
+ },
+ "acc_hi": {
+  "value": "98.9",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 100 ci95[1]"
+ },
+ "acc_lo": {
+  "value": "89.6",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 100 ci95[0]"
+ },
+ "acc_n": {
+  "value": "87",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 n_units"
+ },
+ "acc_verdict": {
+  "value": "fail",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G9c-3 point_verdict"
+ },
+ "c_fail": {
+  "value": "20",
+  "anchor": "repro/register/expected/register.json papers[*].claims, verdict = fail"
+ },
+ "c_not_proven": {
+  "value": "3",
+  "anchor": "repro/register/expected/register.json papers[*].claims, verdict = not proven"
+ },
+ "c_not_tested": {
+  "value": "4",
+  "anchor": "repro/register/expected/register.json papers[*].claims, verdict = not tested"
+ },
+ "c_ours": {
+  "value": "8",
+  "anchor": "repro/register/expected/register.json papers[*].claims, stated_in contains 'not a paper claim'"
+ },
+ "c_ours_repro": {
+  "value": "5",
+  "anchor": "repro/register/expected/register.json papers[*].claims, ours and verdict = reproduces"
+ },
+ "c_paper": {
+  "value": "37",
+  "anchor": "repro/register/expected/register.json papers[*].claims, stated_in without 'not a paper claim'"
+ },
+ "c_paper_fail": {
+  "value": "18",
+  "anchor": "repro/register/expected/register.json papers[*].claims, paper claims, verdict = fail"
+ },
+ "c_paper_repro": {
+  "value": "12",
+  "anchor": "repro/register/expected/register.json papers[*].claims, paper claims, verdict = reproduces"
+ },
+ "c_reproduces": {
+  "value": "17",
+  "anchor": "repro/register/expected/register.json papers[*].claims, verdict = reproduces"
+ },
+ "c_withdrawn": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json papers[*].claims, verdict = withdrawn"
+ },
+ "claims": {
+  "value": "45",
+  "anchor": "repro/register/expected/register.json papers[*].claims, len"
+ },
+ "claims_tested": {
+  "value": "42",
+  "anchor": "repro/register/expected/register.json papers[*].claims, tested = true"
+ },
+ "cost": {
+  "value": "45.10",
+  "anchor": "repro/register/expected/register.json papers, sum of cost_usd"
+ },
+ "ex_a_bar": {
+  "value": "298 ms",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-019-3, bar: '≤ 298 ms'"
+ },
+ "ex_a_ours": {
+  "value": "4,751 ms",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-019-3, ours: '4,751 ms'"
+ },
+ "ex_b_len": {
+  "value": "0.938",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-010-2, ours: '0.818 vs episode length 0.938'"
+ },
+ "ex_b_ours": {
+  "value": "0.818",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-010-2, ours: '0.818 vs episode length 0.938'"
+ },
+ "ex_c_bar": {
+  "value": "0.8",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-001-2, bar: 'executed chunk first among 8 in ≥ 0.8 of anchors'"
+ },
+ "ex_c_base": {
+  "value": "0.68–0.90",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-001-2, ours: '0.60 vs 0.68–0.90 action-only'"
+ },
+ "ex_c_ours": {
+  "value": "0.60",
+  "anchor": "repro/register/expected/register.json papers[*].claims, id C-001-2, ours: '0.60 vs 0.68–0.90 action-only'"
+ },
+ "fail_rows": {
+  "value": "20",
+  "anchor": "repro/classes/PROTOCOL.md: 'All 20 claim rows of the site register whose verdict is `fail`'"
+ },
+ "kappa_bar": {
+  "value": "0.6",
+  "anchor": "repro/classes/PROTOCOL.md: '**Bar: κ ≥ 0.6**'"
+ },
+ "l0": {
+  "value": "29",
+  "anchor": "repro/cold-reproduction/expected/L0.md: '**29 / 29 PASS**'"
+ },
+ "l1_env": {
+  "value": "12",
+  "anchor": "repro/cold-reproduction/expected/REPORT.md: 'L1: 6 REPRO (5 exact, 1 identical but one timing at 0.2 %), 0 DIFF, 12 FAIL-ENV'"
+ },
+ "l1_exact": {
+  "value": "5",
+  "anchor": "repro/cold-reproduction/expected/REPORT.md: 'L1: 6 REPRO (5 exact, 1 identical but one timing at 0.2 %), 0 DIFF, 12 FAIL-ENV'"
+ },
+ "l1_repro": {
+  "value": "6",
+  "anchor": "repro/cold-reproduction/expected/REPORT.md: 'L1: 6 REPRO (5 exact, 1 identical but one timing at 0.2 %), 0 DIFF, 12 FAIL-ENV'"
+ },
+ "l1_skip": {
+  "value": "11",
+  "anchor": "repro/cold-reproduction/expected/REPORT.md: '11 SKIP (3 MAXN-only, 3 private checkpoints, 2 vast, 3 unstated)'"
+ },
+ "osc_bar": {
+  "value": "10",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 bar '>= 0.1' x 100"
+ },
+ "osc_est": {
+  "value": "24.0",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 100 estimate"
+ },
+ "osc_hi": {
+  "value": "40.0",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 100 ci95[1]"
+ },
+ "osc_lo": {
+  "value": "8.0",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 100 ci95[0]"
+ },
+ "osc_n": {
+  "value": "25",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 n_units"
+ },
+ "osc_verdict": {
+  "value": "pass",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate G14 point_verdict"
+ },
+ "p_fail": {
+  "value": "13",
+  "anchor": "repro/register/expected/register.json papers, verdict = fail"
+ },
+ "p_not_proven": {
+  "value": "3",
+  "anchor": "repro/register/expected/register.json papers, verdict = not proven"
+ },
+ "p_not_tested": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json papers, verdict = not tested"
+ },
+ "p_reproduces": {
+  "value": "4",
+  "anchor": "repro/register/expected/register.json papers, verdict = reproduces"
+ },
+ "p_withdrawn": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json papers, verdict = withdrawn"
+ },
+ "papers": {
+  "value": "22",
+  "anchor": "repro/register/expected/register.json papers, len"
+ },
+ "pr_bar_first": {
+  "value": "58",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = bar-first"
+ },
+ "pr_no_bar": {
+  "value": "23",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = no-bar"
+ },
+ "pr_not_run": {
+  "value": "2",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = not-run"
+ },
+ "pr_result_first": {
+  "value": "0",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = result-first"
+ },
+ "pr_rows": {
+  "value": "89",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] (the log of 2026-10-31)"
+ },
+ "pr_same_commit": {
+  "value": "6",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = same-commit"
+ },
+ "pr_today": {
+  "value": "93",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows (today)"
+ },
+ "pr_unprov": {
+  "value": "29",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = same-commit + class = no-bar"
+ },
+ "ps_ids": {
+  "value": "38",
+  "anchor": "repro/prereg-check/expected/PAPER_SIDE_AUDIT.md: '`main:data/register.yaml`, 38 ids'"
+ },
+ "pt_bar_first": {
+  "value": "61",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = bar-first"
+ },
+ "pt_no_bar": {
+  "value": "23",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = no-bar"
+ },
+ "pt_not_run": {
+  "value": "2",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = not-run"
+ },
+ "pt_result_first": {
+  "value": "0",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = result-first"
+ },
+ "pt_same_commit": {
+  "value": "7",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = same-commit"
+ },
+ "rc_flips": {
+  "value": "3",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, flip_under_ci = true"
+ },
+ "rc_resamples": {
+  "value": "2,000",
+  "anchor": "repro/prereg-check/expected/RECOMPUTED.md: '2,000 resamples over episodes'"
+ },
+ "rc_rows": {
+  "value": "10",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, len"
+ },
+ "rig_5to20k": {
+  "value": "3",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = $5–20k"
+ },
+ "rig_eur": {
+  "value": "1,350",
+  "anchor": "repro/register/expected/rig.yaml, sum of price_eur (parts with a stated price)"
+ },
+ "rig_gt20k": {
+  "value": "7",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = >$20k"
+ },
+ "rig_lt5k": {
+  "value": "2",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = <$5k"
+ },
+ "rig_sim": {
+  "value": "9",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = sim"
+ },
+ "rig_unpriced": {
+  "value": "2",
+  "anchor": "repro/register/expected/rig.yaml, price_eur: null"
+ },
+ "rig_unstated": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = unstated"
+ },
+ "sc_stay": {
+  "value": "6",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = same-commit and class = same-commit"
+ },
+ "sc_to_bf": {
+  "value": "21",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = same-commit and class = bar-first"
+ },
+ "sc_to_nb": {
+  "value": "4",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = same-commit and class = no-bar"
+ },
+ "table1_rows": {
+  "value": "22",
+  "anchor": "repro/register/expected/register.json papers: paper, their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)"
+ },
+ "tau_bar": {
+  "value": "5",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ bar '<= 0.05' x 100"
+ },
+ "tau_est": {
+  "value": "2.4",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ 100 estimate"
+ },
+ "tau_hi": {
+  "value": "7.1",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ 100 ci95[1]"
+ },
+ "tau_lo": {
+  "value": "0.0",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ 100 ci95[0]"
+ },
+ "tau_n": {
+  "value": "42",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ n_units"
+ },
+ "tau_verdict": {
+  "value": "pass",
+  "anchor": "repro/prereg-check/expected/recompute_early.json, gate Judge τ point_verdict"
+ },
+ "top_protocol": {
+  "value": "6241570",
+  "anchor": "repro/prereg-check/expected/PREREG_AUDIT.md: '`TOPREWARD_PROTOCOL.md` (`6241570`)\n  predates the log commit `6868fa5`'"
+ },
+ "v1_bar_first": {
+  "value": "36",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = bar-first"
+ },
+ "v1_no_bar": {
+  "value": "19",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = no-bar"
+ },
+ "v1_same_commit": {
+  "value": "31",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = same-commit"
+ },
+ "v1_unresolved": {
+  "value": "3",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = unresolved"
+ }
+}

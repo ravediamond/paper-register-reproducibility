@@ -1,0 +1,124 @@
+# The hardware behind every result (WS-042). Rendered into /rig/ by blog-src/tools/build_rig.py.
+# price_kind: paid (owner-stated, in euros: price_eur) | included (came with the part named in included_in) |
+# list~ (public list price in dollars: price_usd, `source` says where). No price = not priced yet
+# (shown as "price to come"; never guessed). The site total sums price_eur; it refuses to mix currencies.
+# Photos: own files, or reuse-licensed images with photo_source / photo_licence; no licensed image -> photo null and a drawn placeholder.
+owned:
+  - id: so101-follower
+    name: SO-101 follower arm
+    role: the arm every trial ran on
+    specs: ["6 DoF, Feetech STS3215 servos", "position control, no force or torque sensing", "G-clamped to the back edge of the table"]
+    price_eur: 350
+    price_kind: paid
+    price_note: "pack price, with the leader arm and the wrist camera"
+    source: "owner: SO-101 pack (follower, leader and the icSpring wrist camera) for €350"
+    bought: null
+    photo: so101-follower
+    photo_source: "https://github.com/TheRobotStudio/SO-ARM100/blob/main/media/SO101_Follower.webp"
+    photo_licence: "Apache-2.0 (TheRobotStudio/SO-ARM100)"
+    limits: "short reach and no contact sensing: a grasp is only known to have worked by looking"
+    used_in: all
+  - id: so101-leader
+    name: SO-101 leader arm
+    role: teleoperation, for recording demonstrations
+    specs: ["same servos, passive gripper handle", "packed away, out only for recording sessions"]
+    price_eur: null
+    price_kind: included
+    included_in: so101-follower
+    source: "owner: in the SO-101 pack"
+    bought: null
+    photo: so101-leader
+    photo_source: "https://github.com/TheRobotStudio/SO-ARM100/blob/main/media/SO101_Leader.webp"
+    photo_licence: "Apache-2.0 (TheRobotStudio/SO-ARM100)"
+    limits: "setting up teleop takes time, so new data comes in batches"
+    used_in: [data]
+  - id: orin-nx
+    name: NVIDIA Jetson Orin NX 16 GB (Super dev kit)
+    role: the only computer on the robot
+    specs: ["JetPack 6.2 / L4T R36.4.3, CUDA 12.6", "MAXN_SUPER + jetson_clocks for benchmarks, 25 W otherwise", "headless"]
+    price_eur: 950
+    price_kind: paid
+    source: "owner: €950"
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "no desktop GPU: models that need flash-attention kernels without an Orin build (REKI) run on a rented GPU"
+    used_in: all
+  - id: cam-top
+    name: Logitech C920 (top camera)
+    role: the judge's view and the policy's main view
+    specs: ["640×480 at 30 fps, OpenCV", "oblique mount; no overhead view possible here"]
+    price_eur: 50
+    price_kind: paid
+    source: "owner: €50"
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "perspective view lit by a window: colour masks depend on the time of day"
+    used_in: all
+  - id: cam-wrist
+    name: icSpring USB camera (wrist)
+    role: close view of the gripper
+    specs: ["640×480 at 30 fps, OpenCV"]
+    price_eur: null
+    price_kind: included
+    included_in: so101-follower
+    source: "owner: in the SO-101 pack"
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "narrow field of view; often sees only the bowl it is holding"
+    used_in: all
+  - id: mat
+    name: Green cutting mat
+    role: work surface
+    specs: ["fixed colour background for the colour masks"]
+    price_usd: null
+    price_kind: list~
+    source: null
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "one surface, one colour: no texture or lighting variation unless added on purpose"
+    used_in: all
+  - id: table
+    name: Folding table
+    role: holds the station
+    specs: ["station stays installed; leader packed away"]
+    price_usd: null
+    price_kind: list~
+    source: null
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "moves on contact, so hard pushes shift the camera geometry"
+    used_in: all
+  - id: misc
+    name: Clamp, USB hub, power supplies, cables
+    role: everything else
+    specs: ["one G-clamp, one USB hub, servo and Orin power supplies"]
+    price_usd: null
+    price_kind: list~
+    source: null
+    bought: null
+    photo: null
+    photo_source: null
+    photo_licence: null
+    limits: "a loose USB link drops servo packets (seen on motors 4 and 5)"
+    used_in: all
+rented:
+  name: Rented GPUs (vast.ai)
+  role: training, and serving models the Orin cannot run
+  specs: ["RTX 3090 / 4090, A6000, RTX PRO 5000 class, by the hour", "destroyed after each run"]
+planned:
+  - name: Second SO-101 (assembled)
+    why: "a second arm for two-arm tasks"
+  - name: reBot B601-DM
+    why: "upgrade path if reach becomes the limit"
+  - name: Desktop GPU, Jetson Thor or DGX Spark
+    why: "considered for on-site training and for models with no Orin build"
