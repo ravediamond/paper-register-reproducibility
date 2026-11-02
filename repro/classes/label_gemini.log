@@ -1,0 +1,23 @@
+prompt sha256 52518ad796d92b9a3cb47eadcce3643ab3f3ce76d8dc726340eb7cf42b91b2bd
+row  1 C-001-2   C    runs C/C/C
+row  2 C-002-1   C    runs C/C/C
+row  3 C-003-1   C    runs C/C/C
+row  4 C-003-2   A    runs A/A/A
+row  5 C-004-1   C    runs B/C/C
+row  6 C-006-1   B    runs B/B/B
+row  7 C-007-1   B    runs B/B/B
+row  8 C-007-2   B    runs B/B/B
+row  9 C-008-2   B    runs B/B/B
+row 10 C-009-1   B    runs B/B/B
+row 11 C-010-1   B    runs B/B/B
+row 12 C-010-2   B    runs B/B/B
+row 13 C-013-2   none runs A/none/none
+row 14 C-018-1   B    runs B/none/B
+row 15 C-018-2   B    runs B/B/B
+row 16 C-019-1   none runs none/none/none
+row 17 C-019-2   none runs none/none/none
+row 18 C-019-3   A    runs A/A/A
+row 19 C-020-2   A    runs A/A/A
+row 20 C-022-1   B    runs B/B/B
+self-agreement 17/20; labels {'C': 4, 'A': 3, 'B': 10, 'none': 3}
+cost line: 60 calls, 27642 prompt tokens, 2165 completion tokens (gemini-3.8-flash)

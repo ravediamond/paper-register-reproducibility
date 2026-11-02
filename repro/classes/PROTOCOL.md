@@ -78,3 +78,4 @@ steps 2–3, the bar and the bootstrap are unchanged.
 ## Log
 
 - 2026-11-02: protocol and form written (WS-136). Owner labels: pending. Second reader: pending (owner to choose).
+- 2026-11-02: amendment committed (ea5e9ce) before any label; reader 1 (gemini-3.8-flash, 3 runs) written to `labels_reader1_gemini.csv` by `label_gemini.py` (log `label_gemini.log`). Owner veto window open until reader 2's file arrives.
