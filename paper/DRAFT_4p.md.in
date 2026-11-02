@@ -6,7 +6,7 @@
 
 Robot-learning papers are mostly shown in simulation, on costly arms or on data-centre GPUs. We re-tested the
 central claim of {{papers}} papers on a low-cost arm and an edge GPU, running the cheapest baseline first and fixing a
-pass mark before the run. Of {{claims_tested}} tested claim rows, {{c_reproduces}} reproduce. The failures we see
+pass mark before the run. Of the {{c_paper}} claims taken from the papers, {{c_paper_repro}} reproduce and {{c_paper_fail}} fail; {{c_ours}} further rows compare against our own baselines. The failures we see
 fall into three proposed classes: methods that miss a real-time budget on the edge GPU, zero-shot judges beaten by a
 trivial signal, and latent planners beaten by the commanded joint positions. We then audited our own
 pre-registration by commit order, recomputed the early gates with one statistic, and rebuilt every published number
@@ -96,7 +96,7 @@ and {{pr_no_bar}} have no bar, so for {{pr_unprov}} of {{pr_rows}} gates the ord
 from this repository; the commit-order audit is mechanical, but its {{sc_to_bf}} upgrades rest on matching a bar text, and the
 second-reader check of the classes is the only independent check in the study, not yet done. {{rc_flips}} verdicts are
 fragile under the bootstrap. Only {{l1_repro}} gates were rerun cold. The closest statement of our thesis
-[@2610.40026] is not in our papers mirror and was not read for this draft.
+[@2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and deployment affordability; its reproduction score counts audit milestones (configuration mapping, task records, coverage, training records, seeds), not a rerun of each claim. We give one pass/fail per claim on a €1,350 rig, with the bar committed before the run.
 
 ## 6. Related work
 
