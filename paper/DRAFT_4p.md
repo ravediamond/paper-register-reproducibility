@@ -119,7 +119,7 @@ and 23 have no bar, so for 29 of 89 gates the order of bar and result is not pro
 from this repository; the commit-order audit is mechanical, but its 21 upgrades rest on matching a bar text, and the
 second-reader check of the classes is the only independent check in the study, not yet done. 3 verdicts are
 fragile under the bootstrap. Only 6 gates were rerun cold. The closest statement of our thesis
-[arXiv:2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and deployment affordability; its reproduction score counts audit milestones (configuration mapping, task records, coverage, training records, seeds), not a rerun of each claim. We give one pass/fail per claim on a €1,350 rig, with the bar committed before the run.
+[arXiv:2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and deployment affordability; its reproduction-evidence score is five audit milestones (configuration mapping, task records, task coverage, training records, seeds) and, in its words, not a probability that a result is correct. We give one pass/fail per claim on a €1,350 rig, with the bar committed before the run.
 
 ## 6. Related work
 

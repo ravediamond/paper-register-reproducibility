@@ -113,7 +113,8 @@ def prereg():
     lit_file("fail_rows", "classes/PROTOCOL.md", "All 20 claim rows of the site register whose verdict is `fail`", "20")
 
 
-NOT_READ = {"2610.40026": "RoboSeed (title not verified: not in the author's papers mirror, not read)"}
+# read from the local PDF (~/workspace/papers/2610.40026v1-roboseed.pdf, not committed): title and first author of the first page
+READ = {"2610.40026": ("RoboSeed: Multidimensional Evaluation of Vision-Language-Action and World-Action Models", "Ma, Xin and others")}
 
 
 def bib(md):
@@ -130,8 +131,9 @@ def bib(md):
     out = []
     for i in ids:
         r = idx.get(i, {})
-        title = (r.get("title") or NOT_READ.get(i) or f"arXiv {i} (not in the author's papers mirror; not read)").replace("&", "\\&")
-        out.append(f"@misc{{arxiv{i.replace('.', '')},\n  title = {{{{{title}}}}},\n  year = {{{r.get('year') or '20' + i[:2]}}},\n"
+        title = (r.get("title") or READ.get(i, ("",))[0] or f"arXiv {i} (not in the author's papers mirror; not read)").replace("&", "\\&")
+        auth = f"  author = {{{READ[i][1]}}},\n" if i in READ else ""
+        out.append(f"@misc{{arxiv{i.replace('.', '')},\n  title = {{{{{title}}}}},\n{auth}  year = {{{r.get('year') or '20' + i[:2]}}},\n"
                    f"  eprint = {{{i}}}, archivePrefix = {{arXiv}},\n  note = {{arXiv:{i}}}\n}}")
     (HERE / "refs.bib").write_text("\n\n".join(out) + "\n")
     return len(out)
