@@ -79,3 +79,4 @@ steps 2–3, the bar and the bootstrap are unchanged.
 
 - 2026-11-02: protocol and form written (WS-136). Owner labels: pending. Second reader: pending (owner to choose).
 - 2026-11-02: amendment committed (ea5e9ce) before any label; reader 1 (gemini-3.8-flash, 3 runs) written to `labels_reader1_gemini.csv` by `label_gemini.py` (log `label_gemini.log`). Owner veto window open until reader 2's file arrives.
+- 2026-11-03: owner veto pass done (2026-11-03 08:10), no veto: rows 13 (C-013-2), 16 (C-019-1), 17 (C-019-2) stay `none` (Gemini majority stands, no override). Reader-1 (gemini-3.8-flash) labels in `labels_reader1_gemini.csv` are FINAL. Form ready to send to reader 2 (owner sends).
