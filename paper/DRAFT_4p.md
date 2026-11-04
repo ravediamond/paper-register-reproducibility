@@ -4,16 +4,16 @@
 
 ## Abstract
 
-Robot-learning papers are mostly shown in simulation, on costly arms or on data-centre GPUs. We re-tested the
-central claim of 22 papers on a low-cost arm (SO-101) and an edge GPU (Jetson Orin NX), running the cheapest
-baseline first and fixing a pass mark before the run. Of the 37 claims taken from the papers,
-12 reproduce and 18 fail; the remainder are not proven or not tested, and 8
-further rows compare against our own baselines. The failures we see
-fall into three proposed classes: methods that miss a real-time budget on the edge GPU, zero-shot judges beaten by a
-trivial signal, and latent planners beaten by the commanded joint positions. We then audited our own
-pre-registration by commit order, recomputed the early gates with one statistic, and rebuilt every published number
-from its stored rows. Whether the bar preceded the result is provable for most gates, not for all, and the class
-assignment awaits a blind second reader; both limits are stated with their counts. Total compute: $45.10.
+Robot-learning papers are mostly shown in simulation, on costly arms or on data-centre GPUs. Does the claim survive
+on hardware a student can buy? We re-tested the central claim of 22 papers on a low-cost arm (SO-101) and an
+edge GPU (Jetson Orin NX), with the cheapest baseline run first and a pass mark fixed before each run. Of the
+37 claims taken from the papers, 12 reproduce and 18 fail; the rest are not
+proven or not tested, and 8 further rows compare against our own baselines. Three classes cover the failures
+we saw: methods that miss a real-time budget on the edge GPU, zero-shot judges beaten by a trivial signal, and latent
+planners beaten by the commanded joint positions. We also audited ourselves. Every published number was rebuilt from
+its stored rows, the early gates were recomputed with one statistic, and commit order says which bars provably
+preceded their results — most, not all. The class assignment itself waits for a blind second reader. Both limits are
+in the paper, with their counts. Total compute: $45.10.
 
 ## 1. The register
 
@@ -24,23 +24,23 @@ rests on three conditions. **Accessible hardware:** an SO-101 arm and a Jetson O
 parts with a stated price (2 smaller parts not yet priced). **Cheapest baseline first:** before a
 learned model is credited, the trivial signal it must beat (copy-last, the commanded joints, episode length) is run on
 the same rows. **Bar before the run:** the pass mark is committed before the result; §2 audits how far that holds.
-The papers were picked for relevance to the stack this rig runs (latent world models, VLA policies, failure monitors
-and judges, action chunking, edge latency) and entered in the register before testing — the register file also lists
-the papers scheduled next; they are not a sample of the field (§5).
+The papers were picked for relevance to the stack this rig runs — latent world models, VLA policies, failure monitors
+and judges, action chunking, edge latency — and entered in the register before testing. The register file lists the
+papers scheduled next. They are not a sample of the field (§5).
 Of the 22 papers, 9 were shown in simulation, 7 on rigs above $20k, 3 at
 $5–20k, 2 below $5k and 1 on an unstated setup.
 
-Contributions: (i) a public register of 45 claim rows over 22 papers, each with the claim as the
-paper states it, a bar fixed for this rig, a verdict and the rows it is recomputed from; (ii) a commit-order audit of
-the study's own pre-registration, reporting the provable and the unprovable counts; (iii) three proposed failure
-classes with a pre-registered blind two-reader protocol for their assignment. The register, the rows behind every
-number and the audit's own evidence are in one repository.
+Three things come out of this. First, the register: 45 claim rows over 22 papers, each with the claim
+as the paper states it, a bar fixed for this rig, a verdict, and the rows it is recomputed from. Second, a
+commit-order audit of the study's own pre-registration, with the provable and the unprovable counts side by side.
+Third, three proposed failure classes, with a blind two-reader protocol committed before any labelling. Everything,
+the audit's own evidence included, sits in one repository.
 
 ## 2. Method, and an audit of our own pre-registration
 
-Each gate of the experiment log has a bar and a result; we find, in git history, the first commit containing each and
-classify the gate by commit order alone (`git merge-base --is-ancestor`), never from a note or a timestamp. Of the
-89 gate rows of the log as of 2026-10-31,
+Each gate of the experiment log has a bar and a result. We find, in git history, the first commit containing each,
+and classify the gate by commit order alone (`git merge-base --is-ancestor`) — never from a note, never from a
+timestamp. Of the 89 gate rows of the log as of 2026-10-31,
 **58 are bar-first, 6 same-commit, 0 result-first, 23 no-bar and 2 not-run**
 (a bar, never a result). The 93
 rows of the log today give 61 / 7 / 0 / 23 / 2.
@@ -50,13 +50,13 @@ that the result came first, nor that it did not.
 A first pass by text search alone had read 36 bar-first, 31 same-commit,
 19 no-bar and 3 unresolved. Tracing each same-commit gate to its own protocol, plan,
 scorer or specification moved 21 to bar-first and 4 to no-bar (the bar cell itself declares
-none), and left 6. Those upgrades rest on a bar text found in an earlier commit of a file tied to the gate;
-the evidence line for each is in the audit table, so a reader can check it. The earlier bar-first rows were not
+none), and left 6. Those upgrades rest on a bar text found in an earlier commit of a file tied to the gate.
+The evidence line for each is in the audit table, so a reader can check it; the earlier bar-first rows were not
 re-audited for a result elsewhere in the history. One gate added on 2026-11-01 (the reward-model progress test) is
 same-commit by text search, but its protocol (`6241570`) predates the log commit; its result commit was not
 audited, so it stays same-commit and is an open candidate.
 
-**One statistic.** The early gates mixed point estimates and other intervals. We recomputed 10 of them on
+**One statistic.** The early gates mixed point estimates and other intervals, so we recomputed 10 of them on
 the episode bootstrap (2,000 resamples, percentile 95 % CI) from stored rows. 3 verdicts flip
 somewhere inside their interval: the oscillation rate among failed episodes (24.0 %, CI 8.0–40.0 %,
 bar ≥ 10 %, n = 25; pass on the point), a judge's accuracy (94.2 %, CI
@@ -67,7 +67,7 @@ three as fragile.
 
 **Reproducibility of this study.** Every published number was recomputed from its published rows: 29 / 29
 write-ups pass. From a fresh clone with no credentials, 6 gates rerun cold and reproduce (5
-exactly); 12 are blocked by one unpublished software environment and 11 need a larger GPU, a
+exactly). 12 are blocked by one unpublished software environment; 11 need a larger GPU, a
 private checkpoint, the arm or an unstated step. The register's citations and paper-side fields were audited against
 the papers' PDFs and the fixes are merged; of the 38 arXiv ids the published register names, the missing ones in our papers mirror
 belong to scheduled tests, and one tested paper, which has no arXiv id, was not checked against its PDF.
@@ -117,21 +117,21 @@ judge success, failure or progress is no better than a trivial signal; a learned
 AUROC 0.818 where episode length alone reaches 0.938. **C, latent planners beaten by joints:** a
 learned latent used to plan, rank or track progress does worse than the commanded joints or a copy-last /
 action-only baseline; a latent world model ranks the executed chunk first in 0.60 of anchors, against a bar
-of 0.8 and 0.68–0.90 for an action-only baseline. The three examples are illustrative. We deliberately
-assign no class to individual rows in this version: under the pre-registered protocol, per-row labels count only once
-a blind second reader, labelling the same 20 rows on the same form, agrees with the first pass at
-Cohen's κ ≥ 0.6 (the bar was fixed before any reading); the protocol and the label form are committed, and
-the second reading has not yet happened.
+of 0.8 and 0.68–0.90 for an action-only baseline. The three examples are illustrative, nothing more.
+Per-row labels wait: under the protocol committed before any reading, they count only once a blind second reader,
+labelling the same 20 rows on the same form, agrees with the first pass at Cohen's κ ≥ 0.6. The
+protocol and the form are in the repository. The second reading has not happened yet.
 
 ## 5. Limitations
 
-One rig, one arm, one operator: a failure here is a rig finding, not a refutation of the paper's own setting. The
-verdicts were labelled by one person, at rest, not always blind to the arm. 6 gates are same-commit
-and 23 have no bar, so for 29 of 89 gates the order of bar and result is not provable
-from this repository; the commit-order audit is mechanical, but its 21 upgrades rest on matching a bar text, and the
-second-reader check of the classes is the only independent check in the study, not yet done. 3 verdicts are
-fragile under the bootstrap. Only 6 gates were rerun cold. Finally, the papers were chosen for relevance
-to one stack, not sampled, so the reproduction rate describes this register, not the field.
+One rig, one arm, one operator. A failure here is a rig finding, not a refutation of the paper's own setting. The
+verdicts were labelled by one person, at rest, not always blind to the arm. Of the 89 gates,
+6 are same-commit and 23 have no bar: for 29, the order of bar and result
+cannot be proven from this repository. The commit-order audit is mechanical, but its 21 upgrades rest on
+matching a bar text, and the second-reader check of the classes — the only independent check in the study — has not
+been run. Under the bootstrap, 3 verdicts are fragile. Only 6 gates were rerun cold. And the
+papers themselves were chosen for relevance to one stack, not sampled, so the reproduction rate describes this
+register, not the field.
 
 ## 6. Related work
 
@@ -149,9 +149,9 @@ itself audited.
 ## 7. Conclusion
 
 On a €1,350 rig, 12 of 37 tested paper claims reproduce under bars fixed for this
-hardware before the run. The scarce resource was not compute ($45.10 in total) but order — bars before results —
-and the audit of our own history found 29 of 89 gates whose order we cannot prove; both numbers
-belong in the same paper. The register stays open: the next papers are already scheduled in the register file, and
-every number here is recomputable from the repository (`github.com/ravediamond/paper-register-reproducibility`).
+hardware before the run. The scarce resource was not compute — $45.10 covered all of it — but order: bars before
+results. Auditing our own history found 29 of 89 gates whose order we cannot prove, and both
+numbers belong in the same paper. The register stays open. The next papers are already scheduled in the register
+file, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`).
 
 ## References
