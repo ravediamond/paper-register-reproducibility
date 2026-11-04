@@ -1,12 +1,14 @@
-# What survives when a paper leaves the lab: a pre-registered re-test of 22 robot-learning papers on a €1,350 rig
+# What survives when a paper leaves the lab: re-testing 22 robot-learning papers on a €1,350 rig, with an audit of our own pre-registration
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted.*
 
 ## Abstract
 
 Robot-learning papers are mostly shown in simulation, on costly arms or on data-centre GPUs. We re-tested the
-central claim of 22 papers on a low-cost arm and an edge GPU, running the cheapest baseline first and fixing a
-pass mark before the run. Of the 37 claims taken from the papers, 12 reproduce and 18 fail; 8 further rows compare against our own baselines. The failures we see
+central claim of 22 papers on a low-cost arm (SO-101) and an edge GPU (Jetson Orin NX), running the cheapest
+baseline first and fixing a pass mark before the run. Of the 37 claims taken from the papers,
+12 reproduce and 18 fail; the remainder are not proven or not tested, and 8
+further rows compare against our own baselines. The failures we see
 fall into three proposed classes: methods that miss a real-time budget on the edge GPU, zero-shot judges beaten by a
 trivial signal, and latent planners beaten by the commanded joint positions. We then audited our own
 pre-registration by commit order, recomputed the early gates with one statistic, and rebuilt every published number
@@ -22,8 +24,17 @@ rests on three conditions. **Accessible hardware:** an SO-101 arm and a Jetson O
 parts with a stated price (2 smaller parts not yet priced). **Cheapest baseline first:** before a
 learned model is credited, the trivial signal it must beat (copy-last, the commanded joints, episode length) is run on
 the same rows. **Bar before the run:** the pass mark is committed before the result; §2 audits how far that holds.
+The papers were picked for relevance to the stack this rig runs (latent world models, VLA policies, failure monitors
+and judges, action chunking, edge latency) and entered in the register before testing — the register file also lists
+the papers scheduled next; they are not a sample of the field (§5).
 Of the 22 papers, 9 were shown in simulation, 7 on rigs above $20k, 3 at
 $5–20k, 2 below $5k and 1 on an unstated setup.
+
+Contributions: (i) a public register of 45 claim rows over 22 papers, each with the claim as the
+paper states it, a bar fixed for this rig, a verdict and the rows it is recomputed from; (ii) a commit-order audit of
+the study's own pre-registration, reporting the provable and the unprovable counts; (iii) three proposed failure
+classes with a pre-registered blind two-reader protocol for their assignment. The register, the rows behind every
+number and the audit's own evidence are in one repository.
 
 ## 2. Method, and an audit of our own pre-registration
 
@@ -63,32 +74,32 @@ belong to scheduled tests, and one tested paper, which has no arXiv id, was not 
 
 ## 3. Results
 
-Table 1: The register: one row per paper, generated from the register file (claim, bar and result as recorded, including our internal model and gate names). "Class" is the failure class of §4, pending the labels of §4.
+Table 1: The register: one row per paper, generated from the register file (claim, bar and result as recorded, including our internal model and gate names); each re-tested paper is cited beside its name.
 
-| paper | their rig | claim tested | bar | our result | verdict | class |
-|---|---|---|---|---|---|---|
-| LeWorldModel | sim | A small JEPA world model learns the arm's dynamics well enough to plan with it. | Dynamics: beat copy-last, every corruption ≥ 1.3 at K = 30. Planning: rank the executed chunk first among 8 in ≥ 0.8 of anchors. | dynamics 0.31 vs 0.89 copy-last (reproduces); planning top-1 0.60 vs 0.68–0.90 for an action-only baseline (fail) | fail | pending |
-| DINO-WM | sim | A predictor on frozen DINOv2 patches plans better than one on a learned latent. | G1b top-1 ≥ 0.8 at some target distance. | arm-pose R² 0.92 (vs 0.57 for W1); G1b top-1 0.55–0.61; no-model baseline 0.68–0.90 | fail | pending |
-| RoboJEPA | >$20k | Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer. | 9-step L1 ≥ 15 % below copy-last (300M) and ≥ 5 % below shuffled actions; 2-view encoder ≤ 200 ms on the Orin. | 11.8 % below copy-last (300M; 1B 15.8 % on 30 clips); 9–10 % below shuffled; encoder 526 ms on the Orin NX | fail | pending |
-| H-JEPA | sim | A slow second level makes latent distance track task progress. | Progress monotonicity Spearman ρ ≤ −0.80; false stalls ≤ 10 %. | level-2 ρ −0.73; false stalls 52 % | fail | pending |
-| D-JEPA | <$5k | A decision-aligned ranking operator on a frozen world model picks better action chunks. | G1b regret ≤ 0.10 and ≤ the action-only baseline + 0.05. | regret 0.263 (W1 alone 0.263; action-only −0.007) | not tested | — |
-| ContactGuard | $5–20k | An event-anchored probe on imagined latents predicts grasp failure better than the current latent. | AUROC ≥ 0.85 and ≥ 0.05 above the current latent. | 0.70 imagined vs 0.82 current | fail | pending |
-| FAIL-Detect and SAFE | >$20k | A conformal band on a learned failure score keeps false alarms at α while catching failures. | Successes flagged ≤ 1/20; failures flagged ≥ 50 %. | 22.7 % of successes flagged at α = 5 %; 46 % of failures caught | fail | pending |
-| ReAP | $5–20k | A risk head on an action-conditioned latent warns before failures. | ≥ 5/8 failures caught at ≤ 1/20 false interventions; action-conditioned iff true ≥ shuffled + 0.05. | v1 AUROC 0.93 came from time and length; v2 0.789 vs 0.708 shuffled, 3/8 at 5/42 | fail | pending |
-| VLA-Corrector | sim | A verifier on observable history flags a failing rollout early enough to correct it. | ≥ 5/8 failures at ≤ 1/20 false interventions. | the paper's verifier family on our rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30 | fail | pending |
-| Robometer | >$20k | A 4B reward model judges SO-101 rollouts zero-shot. | Pooled AUROC ≥ 0.85 and within-policy ≥ 0.8 on ≥ 5 of 7 policies. | pooled AUROC 0.818 on 2099 ArmnetBench rollouts; episode length alone 0.938 | fail | pending |
-| SmolVLA | <$5k | A 450M VLA succeeds on an SO-101 task and can run on low-cost hardware. | 10-trial operator-judged gate (no numeric pass mark registered); chunk inference within the async budget (667 ms). | 9/10 on bowls; 974 ms in PyTorch, 238 ms with vla.cpp on the Orin NX | reproduces | — |
-| TurboVLA | sim | Our claim that the architecture made the policy ignore its instruction. | Task swap ≥ 5° and per-layout ≥ 75 % → our port was the bug; < 1° with the control ≥ 0.095 → the data. | upstream's own trainer on our data: task swap 0.020°, per-layout 38.9 %; control, their released LIBERO checkpoint run here: 0.105 (≈ 5.5° of pan) | withdrawn | — |
-| VLA-JEPA | sim | VLA-JEPA trains cheaply on SO-101 data and runs on the robot. | 10-trial operator-judged gate (no numeric pass mark registered); for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency. | 9/10 for ~$9.7; 355 ms per chunk on the Orin NX; reranking no-go (0.76, 1.84×) | reproduces | — |
-| REKI | sim | Policies without memory oscillate between poses at a measurable rate. | ≥ 10 % of failed episodes oscillate (their criterion). | 20.3 % of all episodes, 24.0 % of failures; REKI trained on my data: 19/20 + 19/20 on the arm, oscillates in 1/40 | reproduces | — |
-| Real-Time Chunking | unstated | Conditioning a new chunk on the executing one removes the jump at chunk boundaries. | Best gradient-free method cuts the median jump ≥ 50 % against naive async, drift ≤ +10 %, within 667 ms. | prefix overwrite cuts the jump 71–73 % against naive async at +0.4 ms; tuned LeRobot identity mode is close | not proven | — |
-| HWM (hierarchical latent world models) | >$20k | A high-level world model over learned macro-actions beats the low-level model beyond about 1 s (their Fig. 6 crossover). | Crossover in [1.0, 2.0] s; at 2 s high-level error ≤ 0.95 × low-level; learned macro-actions ≥ net joint displacement on cosine. | no crossover: W1 0.382 ± 0.005 → 0.563 ± 0.007, high level 0.769 ± 0.009 → 0.759 ± 0.009 (0.73–2 s); cosine 0.608 ± 0.007 vs 0.551 ± 0.006 | not proven | — |
-| LeJEPA identifiability | sim | A SIGReg JEPA trained on goal-directed data recovers the true latent state only partially and unevenly. | W1's mean R² from latent to joints < 0.80; anisotropy (max − min per-joint R²) ≥ 0.20; the higher-R² model has the higher G1b top-1. | W1 mean R² 0.565, anisotropy 0.639 (shoulder lift 0.91, wrist flex 0.27); frozen DINOv2-S 0.867 / 0.301 | reproduces | — |
-| SURVEYOR | sim | A threshold on the imagined-vs-reached latent distance accepts good plans and rejects bad ones (τ = 0.20). | τ below the 10th percentile of non-equivalent pairs and ≤ 0.40; as a monitor ≥ 5/8 failures at ≤ 2/42; ≥ 0.05 AUROC over a shuffled drafter. | τ = 1.249 on W1 latents of 69 real rollouts; as a monitor 3/8 at 6/42 (S = 30), AUROC 0.756 vs shuffled 0.560 | fail | pending |
-| Adaptive Action Chunking (AAC) | >$20k | Chunk length chosen from the entropy of N sampled chunks follows the task's phases (long in transport, short at the grasp), lowers the boundary jump, and costs little with batched sampling. | median h* in transport ≥ grasp window + 2; jump with AAC + overwrite ≤ fixed + overwrite at d = 8; an N = 20 decision ≤ 298 ms on the Orin. | h* 2 in transport and 2 at the grasp (86 % of decisions at the floor); jump 0.973 vs 0.940; N = 20 decision 4,751 ms (sequential) on the Orin | fail | pending |
-| PACT-VLA | $5–20k | Picking among N sampled chunks by their flow residual under the pre-commit observation fits what happens next better than a random or stale pick, with no added control-step delay. | PACT beats a random pick and the stale-observation residual at d = 8 (CIs < 0); its delay on the Orin ≤ the naive delay; at that delay it still beats a single sample. | offline −0.27° vs random and vs the stale residual (both CIs < 0); on the Orin 1,200 ms per cycle, 37 control ticks vs 8 | fail | pending |
-| Horizon × depth (Euler steps vs execution horizon) | >$20k | With long open-loop commitment, cutting a flow-matching VLA's Euler steps from 10 to 2 contracts the action cloud around an unchanged centroid, saves most of the inference time and avoids edge-GPU thermal throttling. | median R(2)/R(10) ≤ 0.70 with the centroid within 0.05 relative and 3°; N = 2 latency ≤ 0.85 × N = 10 on the Orin, N = 10 within 5 % of 238 ms. | R(2)/R(10) 0.78 (CI 0.73–0.81), centroid 0.018 and 2.35°; 196.1 vs 237.5 ms per chunk (0.83, vision 151 ms); no throttling at N = 10 on the Orin, at MAXN_SUPER or 25 W | not proven | — |
-| REMORA | >$20k | Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. | Against per-frame argmax: premature not higher and missed ≤ +2 points (P1); flips halved, CI upper ≤ 0.7 (P2); a decrease inside ≥ 50 % of the reversal windows with ≤ 20 % false regressions (P3). | premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 × argmax, CI 0.48–0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 | fail | pending |
+| paper | their rig | claim tested | bar | our result | verdict |
+|---|---|---|---|---|---|
+| LeWorldModel [arXiv:2603.19312] | sim | A small JEPA world model learns the arm's dynamics well enough to plan with it. | Dynamics: beat copy-last, every corruption ≥ 1.3 at K = 30. Planning: rank the executed chunk first among 8 in ≥ 0.8 of anchors. | dynamics 0.31 vs 0.89 copy-last (reproduces); planning top-1 0.60 vs 0.68–0.90 for an action-only baseline (fail) | fail |
+| DINO-WM [arXiv:2411.04983] | sim | A predictor on frozen DINOv2 patches plans better than one on a learned latent. | G1b top-1 ≥ 0.8 at some target distance. | arm-pose R² 0.92 (vs 0.57 for W1); G1b top-1 0.55–0.61; no-model baseline 0.68–0.90 | fail |
+| RoboJEPA [arXiv:2610.10515] | >$20k | Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer. | 9-step L1 ≥ 15 % below copy-last (300M) and ≥ 5 % below shuffled actions; 2-view encoder ≤ 200 ms on the Orin. | 11.8 % below copy-last (300M; 1B 15.8 % on 30 clips); 9–10 % below shuffled; encoder 526 ms on the Orin NX | fail |
+| H-JEPA [arXiv:2610.06805] | sim | A slow second level makes latent distance track task progress. | Progress monotonicity Spearman ρ ≤ −0.80; false stalls ≤ 10 %. | level-2 ρ −0.73; false stalls 52 % | fail |
+| D-JEPA [arXiv:2609.24749] | <$5k | A decision-aligned ranking operator on a frozen world model picks better action chunks. | G1b regret ≤ 0.10 and ≤ the action-only baseline + 0.05. | regret 0.263 (W1 alone 0.263; action-only −0.007) | not tested |
+| ContactGuard [arXiv:2608.13438] | $5–20k | An event-anchored probe on imagined latents predicts grasp failure better than the current latent. | AUROC ≥ 0.85 and ≥ 0.05 above the current latent. | 0.70 imagined vs 0.82 current | fail |
+| FAIL-Detect and SAFE [arXiv:2503.08558] [arXiv:2506.09937] | >$20k | A conformal band on a learned failure score keeps false alarms at α while catching failures. | Successes flagged ≤ 1/20; failures flagged ≥ 50 %. | 22.7 % of successes flagged at α = 5 %; 46 % of failures caught | fail |
+| ReAP [arXiv:2610.16309] | $5–20k | A risk head on an action-conditioned latent warns before failures. | ≥ 5/8 failures caught at ≤ 1/20 false interventions; action-conditioned iff true ≥ shuffled + 0.05. | v1 AUROC 0.93 came from time and length; v2 0.789 vs 0.708 shuffled, 3/8 at 5/42 | fail |
+| VLA-Corrector [arXiv:2609.06508] | sim | A verifier on observable history flags a failing rollout early enough to correct it. | ≥ 5/8 failures at ≤ 1/20 false interventions. | the paper's verifier family on our rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30 | fail |
+| Robometer [arXiv:2603.02115] | >$20k | A 4B reward model judges SO-101 rollouts zero-shot. | Pooled AUROC ≥ 0.85 and within-policy ≥ 0.8 on ≥ 5 of 7 policies. | pooled AUROC 0.818 on 2099 ArmnetBench rollouts; episode length alone 0.938 | fail |
+| SmolVLA [arXiv:2506.01844] | <$5k | A 450M VLA succeeds on an SO-101 task and can run on low-cost hardware. | 10-trial operator-judged gate (no numeric pass mark registered); chunk inference within the async budget (667 ms). | 9/10 on bowls; 974 ms in PyTorch, 238 ms with vla.cpp on the Orin NX | reproduces |
+| TurboVLA [arXiv:2607.27205] | sim | Our claim that the architecture made the policy ignore its instruction. | Task swap ≥ 5° and per-layout ≥ 75 % → our port was the bug; < 1° with the control ≥ 0.095 → the data. | upstream's own trainer on our data: task swap 0.020°, per-layout 38.9 %; control, their released LIBERO checkpoint run here: 0.105 (≈ 5.5° of pan) | withdrawn |
+| VLA-JEPA [arXiv:2602.10098] | sim | VLA-JEPA trains cheaply on SO-101 data and runs on the robot. | 10-trial operator-judged gate (no numeric pass mark registered); for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency. | 9/10 for ~$9.7; 355 ms per chunk on the Orin NX; reranking no-go (0.76, 1.84×) | reproduces |
+| REKI [arXiv:2610.22178] | sim | Policies without memory oscillate between poses at a measurable rate. | ≥ 10 % of failed episodes oscillate (their criterion). | 20.3 % of all episodes, 24.0 % of failures; REKI trained on my data: 19/20 + 19/20 on the arm, oscillates in 1/40 | reproduces |
+| Real-Time Chunking [arXiv:2506.07339] | unstated | Conditioning a new chunk on the executing one removes the jump at chunk boundaries. | Best gradient-free method cuts the median jump ≥ 50 % against naive async, drift ≤ +10 %, within 667 ms. | prefix overwrite cuts the jump 71–73 % against naive async at +0.4 ms; tuned LeRobot identity mode is close | not proven |
+| HWM (hierarchical latent world models) [arXiv:2604.03208] | >$20k | A high-level world model over learned macro-actions beats the low-level model beyond about 1 s (their Fig. 6 crossover). | Crossover in [1.0, 2.0] s; at 2 s high-level error ≤ 0.95 × low-level; learned macro-actions ≥ net joint displacement on cosine. | no crossover: W1 0.382 ± 0.005 → 0.563 ± 0.007, high level 0.769 ± 0.009 → 0.759 ± 0.009 (0.73–2 s); cosine 0.608 ± 0.007 vs 0.551 ± 0.006 | not proven |
+| LeJEPA identifiability [arXiv:2605.26379] | sim | A SIGReg JEPA trained on goal-directed data recovers the true latent state only partially and unevenly. | W1's mean R² from latent to joints < 0.80; anisotropy (max − min per-joint R²) ≥ 0.20; the higher-R² model has the higher G1b top-1. | W1 mean R² 0.565, anisotropy 0.639 (shoulder lift 0.91, wrist flex 0.27); frozen DINOv2-S 0.867 / 0.301 | reproduces |
+| SURVEYOR | sim | A threshold on the imagined-vs-reached latent distance accepts good plans and rejects bad ones (τ = 0.20). | τ below the 10th percentile of non-equivalent pairs and ≤ 0.40; as a monitor ≥ 5/8 failures at ≤ 2/42; ≥ 0.05 AUROC over a shuffled drafter. | τ = 1.249 on W1 latents of 69 real rollouts; as a monitor 3/8 at 6/42 (S = 30), AUROC 0.756 vs shuffled 0.560 | fail |
+| Adaptive Action Chunking (AAC) [arXiv:2604.04161] | >$20k | Chunk length chosen from the entropy of N sampled chunks follows the task's phases (long in transport, short at the grasp), lowers the boundary jump, and costs little with batched sampling. | median h* in transport ≥ grasp window + 2; jump with AAC + overwrite ≤ fixed + overwrite at d = 8; an N = 20 decision ≤ 298 ms on the Orin. | h* 2 in transport and 2 at the grasp (86 % of decisions at the floor); jump 0.973 vs 0.940; N = 20 decision 4,751 ms (sequential) on the Orin | fail |
+| PACT-VLA [arXiv:2610.28019] | $5–20k | Picking among N sampled chunks by their flow residual under the pre-commit observation fits what happens next better than a random or stale pick, with no added control-step delay. | PACT beats a random pick and the stale-observation residual at d = 8 (CIs < 0); its delay on the Orin ≤ the naive delay; at that delay it still beats a single sample. | offline −0.27° vs random and vs the stale residual (both CIs < 0); on the Orin 1,200 ms per cycle, 37 control ticks vs 8 | fail |
+| Horizon × depth (Euler steps vs execution horizon) [arXiv:2610.32102] | >$20k | With long open-loop commitment, cutting a flow-matching VLA's Euler steps from 10 to 2 contracts the action cloud around an unchanged centroid, saves most of the inference time and avoids edge-GPU thermal throttling. | median R(2)/R(10) ≤ 0.70 with the centroid within 0.05 relative and 3°; N = 2 latency ≤ 0.85 × N = 10 on the Orin, N = 10 within 5 % of 238 ms. | R(2)/R(10) 0.78 (CI 0.73–0.81), centroid 0.018 and 2.35°; 196.1 vs 237.5 ms per chunk (0.83, vision 151 ms); no throttling at N = 10 on the Orin, at MAXN_SUPER or 25 W | not proven |
+| REMORA [arXiv:2610.39125] | >$20k | Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. | Against per-frame argmax: premature not higher and missed ≤ +2 points (P1); flips halved, CI upper ≤ 0.7 (P2); a decrease inside ≥ 50 % of the reversal windows with ≤ 20 % false regressions (P3). | premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 × argmax, CI 0.48–0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 | fail |
 
 Table 1 lists the register. Of the 22 papers, 4 reproduce, 13 fail, 3 are not proven,
 1 was not tested and 1 was withdrawn. The register holds 45 claim rows
@@ -106,10 +117,11 @@ judge success, failure or progress is no better than a trivial signal; a learned
 AUROC 0.818 where episode length alone reaches 0.938. **C, latent planners beaten by joints:** a
 learned latent used to plan, rank or track progress does worse than the commanded joints or a copy-last /
 action-only baseline; a latent world model ranks the executed chunk first in 0.60 of anchors, against a bar
-of 0.8 and 0.68–0.90 for an action-only baseline. The three examples are illustrative. The assignment of
-every failed row is pending: the owner labels the 20 rows first and commits the labels, then a blind second
-reader labels the same form, and the classes are reported as reproducible only if Cohen's κ ≥ 0.6 (the bar
-was fixed before any reading).
+of 0.8 and 0.68–0.90 for an action-only baseline. The three examples are illustrative. We deliberately
+assign no class to individual rows in this version: under the pre-registered protocol, per-row labels count only once
+a blind second reader, labelling the same 20 rows on the same form, agrees with the first pass at
+Cohen's κ ≥ 0.6 (the bar was fixed before any reading); the protocol and the label form are committed, and
+the second reading has not yet happened.
 
 ## 5. Limitations
 
@@ -118,8 +130,8 @@ verdicts were labelled by one person, at rest, not always blind to the arm. 6 ga
 and 23 have no bar, so for 29 of 89 gates the order of bar and result is not provable
 from this repository; the commit-order audit is mechanical, but its 21 upgrades rest on matching a bar text, and the
 second-reader check of the classes is the only independent check in the study, not yet done. 3 verdicts are
-fragile under the bootstrap. Only 6 gates were rerun cold. The closest statement of our thesis
-[arXiv:2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and deployment affordability; its reproduction-evidence score is five audit milestones (configuration mapping, task records, task coverage, training records, seeds) and, in its words, not a probability that a result is correct. We give one pass/fail per claim on a €1,350 rig, with the bar committed before the run.
+fragile under the bootstrap. Only 6 gates were rerun cold. Finally, the papers were chosen for relevance
+to one stack, not sampled, so the reproduction rate describes this register, not the field.
 
 ## 6. Related work
 
@@ -127,6 +139,19 @@ A standardized real-world benchmark on the same arm reports a failure and recove
 [arXiv:2606.08881]; a fleet of SO-101 cells evaluates policies at scale [arXiv:2607.24481]. A unified harness decouples VLA
 inference from simulation benchmarks [arXiv:2603.13966], and a benchmark of demonstration quality studies one method
 family empirically [arXiv:2610.18869]. These evaluate policies; we re-test the claims behind methods (judges, world
-models, latency) against bars fixed before the run, and audit our own pre-registration.
+models, latency) against bars fixed before the run, and audit our own pre-registration. The closest statement of our
+thesis [arXiv:2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and
+deployment affordability; its reproduction-evidence score is five audit milestones (configuration mapping, task
+records, task coverage, training records, seeds) and, in its words, not a probability that a result is correct. We
+give one pass/fail per claim on a €1,350 rig, with the bar committed before the run and the pre-registration
+itself audited.
+
+## 7. Conclusion
+
+On a €1,350 rig, 12 of 37 tested paper claims reproduce under bars fixed for this
+hardware before the run. The scarce resource was not compute ($45.10 in total) but order — bars before results —
+and the audit of our own history found 29 of 89 gates whose order we cannot prove; both numbers
+belong in the same paper. The register stays open: the next papers are already scheduled in the register file, and
+every number here is recomputable from the repository (`github.com/ravediamond/paper-register-reproducibility`).
 
 ## References

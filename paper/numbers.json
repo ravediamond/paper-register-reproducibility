@@ -289,7 +289,7 @@
  },
  "table1_rows": {
   "value": "22",
-  "anchor": "repro/register/expected/register.json papers: paper, their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)"
+  "anchor": "repro/register/expected/register.json papers: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)"
  },
  "tau_bar": {
   "value": "5",

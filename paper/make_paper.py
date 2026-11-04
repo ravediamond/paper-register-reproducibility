@@ -62,16 +62,17 @@ def register():
         assert by[cid]["verdict"] == "fail", cid
     rows = []
     for p in papers:
-        cls = "pending" if p["verdict"] == "fail" else "—"
-        cells = [p["paper"], p["their_rig_cost_class"], p["claim_tested"], p["bar"], p["ours"], p["verdict"], cls]
+        cite = " ".join(f"[@{x.strip()}]" for x in p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else ""
+        name = p["paper"] + ((" " + cite) if cite else "")
+        cells = [name, p["their_rig_cost_class"], p["claim_tested"], p["bar"], p["ours"], p["verdict"]]
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
-    put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers: paper, their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)")
+    put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)")
     rig = (REG / "rig.yaml").read_text()
     eur = [int(x) for x in re.findall(r"^\s+price_eur: (\d+)\s*$", rig, re.M)]
     put("rig_eur", f"{sum(eur):,}", "repro/register/expected/rig.yaml, sum of price_eur (parts with a stated price)")
     put("rig_unpriced", str(len(re.findall(r"^\s+price_eur: null", rig, re.M))), "repro/register/expected/rig.yaml, price_eur: null")
-    return "\n".join(["| paper | their rig | claim tested | bar | our result | verdict | class |", "|---|---|---|---|---|---|---|"] + rows)
+    return "\n".join(["| paper | their rig | claim tested | bar | our result | verdict |", "|---|---|---|---|---|---|"] + rows)
 
 
 def prereg():
@@ -168,7 +169,7 @@ def esc(s):
     return re.sub(r"\*([^*]+)\*", r"\\emph{\1}", s)
 
 
-COLS = r"p{1.7cm}p{0.95cm}p{3.9cm}p{3.6cm}p{3.6cm}p{1.15cm}p{1.0cm}"
+COLS = r"p{2.2cm}p{0.95cm}p{3.95cm}p{3.7cm}p{3.7cm}p{1.15cm}"
 
 
 def to_tex(md):
@@ -190,7 +191,7 @@ def to_tex(md):
             if l.startswith("## References"):
                 out += [r"\bibliographystyle{plainnat}", r"\bibliography{refs}"]
                 break
-            out.append(r"\section*{" + esc(l[3:]) + "}")
+            out.append(r"\section{" + esc(re.sub(r"^\d+\.\s*", "", l[3:])) + "}")
         elif l.startswith("Table ") and i + 2 < len(lines) and lines[i + 2].startswith("|"):
             cap = l.split(": ", 1)[1]
         elif l.startswith("|"):
@@ -199,7 +200,7 @@ def to_tex(md):
                 if not set(lines[i]) <= set("|-: "):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
-            spec = COLS if len(t[0]) == 7 else "l" * len(t[0])
+            spec = COLS if len(t[0]) == 6 else "l" * len(t[0])
             body, k = t[1:], 11  # a 22-row register does not fit one float page: two floats of 11 rows
             for j in range(0, len(body), k):
                 c = esc(cap) if j == 0 else "Table 1, continued."
