@@ -136,8 +136,8 @@ register, not the field.
 ## 6. Related work
 
 A standardized real-world benchmark on the same arm reports a failure and recovery taxonomy for VLA policies
-[arXiv:2606.08881]; a fleet of SO-101 cells evaluates policies at scale [arXiv:2607.24481]. A unified harness decouples VLA
-inference from simulation benchmarks [arXiv:2603.13966], and a benchmark of demonstration quality studies one method
+[arXiv:2606.08881]; a fleet of SO-101 cells evaluates policies at scale [arXiv:2607.24481]. The vla-eval tool decouples
+VLA inference from 14 simulation benchmarks through a WebSocket protocol and Docker isolation [arXiv:2603.13966], and a benchmark of demonstration quality studies one method
 family empirically [arXiv:2610.18869]. These evaluate policies; we re-test the claims behind methods (judges, world
 models, latency) against bars fixed before the run, and audit our own pre-registration. The closest statement of our
 thesis [arXiv:2610.40026] scores VLA and world-action models on five dimensions, among them reproduction evidence and
