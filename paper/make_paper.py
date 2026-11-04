@@ -211,6 +211,8 @@ def to_tex(md):
             continue
         elif l.startswith("*Ravindu"):
             pass
+        elif not l.strip():
+            out.append("\n")  # keep paragraph breaks: an empty markdown line ends the paragraph in LaTeX too
         else:
             out.append(esc(l))
         i += 1
