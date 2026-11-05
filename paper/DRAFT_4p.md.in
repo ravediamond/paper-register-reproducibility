@@ -4,7 +4,7 @@
 
 ## Abstract
 
-We re-tested the central claims of recent robot-learning papers on an SO-101 arm with a Jetson Orin NX. The parts cost €{{rig_eur}} and the compute ${{cost}}. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Every published number rebuilds from stored rows. Of the {{c_paper}} paper claims we tested, {{c_paper_repro}} held on this hardware. We sort the failures into three proposed classes. In the first, a method misses the real-time budget on the edge GPU. In the second, a zero-shot judge loses to a trivial signal. In the third, a latent planner loses to the commanded joints. A blind second reader still has to confirm the classes. We also audited our own pre-registration by commit ancestry. For most gates the order of bar and result can be shown from the repository, and for some it cannot.
+We re-tested the main claims of new robot-learning papers on an SO-101 arm with a Jetson Orin NX. The pieces cost €{{rig_eur}} and the compute ${{cost}}. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Every committed number rebuilds from stored rows. Of the {{c_paper}} paper claims we tested, {{c_paper_repro}} were valid on our hardware. We sort the failures into three proposed classes. In the first, a method misses the real-time budget on the edge GPU. In the next, a zero-shot judge loses to a trivial signal. In the last, a latent planner loses to the commanded joints. A blind second reader still has to confirm the classes. We also verified our own pre-registration by commit history. For most gates the order of bar and result can be read from the repository, and for some it cannot.
 
 ## 1. The register
 
