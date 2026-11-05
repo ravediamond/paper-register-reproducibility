@@ -4,17 +4,17 @@
 
 ## Abstract
 
-We re-tested the main claims of new robot-learning papers on an SO-101 arm with a Jetson Orin NX. The pieces cost €1,350 and the compute $45.10. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Every committed number rebuilds from stored rows. Of the 37 paper claims we tested, 12 were valid on our hardware. We sort the failures into three proposed classes. In the first, a method misses the real-time budget on the edge GPU. In the next, a zero-shot judge loses to a trivial signal. In the last, a latent planner loses to the commanded joints. A blind second reader still has to confirm the classes. We also verified our own pre-registration by commit history. For most gates the order of bar and result can be read from the repository, and for some it cannot.
+We re-tested the main claims of new robot-learning papers on an SO-101 arm with a Jetson Orin NX. The pieces cost €1,350 and the compute $45.10. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Of the 37 paper claims we tested, 12 were valid on our hardware. We sort the failures into three proposed classes. In the first, a method misses the real-time budget on the edge GPU. In the next, a zero-shot judge loses to a trivial signal. In the last, a latent planner loses to the commanded joints. A blind second reader still has to confirm the classes. We also verified our own pre-registration by commit history. For most gates the order of bar and result can be read from the repository, and for some it cannot.
 
 ## 1. The register
 
-Most of the 22 papers in this study were shown on setups far from ours. 9 were shown in simulation and 7 on rigs above $20k. 2 used a setup under $5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say. Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. The parts with a stated price cost €1,350, and 2 small parts are not priced yet.
+Most of the 22 papers in this study were shown on setups far from ours. 9 were shown in simulation and 7 on rigs above $20k. 2 used a setup under $5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say. Our rig is an SO-101 arm and a Jetson Orin NX 16 GB.
 
 The register grew out of our own write-ups. Each re-test on this rig was published with its data, and there are 29 so far. This paper collects them in one table and audits how the table was kept.
 
 Here is one entry. An adaptive chunking paper claims that choosing the chunk length from the entropy of sampled chunks follows the task's phases, long in transport and short at the grasp. On our edge GPU one such decision takes 4,751 ms. The budget is 298 ms. The entry records a fail on this rig. It says nothing about the method on the hardware it was shown on. Next to the verdict, the entry keeps the claim in the paper's words, our pass mark, our measurement and the published rows.
 
-For each claim we first run the cheapest signal the learned model has to beat, on the same rows. For a predictor this is copy-last. For a latent it is the commanded joints. For a judge it is episode length. The pass mark is committed before the run. §2 checks how often that held.
+For each claim we first run the cheapest signal the learned model has to beat, on the same rows. For a predictor this is copy-last. For a latent it is the commanded joints. For a judge it is episode length.
 
 We chose the papers for the stack this rig runs (world models, VLA policies, failure monitors, chunking, edge latency). Each one went into the register before its test. The register file lists the papers scheduled next.
 
@@ -34,7 +34,7 @@ Table 1: Commit-order class of each gate. The audited column is the one the pape
 | unresolved | 3 | — | — |
 | gates | 89 | 89 | 93 |
 
-Our first pass used text search and found 31 same-commit gates. The cause was batch logging. A bar written earlier in a protocol, plan, scorer or specification often reached the log in the same commit as its result. We traced each same-commit gate back to that file. This moved 21 gates to bar-first and 4 to no-bar, because their bar cell declares none. 6 stayed same-commit. The audit table in the repository gives the evidence line for every move. We did not re-audit the gates that were already bar-first. One open candidate remains, the reward-model progress test of 2026-11-01. It is same-commit by text search, although its protocol (`6241570`) is older than the log commit.
+Our first pass used text search and found 31 same-commit gates. The cause was batch logging. We traced each same-commit gate back to the earlier file that holds its bar. This moved 21 gates to bar-first and 4 to no-bar, because their bar cell declares none. 6 stayed same-commit. The audit table in the repository gives the evidence line for every move. We did not re-audit the gates that were already bar-first. One open candidate remains, the reward-model progress test of 2026-11-01. It is same-commit by text search, although its protocol (`6241570`) is older than the log commit.
 
 The early gates mixed point estimates and different intervals. We recomputed 10 of them from stored rows with one statistic, the episode bootstrap (2,000 resamples, percentile 95 % CI). For 3 of them the bar falls inside the interval (Table 2). The colour judge is a fail on the point estimate, and its interval does not settle it. The false-intervention threshold was fitted to meet its rate, so that interval is only descriptive. The register keeps the pre-registered point verdicts and marks these three as fragile.
 
@@ -50,7 +50,7 @@ All 29 write-ups rebuild from their published rows. We also reran gates cold, fr
 
 ## 3. Results
 
-Table 3 counts the verdicts by paper and by claim row. The appendix lists every entry. On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
+Table 3 counts the verdicts by paper and by claim row. On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
 
 Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
 
@@ -65,7 +65,7 @@ Table 3: Verdicts by paper and by claim row (claim rows include our own baseline
 
 ## 4. Three failure classes
 
-The adaptive chunking entry of §1 misses the real-time budget on the edge GPU. One decision takes 4,751 ms against 298 ms. The method may work on faster hardware. We call this kind of failure class A, the clock.
+The adaptive chunking entry of §1 misses the real-time budget on the edge GPU. The method may work on faster hardware. We call this kind of failure class A, the clock.
 
 In other entries a model judged outcomes without training on this rig. A learned reward model detects failures at AUROC 0.818. Episode length alone reaches 0.938. Judges of success, failure or progress that lose to a trivial signal like this form class B. Class C is about learned latents. A world model ranks the executed chunk first in 0.60 of anchors. Its pass mark was 0.8, and an action-only baseline reaches 0.68–0.90. Class C holds latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline.
 
@@ -87,7 +87,7 @@ We re-tested 37 paper claims, and 12 held. The rig cost €1,350 and the compute
 
 ## Appendix: the register
 
-Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). Read the verdict column against the rig each paper was shown on.
+Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict column against the rig each paper was shown on.
 
 | paper | their rig | claim tested | bar | our result | verdict |
 |---|---|---|---|---|---|
