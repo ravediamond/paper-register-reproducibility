@@ -174,11 +174,18 @@ COLS = r"p{2.2cm}p{0.95cm}p{3.95cm}p{3.7cm}p{3.7cm}p{1.15cm}"
 
 def to_tex(md):
     out = [r"\documentclass[10pt,twocolumn]{article}", r"\usepackage[margin=0.75in]{geometry}", r"\usepackage{booktabs}",
-           r"\usepackage{graphicx}", r"\usepackage[numbers]{natbib}", r"\usepackage{style/shisso}",
+           r"\usepackage{graphicx}", r"\usepackage[numbers]{natbib}", r"\usepackage{style/shisso}", r"\usepackage{listings}\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,frame=tb,framerule=0.3pt,aboveskip=4pt,belowskip=4pt,upquote=true}",
            r"\shissorepo{github.com/ravediamond/paper-register-reproducibility}", r"\input{shisso_commit}", r"\begin{document}"]
     lines, i, abstract, cap, appendix = md.splitlines(), 0, False, "", False
     while i < len(lines):
         l = lines[i]
+        if l.startswith("```"):  # fenced code from the repository: printed verbatim
+            j = i + 1
+            while j < len(lines) and not lines[j].startswith("```"):
+                j += 1
+            out.append("\\begin{lstlisting}\n" + "\n".join(lines[i + 1:j]) + "\n\\end{lstlisting}")
+            i = j + 1
+            continue
         if l.startswith("# "):
             out += [r"\title{" + esc(l[2:]) + "}",
                     r"\author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}",
@@ -204,8 +211,8 @@ def to_tex(md):
                 i += 1
             if t[0][0] != "paper":  # small count tables: one column, one float
                 out += [r"\begin{table}[t]\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}", r"\caption{" + esc(cap) + "}",
-                        r"\begin{tabular}{l" + "r" * (len(t[0]) - 1) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
-                       [" & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+                        (r"\resizebox{\columnwidth}{!}{" if len(t[0]) >= 5 else "") + r"\begin{tabular}{l" + "r" * (len(t[0]) - 1) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
+                       [" & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}" + ("}" if len(t[0]) >= 5 else ""), r"\end{table}"]
                 continue
             spec = COLS
             body, k = t[1:], 11  # a 22-row register does not fit one float page: two floats of 11 rows

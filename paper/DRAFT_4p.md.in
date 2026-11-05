@@ -4,7 +4,7 @@
 
 ## Abstract
 
-We re-tested the main claims of new robot-learning papers on an SO-101 arm with a Jetson Orin NX. The pieces cost €{{rig_eur}} and the compute ${{cost}}. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Of the {{c_paper}} paper claims we tested, {{c_paper_repro}} were valid on our hardware. We sort the failures into three proposed classes. In the first, a method misses the real-time budget on the edge GPU. In the next, a zero-shot judge loses to a trivial signal. In the last, a latent planner loses to the commanded joints. A blind second reader still has to confirm the classes. We also verified our own pre-registration by commit history. For most gates the order of bar and result can be read from the repository, and for some it cannot.
+We re-tested the main claims of new robot-learning papers on an SO-101 arm with a Jetson Orin NX. The pieces cost €{{rig_eur}} and the compute ${{cost}}. Each re-test ran the cheapest baseline first, and its pass mark was committed before the run. Of the {{c_paper}} paper claims we tested, {{c_paper_repro}} were valid on our hardware. Three proposed classes cover the failures: edge latency (a method misses the real-time budget on the edge GPU), zero-shot judges (a judge loses to a trivial signal) and latent planners (a planner loses to the commanded joints). A blind second reader still has to confirm the classes. We also verified our own pre-registration by commit history. For most gates the order of bar and result can be read from the repository, and for some it cannot.
 
 ## 1. The register
 
@@ -20,7 +20,21 @@ We chose the papers for the stack this rig runs (world models, VLA policies, fai
 
 ## 2. Auditing our own pre-registration
 
-A gate's pass mark had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot be changed without rewriting history that others have already cloned. We therefore order each gate with `git merge-base --is-ancestor`, between the first commit that contains its bar and the first commit that contains its result. Table 1 gives the classes for the {{pr_rows}} gates logged by 2026-10-31. Most are bar-first and {{pr_result_first}} are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first.
+A gate's pass mark had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot be changed without rewriting history that others have already cloned. For each gate we find the first commit that contains its bar and the first that contains its result, and compare them (`repro/prereg-check/scripts/prereg_audit.py`, abridged):
+
+```python
+def ancestor(a, b):
+    return subprocess.run(["git", "-C", str(RR), "merge-base", "--is-ancestor", a, b]).returncode == 0
+...
+            elif b[0] == res[0]:
+                cls = "same-commit"
+            elif ancestor(b[0], res[0]):
+                cls = "bar-first"
+            elif ancestor(res[0], b[0]):
+                cls = "result-first"
+```
+
+Table 1 gives the classes for the {{pr_rows}} gates logged by 2026-10-31. Most are bar-first and {{pr_result_first}} are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first.
 
 Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
 
@@ -46,7 +60,19 @@ Table 2: The three gates whose verdict flips somewhere inside its 95 % interval.
 | oscillation among failed episodes | {{osc_n}} | {{osc_est}} % | {{osc_lo}}–{{osc_hi}} % | ≥ {{osc_bar}} % | {{osc_verdict}} |
 | judge threshold, false interventions | {{tau_n}} | {{tau_est}} % | {{tau_lo}}–{{tau_hi}} % | ≤ {{tau_bar}} % | {{tau_verdict}} |
 
-All {{l0}} write-ups rebuild from their published rows. We also reran gates cold, from a fresh clone with no credentials. {{l1_repro}} gates reran and matched, {{l1_exact}} of them exactly. {{l1_env}} more stop at the world-model environment, which is not published yet. Publishing it would unblock most of them. The remaining {{l1_skip}} need a larger GPU, a private checkpoint, the arm or a step the write-up leaves out. We checked the register's citations and paper-side fields against the papers' PDFs and corrected them. The register names {{ps_ids}} arXiv ids. The ones missing from our papers mirror all belong to scheduled tests. One tested paper has no arXiv id and was not checked against a PDF.
+All {{l0}} write-ups rebuild from their published rows. The check for the cold reruns prints:
+
+```text
+$ python3 repro/cold-reproduction/l0_check.py
+ok  posts: 29 (report 29)
+ok  L0 PASS: 29 (report 29)
+ok  L1 REPRO: 6 (report 6)
+ok  L1 DIFF: 0 (report 0)
+ok  L1 classes: {'REPRO': 6, '—': 3, 'SKIP': 8, 'FAIL-ENV': 12}
+L0 PASS
+```
+
+The cold reruns start from a fresh clone with no credentials. {{l1_repro}} gates reran and matched, {{l1_exact}} of them exactly. {{l1_env}} more stop at the world-model environment, which is not published yet. Publishing it would unblock most of them. The remaining {{l1_skip}} need a larger GPU, a private checkpoint, the arm or a step the write-up leaves out. We checked the register's citations and paper-side fields against the papers' PDFs and corrected them. The register names {{ps_ids}} arXiv ids. The ones missing from our papers mirror all belong to scheduled tests. One tested paper has no arXiv id and was not checked against a PDF.
 
 ## 3. Results
 
