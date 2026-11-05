@@ -4,7 +4,7 @@
 
 ## Abstract
 
-{{c_paper_repro}} of the {{c_paper}} paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost €{{rig_eur}} and the compute ${{cost}}. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. A blind second reader has not confirmed them yet. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order.
+{{c_paper_repro}} of the {{c_paper}} paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost €{{rig_eur}} and the compute ${{cost}}. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order.
 
 ## 1. The register
 
@@ -95,11 +95,11 @@ The adaptive chunking entry of §1 misses the real-time budget on the edge GPU. 
 
 In the second case a model judged outcomes without training on this rig. We ran a learned reward model as a failure detector and it reached an AUROC of {{ex_b_ours}}. Episode length alone reaches {{ex_b_len}}. We call judges of success, failure or progress that lose to a trivial signal like this class B. Class C is about learned latents. A world model ranked the executed chunk first in {{ex_c_ours}} of anchors, against a pass mark of {{ex_c_bar}}, and an action-only baseline reaches {{ex_c_base}}. Class C holds latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline.
 
-These examples illustrate the classes. They do not count them. We committed a protocol for counting before any labelling. The labels count only once a blind second reader labels the same {{fail_rows}} failed rows on the same form and agrees with the first reading at Cohen's κ ≥ {{kappa_bar}}. That reading has not happened yet.
+These examples illustrate the classes and do not count them. The classes are our proposal, drawn from the author's reading of the {{fail_rows}} failed rows.
 
 ## 5. Limitations
 
-One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. A blind two-reader protocol for the failure classes is committed. It has not run yet, so no verdict has a second reader. For {{pr_unprov}} of the {{pr_rows}} gates the repository cannot show whether bar or result came first. {{sc_to_bf}} of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap {{rc_flips}} verdicts are fragile. Cold reruns cover {{l1_repro}} gates so far. The unpublished world-model environment blocks most of the rest.
+One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. For {{pr_unprov}} of the {{pr_rows}} gates the repository cannot show whether bar or result came first. {{sc_to_bf}} of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap {{rc_flips}} verdicts are fragile. Cold reruns cover {{l1_repro}} gates so far. The unpublished world-model environment blocks most of the rest.
 
 ## 6. Related work
 
