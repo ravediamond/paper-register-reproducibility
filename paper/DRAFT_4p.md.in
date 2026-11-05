@@ -8,7 +8,7 @@ Re-testing a robot-learning paper does not need a lab. For ${{cost}} of compute 
 
 ## 1. The register
 
-A robot-learning paper reports what happened on one setup. Of the {{papers}} papers here, {{rig_sim}} were shown in simulation and {{rig_gt20k}} on rigs above $20k, while {{rig_5to20k}} used a $5–20k setup, {{rig_lt5k}} one below $5k, and {{rig_unstated}} does not say. Ours costs €{{rig_eur}}: an SO-101 arm and a Jetson Orin NX 16 GB ({{rig_unpriced}} small parts are not yet priced).
+A robot-learning paper reports what happened on one setup, and most of the {{papers}} papers here sit far from ours. Of these, {{rig_sim}} were shown in simulation and another {{rig_gt20k}} on rigs above $20k. Just {{rig_lt5k}} used a setup under $5k, the bracket our rig falls in (the appendix table gives each paper's rig, including the {{rig_5to20k}} in between and the {{rig_unstated}} that does not say). Ours costs €{{rig_eur}}: an SO-101 arm and a Jetson Orin NX 16 GB, with {{rig_unpriced}} small parts not yet priced.
 
 The register grew out of our own write-ups, {{l0}} so far, each published with its data. This paper collects them in one table and audits how the table was kept.
 
@@ -20,33 +20,60 @@ We chose the papers for the stack this rig runs (world models, VLA policies, fai
 
 ## 2. Auditing our own pre-registration
 
-To rule out moving the goalposts after the fact, a gate's threshold had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot, short of rewriting history that others have already cloned, so the order of each gate is read from `git merge-base --is-ancestor` alone, between the first commit that contains its bar and the first that contains its result. Of the {{pr_rows}} gates logged by 2026-10-31, **{{pr_bar_first}} are bar-first** and {{pr_result_first}} result-first. The rest split into {{pr_same_commit}} same-commit, {{pr_no_bar}} with no bar and {{pr_not_run}} with a threshold but no result yet. Same-commit says nothing about which was written first. The log has since grown to {{pr_today}} rows ({{pt_bar_first}} bar-first, {{pt_same_commit}} same-commit, {{pt_result_first}} result-first, {{pt_no_bar}} no-bar, {{pt_not_run}} not-run).
+To rule out moving the goalposts after the fact, a gate's threshold had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot, short of rewriting history that others have already cloned, so the order of each gate is read from `git merge-base --is-ancestor` alone, between the first commit that contains its bar and the first that contains its result. On the {{pr_rows}} gates logged by 2026-10-31, the audit finds most of them bar-first and {{pr_result_first}} result-first (Table 1). Same-commit says nothing about which was written first; it only means bar and result entered the repository together.
 
-A first pass by text search read the log very differently: {{v1_bar_first}} bar-first and {{v1_same_commit}} same-commit, with {{v1_no_bar}} no-bar and {{v1_unresolved}} unresolved. The cause was batch logging. A bar written earlier in a protocol, plan, scorer or specification often reached the log in the same commit as its result. Tracing each same-commit gate back to that earlier file moved {{sc_to_bf}} to bar-first and {{sc_to_nb}} to no-bar (their bar cell declares none), and {{sc_stay}} stayed same-commit; the audit table gives the evidence line for every move. Rows that were already bar-first were not re-audited for a result hidden elsewhere. One open candidate remains, the reward-model progress test of 2026-11-01: same-commit by text search, although its protocol (`{{top_protocol}}`) is older than the log commit.
+Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
 
-Point estimates give clean verdicts, and intervals do not always agree with them. Recomputing {{rc_rows}} early gates from stored rows with one statistic (episode bootstrap, {{rc_resamples}} resamples, percentile 95 % CI) leaves {{rc_flips}} with the bar inside the interval. The no-learning colour judge is the plainest case. It is right on {{acc_est}} % of {{acc_n}} episodes against a {{acc_bar}} % pass mark, a {{acc_verdict}} on the point, yet its interval runs from {{acc_lo}} to {{acc_hi}} %. The oscillation rate among {{osc_n}} failed episodes is a {{osc_verdict}} ({{osc_est}} % against {{osc_bar}} %) with a lower bound of {{osc_lo}} %. A judge threshold's false-intervention rate is a {{tau_verdict}} at {{tau_est}} % of {{tau_n}} against a {{tau_bar}} % ceiling, with an upper bound of {{tau_hi}} %, and because that threshold was fitted to meet the rate, its interval only describes. The register keeps the pre-registered point verdicts and flags these three as fragile.
+| class | first text pass | audited, 2026-10-31 | audited, today |
+|---|---|---|---|
+| bar-first | {{v1_bar_first}} | {{pr_bar_first}} | {{pt_bar_first}} |
+| same-commit | {{v1_same_commit}} | {{pr_same_commit}} | {{pt_same_commit}} |
+| result-first | — | {{pr_result_first}} | {{pt_result_first}} |
+| no bar | {{v1_no_bar}} | {{pr_no_bar}} | {{pt_no_bar}} |
+| bar, no result yet | — | {{pr_not_run}} | {{pt_not_run}} |
+| unresolved | {{v1_unresolved}} | — | — |
+| gates | {{pr_rows}} | {{pr_rows}} | {{pr_today}} |
+
+Text search alone had found {{v1_same_commit}} same-commit gates, and batch logging was the reason. A bar written earlier in a protocol, plan, scorer or specification often reached the log in the same commit as its result. Tracing each one back to that file moved {{sc_to_bf}} to bar-first and {{sc_to_nb}} to no-bar (their bar cell declares none), and left {{sc_stay}} where they were; the audit table in the repository gives the evidence line for every move. Rows that were already bar-first were not re-audited for a result hidden elsewhere. One open candidate remains, the reward-model progress test of 2026-11-01: same-commit by text search, although its protocol (`{{top_protocol}}`) is older than the log commit.
+
+Point estimates give clean verdicts, and intervals do not always agree with them. Recomputing {{rc_rows}} early gates from stored rows with one statistic (episode bootstrap, {{rc_resamples}} resamples, percentile 95 % CI) leaves {{rc_flips}} with the bar inside the interval (Table 2). The colour judge is the one to look at, a {{acc_verdict}} on the point that its interval cannot settle. For the false-intervention rate the interval only describes, since that threshold was fitted to meet it. The register keeps the pre-registered point verdicts and flags all three as fragile.
+
+Table 2: The three gates whose verdict flips somewhere inside its 95 % interval.
+
+| gate | n | estimate | 95 % CI | bar | point verdict |
+|---|---|---|---|---|---|
+| colour judge (no learning), accuracy | {{acc_n}} | {{acc_est}} % | {{acc_lo}}–{{acc_hi}} % | ≥ {{acc_bar}} % | {{acc_verdict}} |
+| oscillation among failed episodes | {{osc_n}} | {{osc_est}} % | {{osc_lo}}–{{osc_hi}} % | ≥ {{osc_bar}} % | {{osc_verdict}} |
+| judge threshold, false interventions | {{tau_n}} | {{tau_est}} % | {{tau_lo}}–{{tau_hi}} % | ≤ {{tau_bar}} % | {{tau_verdict}} |
 
 All {{l0}} write-ups rebuild from their published rows. Cold reruns are a stricter test. From a fresh clone with no credentials, {{l1_repro}} gates rerun and match, {{l1_exact}} of them exactly. Another {{l1_env}} stop at the same place, the world-model environment, which is not published yet; publishing it would unblock most of them. The remaining {{l1_skip}} need a larger GPU, a private checkpoint, the arm or a step the write-up leaves out. Citations and paper-side fields were checked against the papers' PDFs and corrected. Of the {{ps_ids}} arXiv ids the register names, those missing from our papers mirror all belong to scheduled tests, and the one tested paper without an arXiv id was not checked against a PDF.
 
 ## 3. Results
 
-Table 1: The register, one row per paper, generated from the register file (internal model and gate names kept). Read the verdict column against the rig each paper was shown on.
+Table 3 counts the verdicts, and the appendix lists every entry. The figure we lead with counts only claims taken from papers: {{c_paper_repro}} of {{c_paper}} reproduce and {{c_paper_fail}} fail. The other {{c_ours}} rows test our own baselines, for instance that the commanded joints beat the world model, and {{c_ours_repro}} of those hold.
 
-{{TABLE1}}
+Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
 
-Counted by paper, {{p_reproduces}} of the {{papers}} hold and {{p_fail}} fail (Table 1); {{p_not_proven}} are not proven, {{p_not_tested}} was not tested and {{p_withdrawn}} was withdrawn. By claim the picture is finer. Of {{claims}} claim rows ({{claims_tested}} tested), {{c_ours}} test our own baselines rather than a paper, such as "the commanded joints beat the world model", and {{c_ours_repro}} of those reproduce. The {{c_paper}} claims taken from papers split into {{c_paper_repro}} that reproduce and {{c_paper_fail}} that fail. Over all rows: {{c_reproduces}} reproduce, {{c_fail}} fail, {{c_not_proven}} not proven, {{c_not_tested}} not tested, {{c_withdrawn}} withdrawn.
+| verdict | papers | claim rows |
+|---|---|---|
+| reproduces | {{p_reproduces}} | {{c_reproduces}} |
+| fails | {{p_fail}} | {{c_fail}} |
+| not proven | {{p_not_proven}} | {{c_not_proven}} |
+| not tested | {{p_not_tested}} | {{c_not_tested}} |
+| withdrawn | {{p_withdrawn}} | {{c_withdrawn}} |
+| total | {{papers}} | {{claims}} |
 
 ## 4. Three failure classes
 
-We sort the {{fail_rows}} failed claim rows by the condition each claim did not survive. Class A, the clock, is the easiest to see. The method may be sound, but on the edge GPU it misses the real-time budget the claim needs, as the adaptive chunking entry of §1 does ({{ex_a_ours}} per decision against {{ex_a_bar}}); for that entry nothing about the idea is refuted, the board is simply too slow for it.
+The adaptive chunking entry of §1 is the plainest kind of failure: the method may be sound, but on the edge GPU it misses the real-time budget the claim needs ({{ex_a_ours}} per decision against {{ex_a_bar}}). Nothing about the idea is refuted there; the board is too slow for it. We call this class A, the clock.
 
-Class B covers zero-shot judges, models used without training on this rig to judge success, failure or progress, that lose to a trivial signal on the same rows. A learned reward model detects failures at AUROC {{ex_b_ours}}, where episode length alone reaches {{ex_b_len}}. Class C is quicker to state: a learned latent used to plan, rank or track progress does worse than the commanded joints or a copy-last or action-only baseline (a world model ranks the executed chunk first in {{ex_c_ours}} of anchors, against a pass mark of {{ex_c_bar}} and {{ex_c_base}} for actions alone).
+A second kind turned up whenever a model judged outcomes without training on this rig. A learned reward model detects failures at AUROC {{ex_b_ours}}, where episode length alone reaches {{ex_b_len}}, and judges of success, failure or progress that lose to a trivial signal like this one make up class B. The commanded joints did the same to learned latents. A world model ranks the executed chunk first in {{ex_c_ours}} of anchors, below its pass mark of {{ex_c_bar}} and below the {{ex_c_base}} of an action-only baseline, which puts it in class C: a latent used to plan, rank or track progress that loses to the joints or to a copy-last or action-only baseline.
 
-These examples illustrate the classes; they do not count them. A protocol committed before any labelling says the labels count only once a blind second reader, given the same {{fail_rows}} rows on the same form, agrees with the first reading at Cohen's κ ≥ {{kappa_bar}}. That reading has not happened yet.
+These examples illustrate the classes; they do not count them. A protocol committed before any labelling says the labels count only once a blind second reader, given the same {{fail_rows}} failed rows on the same form, agrees with the first reading at Cohen's κ ≥ {{kappa_bar}}. That reading has not happened yet.
 
 ## 5. Limitations
 
-With a single operator, the author, running the rig and labelling outcomes at rest and not always blind to the arm, observer bias is the main confound. Two things limit it. Where commit order shows it, the pass mark predates the run, so a label could not have moved the bar. A blind two-reader protocol for the failure classes is also committed and ready, though it has not run, and until it does no verdict has a second reader. Ordering is provable for most gates, not all: for {{pr_unprov}} of the {{pr_rows}} ({{pr_same_commit}} same-commit, {{pr_no_bar}} with no bar) the repository cannot show which came first, and {{sc_to_bf}} of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap {{rc_flips}} verdicts are fragile. Cold reruns cover {{l1_repro}} gates so far, with the unpublished world-model environment as the main blocker. A failure here describes this rig, not the paper in its own setting, and because the papers were chosen for one stack the rate describes this register rather than the field.
+With a single operator, the author, running the rig and labelling outcomes at rest and not always blind to the arm, observer bias is the main confound. Two things limit it. Where commit order shows it, the pass mark predates the run, so a label could not have moved the bar. A blind two-reader protocol for the failure classes is also committed and ready, though it has not run, and until it does no verdict has a second reader. Ordering is provable for most gates, not all: for {{pr_unprov}} of the {{pr_rows}} the repository cannot show which came first, and {{sc_to_bf}} of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap {{rc_flips}} verdicts are fragile. Cold reruns cover {{l1_repro}} gates so far, with the unpublished world-model environment as the main blocker. A failure here describes this rig, not the paper in its own setting, and because the papers were chosen for one stack the rate describes this register rather than the field.
 
 ## 6. Related work
 
@@ -57,3 +84,9 @@ Work on the same arm evaluates policies. A standardized real-world benchmark rep
 A €{{rig_eur}} rig and ${{cost}} of compute were enough to re-test these claims and publish every row behind the verdicts, and {{c_paper_repro}} of {{c_paper}} held. Money was never the constraint. Order was: keeping each pass mark ahead of its result, which our own history cannot prove for {{pr_unprov}} of {{pr_rows}} gates. If you re-test a paper on a cheap rig, start with its cheapest baseline on the same rows, and commit the threshold before you look. Every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`).
 
 ## References
+
+## Appendix: the register
+
+Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). Read the verdict column against the rig each paper was shown on.
+
+{{TABLE1}}

@@ -176,7 +176,7 @@ def to_tex(md):
     out = [r"\documentclass[10pt,twocolumn]{article}", r"\usepackage[margin=0.75in]{geometry}", r"\usepackage{booktabs}",
            r"\usepackage{graphicx}", r"\usepackage[numbers]{natbib}", r"\usepackage{style/shisso}",
            r"\shissorepo{github.com/ravediamond/paper-register-reproducibility}", r"\input{shisso_commit}", r"\begin{document}"]
-    lines, i, abstract, cap = md.splitlines(), 0, False, ""
+    lines, i, abstract, cap, appendix = md.splitlines(), 0, False, "", False
     while i < len(lines):
         l = lines[i]
         if l.startswith("# "):
@@ -190,24 +190,31 @@ def to_tex(md):
                 out.append(r"\end{abstract}"); abstract = False
             if l.startswith("## References"):
                 out += [r"\bibliographystyle{plainnat}", r"\bibliography{refs}"]
-                break
-            out.append(r"\section{" + esc(re.sub(r"^\d+\.\s*", "", l[3:])) + "}")
+            elif l.startswith("## Appendix"):
+                out += [r"\onecolumn", r"\appendix", r"\section*{" + esc(l[3:]) + "}"]; appendix = True
+            else:
+                out.append(r"\section{" + esc(re.sub(r"^\d+\.\s*", "", l[3:])) + "}")
         elif l.startswith("Table ") and i + 2 < len(lines) and lines[i + 2].startswith("|"):
-            cap = l.split(": ", 1)[1]
+            tabno, cap = l.split(": ", 1)[0][len("Table "):], l.split(": ", 1)[1]
         elif l.startswith("|"):
             t = []
             while i < len(lines) and lines[i].startswith("|"):
                 if not set(lines[i]) <= set("|-: "):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
-            spec = COLS if len(t[0]) == 6 else "l" * len(t[0])
+            if t[0][0] != "paper":  # small count tables: one column, one float
+                out += [r"\begin{table}[t]\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}", r"\caption{" + esc(cap) + "}",
+                        r"\begin{tabular}{l" + "r" * (len(t[0]) - 1) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
+                       [" & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}", r"\end{table}"]
+                continue
+            spec = COLS
             body, k = t[1:], 11  # a 22-row register does not fit one float page: two floats of 11 rows
             for j in range(0, len(body), k):
-                c = esc(cap) if j == 0 else "Table 1, continued."
-                out += [r"\begin{table*}[p]\centering\scriptsize", r"\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.05}",
+                c = esc(cap) if j == 0 else "Table " + tabno + ", continued."
+                out += [(r"\begin{table}[h!]" if appendix else r"\begin{table*}[p]") + r"\centering\scriptsize", r"\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.05}",
                         r"\begin{tabular}{" + spec + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
                        [" & ".join(r) + r" \\" for r in body[j:j + k]] + [r"\bottomrule", r"\end{tabular}",
-                        (r"\caption{" + c + "}") if j == 0 else (r"\par\medskip " + c), r"\end{table*}"]
+                        (r"\caption{" + c + "}") if j == 0 else (r"\par\medskip " + c), r"\end{table}" if appendix else r"\end{table*}"]
             continue
         elif l.startswith("*Ravindu"):
             pass
