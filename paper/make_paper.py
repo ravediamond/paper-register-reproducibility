@@ -181,7 +181,7 @@ def to_tex(md):
         l = lines[i]
         if l.startswith("# "):
             out += [r"\title{" + esc(l[2:]) + "}",
-                    r"\author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@gmail.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}",
+                    r"\author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}",
                     r"\date{}", r"\maketitle"]
         elif l.startswith("## Abstract"):
             out.append(r"\begin{abstract}"); abstract = True
