@@ -181,31 +181,31 @@
  },
  "pr_bar_first": {
   "value": "58",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = bar-first"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class = bar-first"
+ },
+ "pr_cancelled": {
+  "value": "2",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = not-run (superseded or cancelled before a result)"
  },
  "pr_no_bar": {
   "value": "23",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = no-bar"
- },
- "pr_not_run": {
-  "value": "2",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = not-run"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class = no-bar"
  },
  "pr_result_first": {
   "value": "0",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = result-first"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class = result-first"
  },
  "pr_rows": {
-  "value": "89",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] (the log of 2026-10-31)"
+  "value": "87",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] (the log of 2026-10-31) without class = not-run"
  },
  "pr_same_commit": {
   "value": "6",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class = same-commit"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class = same-commit"
  },
  "pr_today": {
-  "value": "93",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows (today)"
+  "value": "91",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows (today) without class = not-run"
  },
  "pr_unprov": {
   "value": "29",
@@ -217,23 +217,19 @@
  },
  "pt_bar_first": {
   "value": "61",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = bar-first"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows without class = not-run, class = bar-first"
  },
  "pt_no_bar": {
   "value": "23",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = no-bar"
- },
- "pt_not_run": {
-  "value": "2",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = not-run"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows without class = not-run, class = no-bar"
  },
  "pt_result_first": {
   "value": "0",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = result-first"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows without class = not-run, class = result-first"
  },
  "pt_same_commit": {
   "value": "7",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows, class = same-commit"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows without class = not-run, class = same-commit"
  },
  "rc_flips": {
   "value": "3",
@@ -321,18 +317,18 @@
  },
  "v1_bar_first": {
   "value": "36",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = bar-first"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class_v1 = bar-first"
  },
  "v1_no_bar": {
   "value": "19",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = no-bar"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class_v1 = no-bar"
  },
  "v1_same_commit": {
   "value": "31",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = same-commit"
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class_v1 = same-commit"
  },
  "v1_unresolved": {
-  "value": "3",
-  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89], class_v1 = unresolved"
+  "value": "1",
+  "anchor": "repro/prereg-check/expected/prereg_check.json rows[:89] without class = not-run, class_v1 = unresolved"
  }
 }

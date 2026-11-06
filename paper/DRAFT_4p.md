@@ -8,7 +8,7 @@
 
 ## 1. The register
 
-![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in 58 of 89 and the result first in 0.](fig/verdicts.png)
+![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in 58 of 87 and the result first in 0.](fig/verdicts.png)
 
 Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. Most of the 22 papers in this study were shown on setups far from it. 9 were shown in simulation and 7 on rigs above $20k. 2 used a setup under $5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say.
 
@@ -36,7 +36,7 @@ def ancestor(a, b):
                 cls = "result-first"
 ```
 
-Table 1 gives the classes for the 89 gates logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first. The 2 gates with a bar and no result were superseded by another gate or cancelled before they ran, so none is waiting to be run.
+Table 1 gives the classes for the 87 gates that ran and were logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first. The log has 2 more gates that are not in the table because we did not run them: one was superseded by a later test, and we dropped the other because neither of its outcomes would have changed what we built.
 
 Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
 
@@ -46,9 +46,8 @@ Table 1: Commit-order class of each gate. The audited column is the one the pape
 | same-commit | 31 | 6 | 7 |
 | result-first | — | 0 | 0 |
 | no bar | 19 | 23 | 23 |
-| bar, never run | — | 2 | 2 |
-| unresolved | 3 | — | — |
-| gates | 89 | 89 | 93 |
+| unresolved | 1 | — | — |
+| gates | 87 | 87 | 91 |
 
 The first pass used text search and found 31 same-commit gates, which came from batch logging. For each one we went back to the earlier file that holds its bar. 21 gates moved to bar-first and 4 to no-bar, because their bar cell declares none. 6 stayed same-commit. The audit table in the repository gives the evidence line for every move. We did not re-audit the gates that were already bar-first. The reward-model progress test of 2026-11-01 is still open. Text search calls it same-commit. Its protocol (`6241570`) is older than the log commit.
 
@@ -104,7 +103,7 @@ These examples illustrate the classes and do not count them. The classes are our
 
 ## 5. Limitations
 
-One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. For 29 of the 89 gates the repository cannot show whether bar or result came first. 21 of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap 3 verdicts are fragile. Cold reruns cover 6 gates so far. The unpublished world-model environment blocks most of the rest.
+One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. For 29 of the 87 gates the repository cannot show whether bar or result came first. 21 of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap 3 verdicts are fragile. Cold reruns cover 6 gates so far. The unpublished world-model environment blocks most of the rest.
 
 ## 6. Related work
 
@@ -112,7 +111,7 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 
 ## 7. Conclusion
 
-> **Conclusion.** 12 of the 37 paper claims we re-tested held. The rig cost €1,350 and the compute $45.10. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For 29 of 89 gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
+> **Conclusion.** 12 of the 37 paper claims we re-tested held. The rig cost €1,350 and the compute $45.10. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For 29 of 87 gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
 
 ## References
 

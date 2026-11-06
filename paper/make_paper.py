@@ -76,18 +76,23 @@ def register():
 
 
 def prereg():
-    rows = json.loads((PC / "prereg_check.json").read_text())
+    allrows = json.loads((PC / "prereg_check.json").read_text())
     a = "repro/prereg-check/expected/prereg_check.json"
-    put("pr_rows", str(len(rows[:89])), a + " rows[:89] (the log of 2026-10-31)"); put("pr_today", str(len(rows)), a + " rows (today)")
-    for pre, sub in (("pr", rows[:89]), ("pt", rows)):
+    # a gate with a bar and no result because it was superseded or cancelled never ran: it is named in the text, not counted in the table
+    rows = [r for r in allrows if r["class"] != "not-run"]; first = [r for r in allrows[:89] if r["class"] != "not-run"]
+    cancelled = [r for r in allrows if r["class"] == "not-run"]
+    assert [r["gate"] for r in cancelled] == ["H3 plan", "G1b-RJ"], "the prose names the two cancelled gates"
+    put("pr_cancelled", str(len(cancelled)), a + " rows, class = not-run (superseded or cancelled before a result)")
+    put("pr_rows", str(len(first)), a + " rows[:89] (the log of 2026-10-31) without class = not-run"); put("pr_today", str(len(rows)), a + " rows (today) without class = not-run")
+    for pre, sub in (("pr", first), ("pt", rows)):
         c = collections.Counter(r["class"] for r in sub)
-        for k in ("bar-first", "same-commit", "result-first", "no-bar", "not-run"):
-            put(f"{pre}_{k.replace('-', '_')}", str(c[k]), a + f" {'rows[:89]' if pre == 'pr' else 'rows'}, class = {k}")
+        for k in ("bar-first", "same-commit", "result-first", "no-bar"):
+            put(f"{pre}_{k.replace('-', '_')}", str(c[k]), a + f" {'rows[:89]' if pre == 'pr' else 'rows'} without class = not-run, class = {k}")
     put("pr_unprov", str(int(N["pr_same_commit"]) + int(N["pr_no_bar"])), a + " rows[:89], class = same-commit + class = no-bar")
-    v1 = collections.Counter(r["class_v1"] for r in rows[:89])
+    v1 = collections.Counter(r["class_v1"] for r in first)
     for k in ("bar-first", "same-commit", "no-bar", "unresolved"):
-        put(f"v1_{k.replace('-', '_')}", str(v1[k]), a + f" rows[:89], class_v1 = {k}")
-    moved = collections.Counter(r["class"] for r in rows[:89] if r["class_v1"] == "same-commit")
+        put(f"v1_{k.replace('-', '_')}", str(v1[k]), a + f" rows[:89] without class = not-run, class_v1 = {k}")
+    moved = collections.Counter(r["class"] for r in first if r["class_v1"] == "same-commit")
     put("sc_to_bf", str(moved["bar-first"]), a + " rows[:89], class_v1 = same-commit and class = bar-first")
     put("sc_to_nb", str(moved["no-bar"]), a + " rows[:89], class_v1 = same-commit and class = no-bar")
     put("sc_stay", str(moved["same-commit"]), a + " rows[:89], class_v1 = same-commit and class = same-commit")
