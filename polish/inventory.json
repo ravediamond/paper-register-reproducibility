@@ -1,0 +1,98 @@
+[
+ {
+  "sec": "Abstract",
+  "words": 111,
+  "base": 0.1329,
+  "text": "12 of the 37 paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost \u20ac1,350 and the compute $45.10. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order."
+ },
+ {
+  "sec": "1. The register",
+  "words": 66,
+  "base": 0.1566,
+  "text": "Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. Most of the 22 papers in this study were shown on setups far from it. 9 were shown in simulation and 7 on rigs above X5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say."
+ },
+ {
+  "sec": "1. The register",
+  "words": 90,
+  "base": 0.1407,
+  "text": "Here is one entry. An adaptive chunking paper claims that choosing the chunk length from the entropy of sampled chunks follows the task's phases, long in transport and short at the grasp. On our edge GPU one such decision takes 4,751 ms. The budget is 298 ms. The entry records a fail on this rig. It says nothing about the method on the hardware it was shown on. Next to the verdict, the entry keeps the claim in the paper's words, our pass mark, our measurement and the published rows."
+ },
+ {
+  "sec": "1. The register",
+  "words": 40,
+  "base": 0.0849,
+  "text": "For each claim we first run the cheapest signal the learned model has to beat, on the same rows. For a predictor this is copy-last. For a latent it is the commanded joints. For a judge it is episode length."
+ },
+ {
+  "sec": "1. The register",
+  "words": 48,
+  "base": 0.15,
+  "text": "We chose the papers for the stack this rig runs (world models, VLA policies, failure monitors, chunking, edge latency), so the failure rate describes this register and not the field. The register file has every paper we have tested and every paper scheduled next, entered before its test."
+ },
+ {
+  "sec": "2. Auditing our own pre-registration",
+  "words": 59,
+  "base": 0.128,
+  "text": "A gate's pass mark had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot be changed without rewriting history that others have already cloned. For each gate we find the first commit that contains its bar and the first that contains its result, and compare them (X, abridged):"
+ },
+ {
+  "sec": "2. Auditing our own pre-registration",
+  "words": 40,
+  "base": 0.0736,
+  "text": "Table 1 gives the classes for the 89 gates logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first."
+ },
+ {
+  "sec": "2. Auditing our own pre-registration",
+  "words": 94,
+  "base": 0.1557,
+  "text": "The first pass used text search and found 31 same-commit gates, which came from batch logging. For each one we went back to the earlier file that holds its bar. 21 gates moved to bar-first and 4 to no-bar, because their bar cell declares none. 6 stayed same-commit. The audit table in the repository gives the evidence line for every move. We did not re-audit the gates that were already bar-first. The reward-model progress test of 2026-11-01 is still open. Text search calls it same-commit. Its protocol (X) is older than the log commit."
+ },
+ {
+  "sec": "2. Auditing our own pre-registration",
+  "words": 86,
+  "base": 0.1903,
+  "text": "The early gates mixed point estimates and different intervals. We recomputed 10 of them from stored rows with one statistic, the episode bootstrap (2,000 resamples, percentile 95 % CI). For 3 of them the bar falls inside the interval (Table 2). The colour judge is a fail on the point estimate, and its interval does not settle it. The false-intervention threshold was fitted to meet its rate, so that interval is only descriptive. The register keeps the pre-registered point verdicts and marks these three as fragile."
+ },
+ {
+  "sec": "2. Auditing our own pre-registration",
+  "words": 113,
+  "base": 0.1394,
+  "text": "We ran the cold reruns from a fresh clone with no credentials. 6 gates reran and matched, 5 of them exactly. 12 more stop at the world-model environment, which is not published yet, and publishing it would unblock most of them. For the remaining 11 we need a larger GPU, a private checkpoint or the arm, or the write-up leaves out a step. We also checked the register's citations and paper-side fields against the papers' PDFs, and corrected them. The register names 38 arXiv ids. The ids missing from our papers mirror all belong to scheduled tests. One tested paper has no arXiv id, so we could not check it against a PDF."
+ },
+ {
+  "sec": "3. Results",
+  "words": 45,
+  "base": 0.1619,
+  "text": "Table 3 counts the verdicts by paper and by claim row. On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold."
+ },
+ {
+  "sec": "4. Three failure classes",
+  "words": 106,
+  "base": 0.1447,
+  "text": "In the second case a model judged outcomes without training on this rig. We ran a learned reward model as a failure detector and it reached an AUROC of 0.818. Episode length alone reaches 0.938. We call judges of success, failure or progress that lose to a trivial signal like this class B. Class C is about learned latents. A world model ranked the executed chunk first in 0.60 of anchors, against a pass mark of 0.8, and an action-only baseline reaches 0.68\u20130.90. Class C holds latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline."
+ },
+ {
+  "sec": "5. Limitations",
+  "words": 103,
+  "base": 0.185,
+  "text": "One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. For 29 of the 89 gates the repository cannot show whether bar or result came first. 21 of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap 3 verdicts are fragile. Cold reruns cover 6 gates so far. The unpublished world-model environment blocks most of the rest."
+ },
+ {
+  "sec": "6. Related work",
+  "words": 148,
+  "base": 0.1941,
+  "text": "Two works use the same arm to evaluate policies. One is a standardized real-world benchmark that reports a taxonomy of failures and recoveries for VLA policies. The other runs a fleet of SO-101 cells and evaluates policies at scale. The vla-eval tool runs VLAs across 14 simulation benchmarks, and a benchmark of demonstration quality studies one method family. We do something different. We test the claims behind methods (judges, world models, latency) against thresholds fixed before the run, and we audit our own pre-registration. The closest work is RoboSeed. It scores VLA and world-action models on five dimensions, including reproduction evidence and deployment affordability. The reproduction-evidence score counts five audit milestones: configuration mapping, task records, task coverage, training records and seeds. Its authors state that the score is not a probability that a result is correct. We give one pass or fail per claim on a \u20ac1,350 rig."
+ },
+ {
+  "sec": "7. Conclusion",
+  "words": 76,
+  "base": 0.2177,
+  "text": "12 of the 37 paper claims we re-tested held. The rig cost \u20ac1,350 and the compute $45.10. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (X). For 29 of 89 gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run."
+ },
+ {
+  "sec": "Appendix: the register",
+  "words": 50,
+  "base": 0.1181,
+  "text": "Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). The rig price of \u20ac1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict column against the rig each paper was shown on."
+ }
+]
