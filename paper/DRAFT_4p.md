@@ -36,7 +36,7 @@ def ancestor(a, b):
                 cls = "result-first"
 ```
 
-Table 1 gives the classes for the 89 gates logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first.
+Table 1 gives the classes for the 89 gates logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first. The 2 gates with a bar and no result were superseded by another gate or cancelled before they ran, so none is waiting to be run.
 
 Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
 
@@ -46,7 +46,7 @@ Table 1: Commit-order class of each gate. The audited column is the one the pape
 | same-commit | 31 | 6 | 7 |
 | result-first | — | 0 | 0 |
 | no bar | 19 | 23 | 23 |
-| bar, no result yet | — | 2 | 2 |
+| bar, never run | — | 2 | 2 |
 | unresolved | 3 | — | — |
 | gates | 89 | 89 | 93 |
 
