@@ -11,19 +11,15 @@
 \title{What survives when a paper leaves the lab: re-testing 22 robot-learning papers on a €1,350 rig, and auditing our own pre-registration}
 \author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}
 \date{}
-\maketitle
 
 
 
 
-\begin{abstract}
-
-
-12 of the 37 paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost €1,350 and the compute \$45.10. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order.
-
-
-\end{abstract}
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 22 robot-learning papers on a €1,350 rig, and auditing our own pre-registration}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{12 of the 37 paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost €1,350 and the compute \$45.10. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order.}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{The register}
+
+
+\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig/verdicts.pdf}\caption{what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in 58 of 89 and the result first in 0.}\end{figure*}
 
 
 Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. Most of the 22 papers in this study were shown on setups far from it. 9 were shown in simulation and 7 on rigs above \$20k. 2 used a setup under \$5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say.
@@ -99,9 +95,9 @@ The early gates mixed point estimates and different intervals. We recomputed 10 
 \toprule
 \shissohead gate & n & estimate & 95 \% CI & bar & point verdict \\
 \midrule
-colour judge (no learning), accuracy & 87 & 94.2 \% & 89.6--98.9 \% & $\geq$ 95 \% & fail \\
-oscillation among failed episodes & 25 & 24.0 \% & 8.0--40.0 \% & $\geq$ 10 \% & pass \\
-judge threshold, false interventions & 42 & 2.4 \% & 0.0--7.1 \% & $\leq$ 5 \% & pass \\
+\rowcolor{shissofail}colour judge (no learning), accuracy & 87 & 94.2 \% & 89.6--98.9 \% & $\geq$ 95 \% & fail \\
+\rowcolor{shissopass}oscillation among failed episodes & 25 & 24.0 \% & 8.0--40.0 \% & $\geq$ 10 \% & pass \\
+\rowcolor{shissopass}judge threshold, false interventions & 42 & 2.4 \% & 0.0--7.1 \% & $\leq$ 5 \% & pass \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -127,7 +123,14 @@ We ran the cold reruns from a fresh clone with no credentials. 6 gates reran and
 \section{Results}
 
 
-Table 3 counts the verdicts by paper and by claim row. On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
+Table 3 counts the verdicts by paper and by claim row.
+
+
+\begin{shissofinding}[Finding.]
+On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
+\end{shissofinding}
+
+
 
 
 
@@ -177,7 +180,9 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 \section{Conclusion}
 
 
+\begin{shissofinding}[Conclusion.]
 12 of the 37 paper claims we re-tested held. The rig cost €1,350 and the compute \$45.10. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (\texttt{github.com/ravediamond/paper-register-reproducibility}). For 29 of 89 gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
+\end{shissofinding}
 
 
 \bibliographystyle{plainnat}
@@ -197,17 +202,17 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 \toprule
 \shissohead paper & their rig & claim tested & bar & our result & verdict \\
 \midrule
-LeWorldModel \citep{arxiv260319312} & sim & A small JEPA world model learns the arm's dynamics well enough to plan with it. & Dynamics: beat copy-last, every corruption $\geq$ 1.3 at K = 30. Planning: rank the executed chunk first among 8 in $\geq$ 0.8 of anchors. & dynamics 0.31 vs 0.89 copy-last (reproduces); planning top-1 0.60 vs 0.68--0.90 for an action-only baseline (fail) & fail \\
-DINO-WM \citep{arxiv241104983} & sim & A predictor on frozen DINOv2 patches plans better than one on a learned latent. & G1b top-1 $\geq$ 0.8 at some target distance. & arm-pose R$^2$ 0.92 (vs 0.57 for W1); G1b top-1 0.55--0.61; no-model baseline 0.68--0.90 & fail \\
-RoboJEPA \citep{arxiv261010515} & $>$\$20k & Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer. & 9-step L1 $\geq$ 15 \% below copy-last (300M) and $\geq$ 5 \% below shuffled actions; 2-view encoder $\leq$ 200 ms on the Orin. & 11.8 \% below copy-last (300M; 1B 15.8 \% on 30 clips); 9--10 \% below shuffled; encoder 526 ms on the Orin NX & fail \\
-H-JEPA \citep{arxiv261006805} & sim & A slow second level makes latent distance track task progress. & Progress monotonicity Spearman ρ $\leq$ $-$0.80; false stalls $\leq$ 10 \%. & level-2 ρ $-$0.73; false stalls 52 \% & fail \\
+\rowcolor{shissofail}LeWorldModel \citep{arxiv260319312} & sim & A small JEPA world model learns the arm's dynamics well enough to plan with it. & Dynamics: beat copy-last, every corruption $\geq$ 1.3 at K = 30. Planning: rank the executed chunk first among 8 in $\geq$ 0.8 of anchors. & dynamics 0.31 vs 0.89 copy-last (reproduces); planning top-1 0.60 vs 0.68--0.90 for an action-only baseline (fail) & fail \\
+\rowcolor{shissofail}DINO-WM \citep{arxiv241104983} & sim & A predictor on frozen DINOv2 patches plans better than one on a learned latent. & G1b top-1 $\geq$ 0.8 at some target distance. & arm-pose R$^2$ 0.92 (vs 0.57 for W1); G1b top-1 0.55--0.61; no-model baseline 0.68--0.90 & fail \\
+\rowcolor{shissofail}RoboJEPA \citep{arxiv261010515} & $>$\$20k & Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer. & 9-step L1 $\geq$ 15 \% below copy-last (300M) and $\geq$ 5 \% below shuffled actions; 2-view encoder $\leq$ 200 ms on the Orin. & 11.8 \% below copy-last (300M; 1B 15.8 \% on 30 clips); 9--10 \% below shuffled; encoder 526 ms on the Orin NX & fail \\
+\rowcolor{shissofail}H-JEPA \citep{arxiv261006805} & sim & A slow second level makes latent distance track task progress. & Progress monotonicity Spearman ρ $\leq$ $-$0.80; false stalls $\leq$ 10 \%. & level-2 ρ $-$0.73; false stalls 52 \% & fail \\
 D-JEPA \citep{arxiv260924749} & $<$\$5k & A decision-aligned ranking operator on a frozen world model picks better action chunks. & G1b regret $\leq$ 0.10 and $\leq$ the action-only baseline + 0.05. & regret 0.263 (W1 alone 0.263; action-only $-$0.007) & not tested \\
-ContactGuard \citep{arxiv260813438} & \$5--20k & An event-anchored probe on imagined latents predicts grasp failure better than the current latent. & AUROC $\geq$ 0.85 and $\geq$ 0.05 above the current latent. & 0.70 imagined vs 0.82 current & fail \\
-FAIL-Detect and SAFE \citep{arxiv250308558} \citep{arxiv250609937} & $>$\$20k & A conformal band on a learned failure score keeps false alarms at α while catching failures. & Successes flagged $\leq$ 1/20; failures flagged $\geq$ 50 \%. & 22.7 \% of successes flagged at α = 5 \%; 46 \% of failures caught & fail \\
-ReAP \citep{arxiv261016309} & \$5--20k & A risk head on an action-conditioned latent warns before failures. & $\geq$ 5/8 failures caught at $\leq$ 1/20 false interventions; action-conditioned iff true $\geq$ shuffled + 0.05. & v1 AUROC 0.93 came from time and length; v2 0.789 vs 0.708 shuffled, 3/8 at 5/42 & fail \\
-VLA-Corrector \citep{arxiv260906508} & sim & A verifier on observable history flags a failing rollout early enough to correct it. & $\geq$ 5/8 failures at $\leq$ 1/20 false interventions. & the paper's verifier family on our rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30 & fail \\
-Robometer \citep{arxiv260302115} & $>$\$20k & A 4B reward model judges SO-101 rollouts zero-shot. & Pooled AUROC $\geq$ 0.85 and within-policy $\geq$ 0.8 on $\geq$ 5 of 7 policies. & pooled AUROC 0.818 on 2099 ArmnetBench rollouts; episode length alone 0.938 & fail \\
-SmolVLA \citep{arxiv250601844} & $<$\$5k & A 450M VLA succeeds on an SO-101 task and can run on low-cost hardware. & 10-trial operator-judged gate (no numeric pass mark registered); chunk inference within the async budget (667 ms). & 9/10 on bowls; 974 ms in PyTorch, 238 ms with vla.cpp on the Orin NX & reproduces \\
+\rowcolor{shissofail}ContactGuard \citep{arxiv260813438} & \$5--20k & An event-anchored probe on imagined latents predicts grasp failure better than the current latent. & AUROC $\geq$ 0.85 and $\geq$ 0.05 above the current latent. & 0.70 imagined vs 0.82 current & fail \\
+\rowcolor{shissofail}FAIL-Detect and SAFE \citep{arxiv250308558} \citep{arxiv250609937} & $>$\$20k & A conformal band on a learned failure score keeps false alarms at α while catching failures. & Successes flagged $\leq$ 1/20; failures flagged $\geq$ 50 \%. & 22.7 \% of successes flagged at α = 5 \%; 46 \% of failures caught & fail \\
+\rowcolor{shissofail}ReAP \citep{arxiv261016309} & \$5--20k & A risk head on an action-conditioned latent warns before failures. & $\geq$ 5/8 failures caught at $\leq$ 1/20 false interventions; action-conditioned iff true $\geq$ shuffled + 0.05. & v1 AUROC 0.93 came from time and length; v2 0.789 vs 0.708 shuffled, 3/8 at 5/42 & fail \\
+\rowcolor{shissofail}VLA-Corrector \citep{arxiv260906508} & sim & A verifier on observable history flags a failing rollout early enough to correct it. & $\geq$ 5/8 failures at $\leq$ 1/20 false interventions. & the paper's verifier family on our rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30 & fail \\
+\rowcolor{shissofail}Robometer \citep{arxiv260302115} & $>$\$20k & A 4B reward model judges SO-101 rollouts zero-shot. & Pooled AUROC $\geq$ 0.85 and within-policy $\geq$ 0.8 on $\geq$ 5 of 7 policies. & pooled AUROC 0.818 on 2099 ArmnetBench rollouts; episode length alone 0.938 & fail \\
+\rowcolor{shissopass}SmolVLA \citep{arxiv250601844} & $<$\$5k & A 450M VLA succeeds on an SO-101 task and can run on low-cost hardware. & 10-trial operator-judged gate (no numeric pass mark registered); chunk inference within the async budget (667 ms). & 9/10 on bowls; 974 ms in PyTorch, 238 ms with vla.cpp on the Orin NX & reproduces \\
 \bottomrule
 \end{tabular}
 \caption{The register, one row per paper, generated from the register file (internal model and gate names kept). The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict column against the rig each paper was shown on.}
@@ -219,18 +224,21 @@ SmolVLA \citep{arxiv250601844} & $<$\$5k & A 450M VLA succeeds on an SO-101 task
 \shissohead paper & their rig & claim tested & bar & our result & verdict \\
 \midrule
 TurboVLA \citep{arxiv260727205} & sim & Our claim that the architecture made the policy ignore its instruction. & Task swap $\geq$ 5° and per-layout $\geq$ 75 \% $\rightarrow$ our port was the bug; $<$ 1° with the control $\geq$ 0.095 $\rightarrow$ the data. & upstream's own trainer on our data: task swap 0.020°, per-layout 38.9 \%; control, their released LIBERO checkpoint run here: 0.105 ($\approx$ 5.5° of pan) & withdrawn \\
-VLA-JEPA \citep{arxiv260210098} & sim & VLA-JEPA trains cheaply on SO-101 data and runs on the robot. & 10-trial operator-judged gate (no numeric pass mark registered); for reranking (H0): oracle / mean error $\leq$ ~0.7 and N = 8 $\leq$ 1.5$\times$ the latency. & 9/10 for ~\$9.7; 355 ms per chunk on the Orin NX; reranking no-go (0.76, 1.84$\times$) & reproduces \\
-REKI \citep{arxiv261022178} & sim & Policies without memory oscillate between poses at a measurable rate. & $\geq$ 10 \% of failed episodes oscillate (their criterion). & 20.3 \% of all episodes, 24.0 \% of failures; REKI trained on my data: 19/20 + 19/20 on the arm, oscillates in 1/40 & reproduces \\
-Real-Time Chunking \citep{arxiv250607339} & unstated & Conditioning a new chunk on the executing one removes the jump at chunk boundaries. & Best gradient-free method cuts the median jump $\geq$ 50 \% against naive async, drift $\leq$ +10 \%, within 667 ms. & prefix overwrite cuts the jump 71--73 \% against naive async at +0.4 ms; tuned LeRobot identity mode is close & not proven \\
-HWM (hierarchical latent world models) \citep{arxiv260403208} & $>$\$20k & A high-level world model over learned macro-actions beats the low-level model beyond about 1 s (their Fig. 6 crossover). & Crossover in [1.0, 2.0] s; at 2 s high-level error $\leq$ 0.95 $\times$ low-level; learned macro-actions $\geq$ net joint displacement on cosine. & no crossover: W1 0.382 $\pm$ 0.005 $\rightarrow$ 0.563 $\pm$ 0.007, high level 0.769 $\pm$ 0.009 $\rightarrow$ 0.759 $\pm$ 0.009 (0.73--2 s); cosine 0.608 $\pm$ 0.007 vs 0.551 $\pm$ 0.006 & not proven \\
-LeJEPA identifiability \citep{arxiv260526379} & sim & A SIGReg JEPA trained on goal-directed data recovers the true latent state only partially and unevenly. & W1's mean R$^2$ from latent to joints $<$ 0.80; anisotropy (max $-$ min per-joint R$^2$) $\geq$ 0.20; the higher-R$^2$ model has the higher G1b top-1. & W1 mean R$^2$ 0.565, anisotropy 0.639 (shoulder lift 0.91, wrist flex 0.27); frozen DINOv2-S 0.867 / 0.301 & reproduces \\
-SURVEYOR & sim & A threshold on the imagined-vs-reached latent distance accepts good plans and rejects bad ones ($\tau$ = 0.20). & $\tau$ below the 10th percentile of non-equivalent pairs and $\leq$ 0.40; as a monitor $\geq$ 5/8 failures at $\leq$ 2/42; $\geq$ 0.05 AUROC over a shuffled drafter. & $\tau$ = 1.249 on W1 latents of 69 real rollouts; as a monitor 3/8 at 6/42 (S = 30), AUROC 0.756 vs shuffled 0.560 & fail \\
-Adaptive Action Chunking (AAC) \citep{arxiv260404161} & $>$\$20k & Chunk length chosen from the entropy of N sampled chunks follows the task's phases (long in transport, short at the grasp), lowers the boundary jump, and costs little with batched sampling. & median h* in transport $\geq$ grasp window + 2; jump with AAC + overwrite $\leq$ fixed + overwrite at d = 8; an N = 20 decision $\leq$ 298 ms on the Orin. & h* 2 in transport and 2 at the grasp (86 \% of decisions at the floor); jump 0.973 vs 0.940; N = 20 decision 4,751 ms (sequential) on the Orin & fail \\
-PACT-VLA \citep{arxiv261028019} & \$5--20k & Picking among N sampled chunks by their flow residual under the pre-commit observation fits what happens next better than a random or stale pick, with no added control-step delay. & PACT beats a random pick and the stale-observation residual at d = 8 (CIs $<$ 0); its delay on the Orin $\leq$ the naive delay; at that delay it still beats a single sample. & offline $-$0.27° vs random and vs the stale residual (both CIs $<$ 0); on the Orin 1,200 ms per cycle, 37 control ticks vs 8 & fail \\
-Horizon $\times$ depth (Euler steps vs execution horizon) \citep{arxiv261032102} & $>$\$20k & With long open-loop commitment, cutting a flow-matching VLA's Euler steps from 10 to 2 contracts the action cloud around an unchanged centroid, saves most of the inference time and avoids edge-GPU thermal throttling. & median R(2)/R(10) $\leq$ 0.70 with the centroid within 0.05 relative and 3°; N = 2 latency $\leq$ 0.85 $\times$ N = 10 on the Orin, N = 10 within 5 \% of 238 ms. & R(2)/R(10) 0.78 (CI 0.73--0.81), centroid 0.018 and 2.35°; 196.1 vs 237.5 ms per chunk (0.83, vision 151 ms); no throttling at N = 10 on the Orin, at MAXN\_SUPER or 25 W & not proven \\
-REMORA \citep{arxiv261039125} & $>$\$20k & Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. & Against per-frame argmax: premature not higher and missed $\leq$ +2 points (P1); flips halved, CI upper $\leq$ 0.7 (P2); a decrease inside $\geq$ 50 \% of the reversal windows with $\leq$ 20 \% false regressions (P3). & premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 $\times$ argmax, CI 0.48--0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 & fail \\
+\rowcolor{shissopass}VLA-JEPA \citep{arxiv260210098} & sim & VLA-JEPA trains cheaply on SO-101 data and runs on the robot. & 10-trial operator-judged gate (no numeric pass mark registered); for reranking (H0): oracle / mean error $\leq$ ~0.7 and N = 8 $\leq$ 1.5$\times$ the latency. & 9/10 for ~\$9.7; 355 ms per chunk on the Orin NX; reranking no-go (0.76, 1.84$\times$) & reproduces \\
+\rowcolor{shissopass}REKI \citep{arxiv261022178} & sim & Policies without memory oscillate between poses at a measurable rate. & $\geq$ 10 \% of failed episodes oscillate (their criterion). & 20.3 \% of all episodes, 24.0 \% of failures; REKI trained on my data: 19/20 + 19/20 on the arm, oscillates in 1/40 & reproduces \\
+\rowcolor{shissoamber}Real-Time Chunking \citep{arxiv250607339} & unstated & Conditioning a new chunk on the executing one removes the jump at chunk boundaries. & Best gradient-free method cuts the median jump $\geq$ 50 \% against naive async, drift $\leq$ +10 \%, within 667 ms. & prefix overwrite cuts the jump 71--73 \% against naive async at +0.4 ms; tuned LeRobot identity mode is close & not proven \\
+\rowcolor{shissoamber}HWM (hierarchical latent world models) \citep{arxiv260403208} & $>$\$20k & A high-level world model over learned macro-actions beats the low-level model beyond about 1 s (their Fig. 6 crossover). & Crossover in [1.0, 2.0] s; at 2 s high-level error $\leq$ 0.95 $\times$ low-level; learned macro-actions $\geq$ net joint displacement on cosine. & no crossover: W1 0.382 $\pm$ 0.005 $\rightarrow$ 0.563 $\pm$ 0.007, high level 0.769 $\pm$ 0.009 $\rightarrow$ 0.759 $\pm$ 0.009 (0.73--2 s); cosine 0.608 $\pm$ 0.007 vs 0.551 $\pm$ 0.006 & not proven \\
+\rowcolor{shissopass}LeJEPA identifiability \citep{arxiv260526379} & sim & A SIGReg JEPA trained on goal-directed data recovers the true latent state only partially and unevenly. & W1's mean R$^2$ from latent to joints $<$ 0.80; anisotropy (max $-$ min per-joint R$^2$) $\geq$ 0.20; the higher-R$^2$ model has the higher G1b top-1. & W1 mean R$^2$ 0.565, anisotropy 0.639 (shoulder lift 0.91, wrist flex 0.27); frozen DINOv2-S 0.867 / 0.301 & reproduces \\
+\rowcolor{shissofail}SURVEYOR & sim & A threshold on the imagined-vs-reached latent distance accepts good plans and rejects bad ones ($\tau$ = 0.20). & $\tau$ below the 10th percentile of non-equivalent pairs and $\leq$ 0.40; as a monitor $\geq$ 5/8 failures at $\leq$ 2/42; $\geq$ 0.05 AUROC over a shuffled drafter. & $\tau$ = 1.249 on W1 latents of 69 real rollouts; as a monitor 3/8 at 6/42 (S = 30), AUROC 0.756 vs shuffled 0.560 & fail \\
+\rowcolor{shissofail}Adaptive Action Chunking (AAC) \citep{arxiv260404161} & $>$\$20k & Chunk length chosen from the entropy of N sampled chunks follows the task's phases (long in transport, short at the grasp), lowers the boundary jump, and costs little with batched sampling. & median h* in transport $\geq$ grasp window + 2; jump with AAC + overwrite $\leq$ fixed + overwrite at d = 8; an N = 20 decision $\leq$ 298 ms on the Orin. & h* 2 in transport and 2 at the grasp (86 \% of decisions at the floor); jump 0.973 vs 0.940; N = 20 decision 4,751 ms (sequential) on the Orin & fail \\
+\rowcolor{shissofail}PACT-VLA \citep{arxiv261028019} & \$5--20k & Picking among N sampled chunks by their flow residual under the pre-commit observation fits what happens next better than a random or stale pick, with no added control-step delay. & PACT beats a random pick and the stale-observation residual at d = 8 (CIs $<$ 0); its delay on the Orin $\leq$ the naive delay; at that delay it still beats a single sample. & offline $-$0.27° vs random and vs the stale residual (both CIs $<$ 0); on the Orin 1,200 ms per cycle, 37 control ticks vs 8 & fail \\
+\rowcolor{shissoamber}Horizon $\times$ depth (Euler steps vs execution horizon) \citep{arxiv261032102} & $>$\$20k & With long open-loop commitment, cutting a flow-matching VLA's Euler steps from 10 to 2 contracts the action cloud around an unchanged centroid, saves most of the inference time and avoids edge-GPU thermal throttling. & median R(2)/R(10) $\leq$ 0.70 with the centroid within 0.05 relative and 3°; N = 2 latency $\leq$ 0.85 $\times$ N = 10 on the Orin, N = 10 within 5 \% of 238 ms. & R(2)/R(10) 0.78 (CI 0.73--0.81), centroid 0.018 and 2.35°; 196.1 vs 237.5 ms per chunk (0.83, vision 151 ms); no throttling at N = 10 on the Orin, at MAXN\_SUPER or 25 W & not proven \\
+\rowcolor{shissofail}REMORA \citep{arxiv261039125} & $>$\$20k & Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. & Against per-frame argmax: premature not higher and missed $\leq$ +2 points (P1); flips halved, CI upper $\leq$ 0.7 (P2); a decrease inside $\geq$ 50 \% of the reversal windows with $\leq$ 20 \% false regressions (P3). & premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 $\times$ argmax, CI 0.48--0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 & fail \\
 \bottomrule
 \end{tabular}
 \par\medskip Table 4, continued.
 \end{table}
+
+
+\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig/number_chain.pdf}\caption{how every number in this paper is made: a protocol with its bar is committed before any number exists (1), the run stores its rows under repro/ (2), the result is committed after the bar and the commit order is audited (3), make l0 recomputes every number from the stored rows (4), make\_paper.py writes numbers.json with each value's anchor and fills the text from it (5); make check regenerates the paper and fails on any difference.}\end{figure*}
 \end{document}

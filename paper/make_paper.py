@@ -2,7 +2,7 @@
 """paper-register-reproducibility: fill paper/DRAFT_4p.md.in from repro/*/expected/ into numbers.json, DRAFT_4p.md,
 main.tex and refs.bib. Every number has an anchor; a literal that is not found in its source file fails the build.
 Table 1 is generated from the register. Citations are written [@<arXiv id>] in the template."""
-import collections, json, re
+import collections, json, re, sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -140,6 +140,49 @@ def bib(md):
     return len(out)
 
 
+def figures():
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+    FIG = HERE / "fig"; FIG.mkdir(exist_ok=True); sys.path.insert(0, str(HERE / "style")); import shisso_colors as sc; sc.use()
+    GREEN, AMBER, RED = sc.CATEGORICAL[2], sc.CATEGORICAL[1], sc.CATEGORICAL[3]
+    f = lambda k: int(N[k])  # noqa: E731
+    tot, rep, fail = f("c_paper"), f("c_paper_repro"), f("c_paper_fail")
+    other = tot - rep - fail
+    fig, ax = plt.subplots(figsize=(7.0, 1.95)); ax.set_xlim(0, 100); ax.set_ylim(0, 24); ax.axis("off")
+    ax.text(1, 22.2, f"{tot} paper claims re-tested on the {N['rig_eur']} euro rig, by verdict", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
+    x = 1.0; W = 98.0
+    for n, lab, c in [(rep, "reproduce", GREEN), (fail, "fail", RED), (other, "not proven or not tested", "#8A90A0")]:
+        wd = W * n / tot; ax.add_patch(FancyBboxPatch((x, 15.2), wd, 5.2, boxstyle="round,pad=0,rounding_size=0.8", fc=c, ec="white", lw=1.2))
+        ax.text(x + wd / 2, 17.8, f"{n} {lab}", ha="center", va="center", fontsize=6.2, color="white", fontweight="bold"); x += wd
+    cls = [("A  the clock", "adaptive chunking: one decision\n{} on the edge GPU, budget {}".format(N["ex_a_ours"], N["ex_a_bar"]), RED),
+           ("B  zero-shot judges", "a learned reward model: AUROC {}\nepisode length alone: {}".format(N["ex_b_ours"], N["ex_b_len"]), RED),
+           ("C  learned latents", "world model ranks the executed chunk\nfirst in {} of anchors, bar {}".format(N["ex_c_ours"], N["ex_c_bar"]), RED),
+           ("our own gates", "bar committed before the result: {} of {};\nresult first: {}".format(N["pr_bar_first"], N["pr_rows"], N["pr_result_first"]), GREEN)]
+    ax.text(1, 12.2, "the failures fall into three classes; our own history is audited", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
+    bw, gap = 23.0, 2.0
+    for i, (h, b, c) in enumerate(cls):
+        xx = 1 + i * (bw + gap); ax.add_patch(FancyBboxPatch((xx, 1.0), bw, 9.4, boxstyle="round,pad=0,rounding_size=1.0", fc="white", ec=c, lw=1.7))
+        ax.text(xx + bw / 2, 8.0, h, ha="center", va="center", fontsize=6.3, fontweight="bold", color=c)
+        ax.text(xx + bw / 2, 4.1, b, ha="center", va="center", fontsize=5.5, linespacing=1.2)
+    fig.subplots_adjust(0, 0, 1, 1); fig.savefig(FIG / "verdicts.pdf"); fig.savefig(FIG / "verdicts.png", dpi=200); plt.close(fig)
+
+    # the chain that makes every number (same in all four papers)
+    fig, ax = plt.subplots(figsize=(7.0, 1.05)); ax.set_xlim(0, 100); ax.set_ylim(0, 15); ax.axis("off")
+    steps = [("1  bar committed", "protocol commit\nbefore any number"), ("2  run", "rows stored in\nrepro/<exp>/expected"), ("3  result committed", "result commit\nafter the bar"),
+             ("4  L0 recompute", "make l0: every number\nfrom the stored rows"), ("5  paper", "numbers.json: value\nand its anchor")]
+    bw, gap = 16.2, 4.0
+    for i, (a, b) in enumerate(steps):
+        xx = 1 + i * (bw + gap); ax.add_patch(FancyBboxPatch((xx, 3), bw, 10, boxstyle="round,pad=0,rounding_size=1.2", fc="#EDF2FB" if i != 4 else sc.ACCENT, ec=sc.ACCENT, lw=1.0))
+        ax.text(xx + bw / 2, 10.3, a, ha="center", va="center", fontsize=6.4, fontweight="bold", color="white" if i == 4 else sc.ACCENT)
+        ax.text(xx + bw / 2, 6.0, b, ha="center", va="center", fontsize=5.6, color="white" if i == 4 else "black", linespacing=1.15)
+        if i < 4:
+            ax.add_patch(FancyArrowPatch((xx + bw, 8), (xx + bw + gap, 8), arrowstyle="-|>", mutation_scale=6, lw=1.0, color=sc.ACCENT))
+    ax.text(50, 0.7, "make check regenerates the paper from the stored rows and fails on any difference", ha="center", fontsize=5.8, color=sc.DARKGREY, style="italic")
+    fig.subplots_adjust(0, 0, 1, 1); fig.savefig(FIG / "number_chain.pdf"); fig.savefig(FIG / "number_chain.png", dpi=200); plt.close(fig)
+
+
 def main():
     table = register()
     prereg()
@@ -148,6 +191,7 @@ def main():
     assert not missing, f"placeholders without a value: {sorted(missing)}"
     md = re.sub(r"\{\{(\w+)\}\}", lambda m: table if m.group(1) == "TABLE1" else N[m.group(1)], tpl)
     nb = bib(md)
+    figures()
     (HERE / "DRAFT_4p.md").write_text(re.sub(r"\[@(\d{4}\.\d{4,5})\]", r"[arXiv:\1]", md))
     (HERE / "numbers.json").write_text(json.dumps({k: {"value": N[k], "anchor": A[k]} for k in sorted(N)}, indent=1, ensure_ascii=False) + "\n")
     (HERE / "main.tex").write_text(to_tex(md))
@@ -169,6 +213,15 @@ def esc(s):
     return re.sub(r"\*([^*]+)\*", r"\\emph{\1}", s)
 
 
+LINKS = r"\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit."
+
+
+def tint(v):
+    v = v.strip().lower()
+    c = {"reproduces": "shissopass", "fail": "shissofail", "pass": "shissopass", "not proven": "shissoamber"}.get(v)
+    return "\\rowcolor{" + c + "}" if c else ""
+
+
 COLS = r"p{2.2cm}p{0.95cm}p{3.95cm}p{3.7cm}p{3.7cm}p{1.15cm}"
 
 
@@ -187,14 +240,15 @@ def to_tex(md):
             i = j + 1
             continue
         if l.startswith("# "):
-            out += [r"\title{" + esc(l[2:]) + "}",
+            title = esc(l[2:]); out += [r"\title{" + title + "}",
                     r"\author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}",
-                    r"\date{}", r"\maketitle"]
+                    r"\date{}"]
         elif l.startswith("## Abstract"):
-            out.append(r"\begin{abstract}"); abstract = True
+            abs_at = len(out); abstract = True
         elif l.startswith("## "):
             if abstract:
-                out.append(r"\end{abstract}"); abstract = False
+                body = " ".join(x.strip() for x in out[abs_at:] if x.strip()); del out[abs_at:]; abstract = False
+                out.append(r"\twocolumn[\vspace*{0.32in}\shissopanel{" + title + "}{Ravindu Somawansa\\\\[1pt]Shisso Robotics\\\\[1pt]\\texttt{ravindu.somawansa@shissorobotics.com}}{" + body + "}{" + LINKS + r"}\vspace{4pt}]")
             if l.startswith("## References"):
                 out += [r"\bibliographystyle{plainnat}", r"\bibliography{refs}"]
             elif l.startswith("## Appendix"):
@@ -212,7 +266,7 @@ def to_tex(md):
             if t[0][0] != "paper":  # small count tables: one column, one float
                 out += [r"\begin{table}[t]\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}", r"\caption{" + esc(cap) + "}",
                         (r"\resizebox{\columnwidth}{!}{" if len(t[0]) >= 5 else "") + r"\begin{tabular}{l" + "r" * (len(t[0]) - 1) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
-                       [" & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}" + ("}" if len(t[0]) >= 5 else ""), r"\end{table}"]
+                       [(tint(r[-1]) if t[0][-1] == "point verdict" else "") + " & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}" + ("}" if len(t[0]) >= 5 else ""), r"\end{table}"]
                 continue
             spec = COLS
             body, k = t[1:], 11  # a 22-row register does not fit one float page: two floats of 11 rows
@@ -220,11 +274,21 @@ def to_tex(md):
                 c = esc(cap) if j == 0 else "Table " + tabno + ", continued."
                 out += [(r"\begin{table}[h!]" if appendix else r"\begin{table*}[p]") + r"\centering\scriptsize", r"\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.05}",
                         r"\begin{tabular}{" + spec + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
-                       [" & ".join(r) + r" \\" for r in body[j:j + k]] + [r"\bottomrule", r"\end{tabular}",
+                       [tint(r[-1]) + " & ".join(r) + r" \\" for r in body[j:j + k]] + [r"\bottomrule", r"\end{tabular}",
                         (r"\caption{" + c + "}") if j == 0 else (r"\par\medskip " + c), r"\end{table}" if appendix else r"\end{table*}"]
             continue
         elif l.startswith("*Ravindu"):
             pass
+        elif l.startswith("!["):
+            cap_, img = re.match(r"!\[(.*)\]\((.*)\.png\)", l).groups()
+            out.append(r"\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{" + img + r".pdf}\caption{" + esc(re.sub(r"^Fig\. \d+ — ", "", cap_)) + r"}\end{figure*}")
+        elif l.startswith("> "):
+            q = []
+            while i < len(lines) and lines[i].startswith("> "):
+                q.append(lines[i][2:]); i += 1
+            mm = re.match(r"\*\*(.+?)\*\*\s*(.*)", " ".join(q))
+            out.append(r"\begin{shissofinding}[" + esc(mm.group(1)) + "]\n" + esc(mm.group(2)) + "\n" + r"\end{shissofinding}")
+            continue
         elif not l.strip():
             out.append("\n")  # keep paragraph breaks: an empty markdown line ends the paragraph in LaTeX too
         else:

@@ -8,6 +8,8 @@
 
 ## 1. The register
 
+![Fig. 1 — what survived when the papers left the lab: of the {{c_paper}} paper claims, {{c_paper_repro}} reproduce and {{c_paper_fail}} fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in {{pr_bar_first}} of {{pr_rows}} and the result first in {{pr_result_first}}.](fig/verdicts.png)
+
 Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. Most of the {{papers}} papers in this study were shown on setups far from it. {{rig_sim}} were shown in simulation and {{rig_gt20k}} on rigs above $20k. {{rig_lt5k}} used a setup under $5k, which is where our rig falls. The appendix table gives the rig of each paper, including the {{rig_5to20k}} in between and the {{rig_unstated}} that does not say.
 
 The register grew out of our own write-ups. Each re-test on this rig was published with its data, and there are {{l0}} so far. This paper collects them in one table and audits how the table was kept.
@@ -76,7 +78,10 @@ We ran the cold reruns from a fresh clone with no credentials. {{l1_repro}} gate
 
 ## 3. Results
 
-Table 3 counts the verdicts by paper and by claim row. On claims taken from papers, {{c_paper_repro}} of {{c_paper}} reproduce and {{c_paper_fail}} fail. The other {{c_ours}} rows test our own baselines, for example that the commanded joints beat the world model. {{c_ours_repro}} of those hold.
+Table 3 counts the verdicts by paper and by claim row.
+
+> **Finding.** On claims taken from papers, {{c_paper_repro}} of {{c_paper}} reproduce and {{c_paper_fail}} fail. The other {{c_ours}} rows test our own baselines, for example that the commanded joints beat the world model. {{c_ours_repro}} of those hold.
+
 
 Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
 
@@ -107,7 +112,7 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 
 ## 7. Conclusion
 
-{{c_paper_repro}} of the {{c_paper}} paper claims we re-tested held. The rig cost €{{rig_eur}} and the compute ${{cost}}. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For {{pr_unprov}} of {{pr_rows}} gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
+> **Conclusion.** {{c_paper_repro}} of the {{c_paper}} paper claims we re-tested held. The rig cost €{{rig_eur}} and the compute ${{cost}}. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For {{pr_unprov}} of {{pr_rows}} gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
 
 ## References
 
@@ -116,3 +121,5 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). The rig price of €{{rig_eur}} counts the parts with a stated price; {{rig_unpriced}} small parts are not priced yet. Read the verdict column against the rig each paper was shown on.
 
 {{TABLE1}}
+
+![Fig. 2 — how every number in this paper is made: a protocol with its bar is committed before any number exists (1), the run stores its rows under repro/ (2), the result is committed after the bar and the commit order is audited (3), make l0 recomputes every number from the stored rows (4), make_paper.py writes numbers.json with each value's anchor and fills the text from it (5); make check regenerates the paper and fails on any difference.](fig/number_chain.png)
