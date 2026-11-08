@@ -111,7 +111,7 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 
 ## 7. Conclusion
 
-> **Conclusion.** {{c_paper_repro}} of the {{c_paper}} paper claims we re-tested held. The rig cost €{{rig_eur}} and the compute ${{cost}}. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For {{pr_unprov}} of {{pr_rows}} gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
+> **Conclusion.** We re-tested {{c_paper}} paper claims on this rig, and {{c_paper_repro}} of them held. The rig cost €{{rig_eur}} and the compute ${{cost}}. Every row behind the verdicts is published. Every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For {{pr_unprov}} of {{pr_rows}} gates our history does not show the order of bar and result. Re-testing a paper on a cheap rig starts with its cheapest baseline on the same rows, with the threshold committed before the run.
 
 ## References
 

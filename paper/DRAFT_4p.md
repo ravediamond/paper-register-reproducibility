@@ -111,7 +111,7 @@ Two works use the same arm to evaluate policies. One is a standardized real-worl
 
 ## 7. Conclusion
 
-> **Conclusion.** 12 of the 37 paper claims we re-tested held. The rig cost €1,350 and the compute $45.10. Every row behind the verdicts is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For 29 of 87 gates our history does not show the order of bar and result. When we re-test a paper on a cheap rig we run its cheapest baseline on the same rows and commit the threshold before the run.
+> **Conclusion.** We re-tested 37 paper claims on this rig, and 12 of them held. The rig cost €1,350 and the compute $45.10. Every row behind the verdicts is published. Every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For 29 of 87 gates our history does not show the order of bar and result. Re-testing a paper on a cheap rig starts with its cheapest baseline on the same rows, with the threshold committed before the run.
 
 ## References
 
