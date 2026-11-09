@@ -1,3 +1,8 @@
 __pycache__/
 paper/shisso_commit.tex
 polish/last_try_*.json
+paper/main.aux
+paper/main.bbl
+paper/main.blg
+paper/main.log
+paper/main.out
