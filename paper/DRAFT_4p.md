@@ -12,7 +12,7 @@
 - Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data.
 - Result: 12 claims hold, 18 fail, 7 are not settled.
 - Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints.
-- All 7 failure monitors and judges fail; all 3 VLA policies reproduce.
+- All 7 failure monitors and judges fail, but most of these fails have a cause on our side: few failures in our data, and re-implementations.
 - Code, data and every number are public.
 
 ## 1. Introduction
@@ -71,7 +71,7 @@ Table 1: The four kinds of papers, what we test in each, the cheapest baseline w
 - Figure 1 and Table 2; by kind of paper in Table 1.
 - Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
 - Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
-- Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce.
+- Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce; Section 6 shows why the first is weaker evidence than it looks.
 - Every paper, with its claim, bar and our result: appendix.
 
 ![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes: the clock, zero-shot judges against a trivial signal, and learned latents against the commanded joints.](fig/verdicts.png)
@@ -93,16 +93,58 @@ Table 2: Verdicts by paper and by claim.
 - The classes are our proposal, from the author's reading of the 18 failed claims; a second reader is needed.
 - Order to test a paper on a cheap rig: time it on the device → the cheapest baseline → then the bar.
 
-## 6. Limitations
+## 6. Why they failed here: the method, our data, or our setup
 
-- Data: short tasks, one task family, one arm; nothing on long horizon.
-- One operator ran the arm and labelled the outcomes, not blind.
-- Small samples and one training seed in many tests (the n of each test is in the appendix).
-- A fail on our rig is not a fail on the authors' hardware.
-- Papers chosen from the stack we run (world models, VLAs, failure monitors, chunking, edge latency): the failure rate describes these papers, not the field.
-- Our own mistakes are possible: TurboVLA (Section 3).
+- For each fail, what on our side may explain it (Table 3); most fails have at least one cause of ours, so a fail here is a fail on this rig, with this data.
+- Our data is small and simple:
+  - 157 training episodes of one short task (about 11 s) against hours of varied data in the papers (HWM: about 0.6 h against their about 130 h)
+  - on a short task with one arm, the commanded joints already hold most of the state → a latent has little left to add (class C)
+  - the task is easy for our policy (SmolVLA at ceiling) → little uncertainty for an entropy rule to read (adaptive chunking: chunk length at the minimum in 86 % of decisions)
+  - H-JEPA: our task is outside the paper's regime (no gap between slow and fast parts of the scene)
+- Too few failures: our policies mostly succeed; the main rollout set has 8 failures in 50 episodes → a bar like 5 of 8 is coarse, one episode moves the verdict (ReAP, VLA-Corrector, SURVEYOR)
+- Our version is not exactly theirs:
+  - ContactGuard: our mixed policies and 2 cameras against their one policy and 3 cameras
+  - FAIL-Detect and SAFE: our world model's surprise as the score, not their scores
+  - VLA-Corrector: our verifier on pooled image statistics, not their 54 features with the arm state
+  - SURVEYOR: their drafter is not released; REMORA: hand-written progress atoms
+  - Robometer: zero-shot only, the fine-tuning run never trained
+- Episode length is strong because of how the episodes end, not because judges are weak in general: on ArmnetBench a failure tends to run to the time limit, so length separates outcomes (0.938); on our own 88 rollouts, where failures do not run to the time limit, length is near chance (0.521) → what a judge must beat depends on who stopped the episode
+- Our inference engine: vla.cpp samples sequentially, with no batching → adaptive chunking pays 20 full passes (their 106 ms is batched on an A800); PACT's check time is projected, not measured
+- Offline only: planning ranked recorded chunks, chunking measured smoothness on recorded episodes; none of these ran in closed loop on the arm
 
-## 7. Related work
+Table 3: Each fail or not-proven paper, what we measured, and what on our side may explain it.
+
+| failed paper | kind | our result | what may be on our side |
+|---|---|---|---|
+| LeWorldModel | world model | planning rank 0.60, action-only 0.68–0.90 | one short task, 157 episodes, one seed; offline ranking only |
+| DINO-WM | world model | planning rank 0.61, action-only 0.68–0.90 | same data as LeWorldModel; one training |
+| RoboJEPA | world model | 11.8 % below copy-last, bar 15 % | near miss; the 1B model reached 15.8 % on 30 clips only |
+| H-JEPA | world model | progress ρ −0.73, bar −0.80; false stalls 52 % | our task is outside the paper's regime |
+| HWM | world model | not proven: high level worse at 2 s | 0.6 h of one task against their 130 h |
+| ContactGuard | monitor | AUROC 0.70, current latent 0.82 | mixed policies and 2 cameras against one policy and 3 cameras |
+| FAIL-Detect and SAFE | monitor | 22.7 % of successes flagged at α 5 % | our score, not theirs; 22 successes for calibration |
+| ReAP | monitor | 3 of 8 failures caught | 8 failures only |
+| VLA-Corrector | monitor | 2 of 8, AUROC 0.59 | our features, not their 54; 8 failures |
+| Robometer | judge | AUROC 0.818, length 0.938 | zero-shot only; ArmnetBench failures run to the time limit (on our rollouts length is near chance) |
+| SURVEYOR | monitor | threshold 1.249 against 0.20; 3 of 8 | their drafter not released; 8 failures |
+| REMORA | monitor | readout flips 0.70 of the per-frame readout | hand-written progress atoms |
+| Adaptive chunking | chunking | 4,751 ms per decision; length 2 in transport and at the grasp | sequential engine, no batching; task at ceiling for our policy |
+| PACT-VLA | chunking | 37 ticks of delay against 8 | check time projected; sequential engine |
+| Real-Time Chunking | chunking | not proven: 71–73 % smoother, no arm run | offline smoothness only |
+| Horizon × depth | chunking | not proven: 0.78, bar 0.70 | one policy, one task; arm test not run |
+
+## 7. Limitations
+
+- Data: one short task family (about 11 s per episode), one arm, two cameras, about 34 minutes of demonstrations; nothing on long horizon (several steps, memory) or on varied scenes.
+- Few failures to test monitors on (8 in the main set of 50).
+- Several methods are our re-implementation, not the authors' code end to end (Table 3).
+- Offline tests for planning and chunking; no closed-loop run on the arm for them.
+- One operator ran the arm and labelled the outcomes, not blind; small samples and one training seed in many tests.
+- VLA policies have no cheap baseline, only a success rate over 10 trials: a weaker test than the others.
+- Papers chosen from the stack we run: the rates describe these papers, not the field.
+- A fail on our rig is not a fail on the authors' hardware; our own mistakes are possible (TurboVLA, Section 3).
+
+## 8. Related work
 
 - On the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries [arXiv:2606.08881]; ArmnetBench, a fleet of SO-101 cells evaluating policies at scale [arXiv:2607.24481].
 - In simulation: vla-eval, VLAs across 14 benchmarks [arXiv:2603.13966]; a benchmark of demonstration quality [arXiv:2610.18869].
@@ -110,7 +152,7 @@ Table 2: Verdicts by paper and by claim.
 - Closest: RoboSeed [arXiv:2610.40026], scores VLA and world-action models on five dimensions including reproduction evidence and deployment affordability; its authors say the score is not a probability that a result is correct.
 - Ours: one yes or no per claim on one rig, with the data behind it.
 
-## 8. Conclusion
+## 9. Conclusion
 
 - 37 claims from 21 papers on a rig of about €1,500, under $50 of cloud GPU → 12 hold.
 - Several lost to a baseline with no learning: copy-last, the joints, episode length.
@@ -121,7 +163,7 @@ Table 2: Verdicts by paper and by claim.
 
 ## Appendix: every paper
 
-Table 3: One row per paper with a claim of its own (internal model and test names kept). The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict against the rig each paper was shown on.
+Table 4: One row per paper with a claim of its own (internal model and test names kept). The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict against the rig each paper was shown on.
 
 | paper | their rig | claim tested | bar | our result | verdict |
 |---|---|---|---|---|---|

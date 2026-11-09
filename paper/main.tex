@@ -15,7 +15,7 @@
 
 
 
-\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under \$50 of cloud GPU. \item Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item All 7 failure monitors and judges fail; all 3 VLA policies reproduce. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under \$50 of cloud GPU. \item Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item All 7 failure monitors and judges fail, but most of these fails have a cause on our side: few failures in our data, and re-implementations. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{Introduction}
 
 
@@ -104,7 +104,7 @@ chunking and edge inference & 4 & smoother joins between chunks; time per chunk 
 \item Figure 1 and Table 2; by kind of paper in Table 1.
 \item Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
 \item Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
-\item Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce.
+\item Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce; Section 6 shows why the first is weaker evidence than it looks.
 \item Every paper, with its claim, bar and our result: appendix.
 \end{itemize}
 
@@ -142,16 +142,74 @@ not tested & 1 & 4 \\
 \end{itemize}
 
 
+\section{Why they failed here: the method, our data, or our setup}
+
+
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item For each fail, what on our side may explain it (Table 3); most fails have at least one cause of ours, so a fail here is a fail on this rig, with this data.
+\item Our data is small and simple:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item 157 training episodes of one short task (about 11 s) against hours of varied data in the papers (HWM: about 0.6 h against their about 130 h)
+\item on a short task with one arm, the commanded joints already hold most of the state $\rightarrow$ a latent has little left to add (class C)
+\item the task is easy for our policy (SmolVLA at ceiling) $\rightarrow$ little uncertainty for an entropy rule to read (adaptive chunking: chunk length at the minimum in 86 \% of decisions)
+\item H-JEPA: our task is outside the paper's regime (no gap between slow and fast parts of the scene)
+\end{itemize}
+\item Too few failures: our policies mostly succeed; the main rollout set has 8 failures in 50 episodes $\rightarrow$ a bar like 5 of 8 is coarse, one episode moves the verdict (ReAP, VLA-Corrector, SURVEYOR)
+\item Our version is not exactly theirs:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item ContactGuard: our mixed policies and 2 cameras against their one policy and 3 cameras
+\item FAIL-Detect and SAFE: our world model's surprise as the score, not their scores
+\item VLA-Corrector: our verifier on pooled image statistics, not their 54 features with the arm state
+\item SURVEYOR: their drafter is not released; REMORA: hand-written progress atoms
+\item Robometer: zero-shot only, the fine-tuning run never trained
+\end{itemize}
+\item Episode length is strong because of how the episodes end, not because judges are weak in general: on ArmnetBench a failure tends to run to the time limit, so length separates outcomes (0.938); on our own 88 rollouts, where failures do not run to the time limit, length is near chance (0.521) $\rightarrow$ what a judge must beat depends on who stopped the episode
+\item Our inference engine: vla.cpp samples sequentially, with no batching $\rightarrow$ adaptive chunking pays 20 full passes (their 106 ms is batched on an A800); PACT's check time is projected, not measured
+\item Offline only: planning ranked recorded chunks, chunking measured smoothness on recorded episodes; none of these ran in closed loop on the arm
+\end{itemize}
+
+
+
+
+\begin{table*}[t]\centering\footnotesize
+\caption{Each fail or not-proven paper, what we measured, and what on our side may explain it.}
+\begin{tabular}{p{2.8cm}p{1.8cm}p{5.6cm}p{6.6cm}}
+\toprule
+\shissohead failed paper & kind & our result & what may be on our side \\
+\midrule
+LeWorldModel & world model & planning rank 0.60, action-only 0.68--0.90 & one short task, 157 episodes, one seed; offline ranking only \\
+DINO-WM & world model & planning rank 0.61, action-only 0.68--0.90 & same data as LeWorldModel; one training \\
+RoboJEPA & world model & 11.8 \% below copy-last, bar 15 \% & near miss; the 1B model reached 15.8 \% on 30 clips only \\
+H-JEPA & world model & progress ρ $-$0.73, bar $-$0.80; false stalls 52 \% & our task is outside the paper's regime \\
+HWM & world model & not proven: high level worse at 2 s & 0.6 h of one task against their 130 h \\
+ContactGuard & monitor & AUROC 0.70, current latent 0.82 & mixed policies and 2 cameras against one policy and 3 cameras \\
+FAIL-Detect and SAFE & monitor & 22.7 \% of successes flagged at α 5 \% & our score, not theirs; 22 successes for calibration \\
+ReAP & monitor & 3 of 8 failures caught & 8 failures only \\
+VLA-Corrector & monitor & 2 of 8, AUROC 0.59 & our features, not their 54; 8 failures \\
+Robometer & judge & AUROC 0.818, length 0.938 & zero-shot only; ArmnetBench failures run to the time limit (on our rollouts length is near chance) \\
+SURVEYOR & monitor & threshold 1.249 against 0.20; 3 of 8 & their drafter not released; 8 failures \\
+REMORA & monitor & readout flips 0.70 of the per-frame readout & hand-written progress atoms \\
+Adaptive chunking & chunking & 4,751 ms per decision; length 2 in transport and at the grasp & sequential engine, no batching; task at ceiling for our policy \\
+PACT-VLA & chunking & 37 ticks of delay against 8 & check time projected; sequential engine \\
+Real-Time Chunking & chunking & not proven: 71--73 \% smoother, no arm run & offline smoothness only \\
+Horizon $\times$ depth & chunking & not proven: 0.78, bar 0.70 & one policy, one task; arm test not run \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
 \section{Limitations}
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
-\item Data: short tasks, one task family, one arm; nothing on long horizon.
-\item One operator ran the arm and labelled the outcomes, not blind.
-\item Small samples and one training seed in many tests (the n of each test is in the appendix).
-\item A fail on our rig is not a fail on the authors' hardware.
-\item Papers chosen from the stack we run (world models, VLAs, failure monitors, chunking, edge latency): the failure rate describes these papers, not the field.
-\item Our own mistakes are possible: TurboVLA (Section 3).
+\item Data: one short task family (about 11 s per episode), one arm, two cameras, about 34 minutes of demonstrations; nothing on long horizon (several steps, memory) or on varied scenes.
+\item Few failures to test monitors on (8 in the main set of 50).
+\item Several methods are our re-implementation, not the authors' code end to end (Table 3).
+\item Offline tests for planning and chunking; no closed-loop run on the arm for them.
+\item One operator ran the arm and labelled the outcomes, not blind; small samples and one training seed in many tests.
+\item VLA policies have no cheap baseline, only a success rate over 10 trials: a weaker test than the others.
+\item Papers chosen from the stack we run: the rates describe these papers, not the field.
+\item A fail on our rig is not a fail on the authors' hardware; our own mistakes are possible (TurboVLA, Section 3).
 \end{itemize}
 
 
@@ -228,6 +286,6 @@ D-JEPA \citep{arxiv260924749} & $<$\$5k & A decision-aligned ranking operator on
 \rowcolor{shissofail}REMORA \citep{arxiv261039125} & $>$\$20k & Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. & Against per-frame argmax: premature not higher and missed $\leq$ +2 points (P1); flips halved, CI upper $\leq$ 0.7 (P2); a decrease inside $\geq$ 50 \% of the reversal windows with $\leq$ 20 \% false regressions (P3). & premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 $\times$ argmax, CI 0.48--0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 & fail \\
 \bottomrule
 \end{tabular}
-\par\medskip Table 3, continued.
+\par\medskip Table 4, continued.
 \end{table}
 \end{document}

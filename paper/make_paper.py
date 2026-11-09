@@ -104,7 +104,7 @@ def datasets():
     for k, (g, f) in {"tel_eps": ("teleop", "episodes"), "tel_train": ("teleop", "train_episodes"), "tel_val": ("teleop", "val_episodes"),
                       "tel_fps": ("teleop", "fps"), "ro_eps": ("rollouts", "episodes"), "ro_succ": ("rollouts", "success"),
                       "ro_fail": ("rollouts", "failure"), "arm_n": ("armnetbench", "rollouts"), "arm_pol": ("armnetbench", "policies"),
-                      "tim_eps": ("timing", "episodes"), "tim_b": ("timing", "boundaries")}.items():
+                      "tim_eps": ("timing", "episodes"), "ro_p_eps": ("rollouts", "primary_episodes"), "ro_p_fail": ("rollouts", "primary_failure"), "tim_b": ("timing", "boundaries")}.items():
         put(k, f"{d[g][f]:,}", a + f"{g}.{f}")
     t = d["teleop"]
     put("tel_frames", f"{t['frames']:,}", a + "teleop.frames"); put("tel_min", f"{t['frames'] / t['fps'] / 60:.0f}", a + "teleop.frames / fps / 60")
@@ -305,7 +305,7 @@ def to_tex(md):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
             if t[0][0] != "paper" and len(t[0]) >= 4 and max(len(x) for r in t[1:] for x in r[1:]) >= 12:  # wide text table: full width
-                w = {4: [3.0, 4.6, 4.6, 4.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
+                w = {4: [2.8, 1.8, 5.6, 6.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
                 out += [r"\begin{table*}[t]\centering\footnotesize", r"\caption{" + esc(cap) + "}", r"\begin{tabular}{" + "".join(f"p{{{x}cm}}" for x in w) + "}",
                         r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + [" & ".join(r) + r" \\" for r in t[1:]] + \
                        [r"\bottomrule", r"\end{tabular}", r"\end{table*}"]

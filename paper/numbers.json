@@ -171,6 +171,14 @@
   "value": "25",
   "anchor": "data/datasets.json rollouts.failure"
  },
+ "ro_p_eps": {
+  "value": "50",
+  "anchor": "data/datasets.json rollouts.primary_episodes"
+ },
+ "ro_p_fail": {
+  "value": "8",
+  "anchor": "data/datasets.json rollouts.primary_failure"
+ },
  "ro_succ": {
   "value": "44",
   "anchor": "data/datasets.json rollouts.success"
