@@ -4,16 +4,11 @@
 
 ## Abstract
 
-- Most robot-learning papers are tested in simulation or on rigs above $20k: 15 of our 21 papers; 2 under $5k.
-- Question: do their claims still hold on a cheap rig?
-- This is why Shisso Robotics exists: re-test robot-learning papers on hardware a small team can buy, and publish what survives; this paper is the first full report.
-- We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under $50 of cloud GPU.
-- Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference.
-- Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts.
-- Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data.
-- Result: 12 claims hold, 18 fail, 7 are not settled.
-- Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints.
-- All 7 failure monitors and judges fail, but most of these fails have a cause on our side: few failures in our data, and re-implementations.
+- Most robot-learning papers are tested in simulation or on rigs above $20k (15 of our 21).
+- We re-tested 37 of their claims on a rig of about €1,500: an SO-101 arm and a Jetson Orin NX.
+- For each claim, the bar is fixed before the test and the cheapest baseline is run first.
+- 12 claims hold and 18 fail, in three ways: too slow for the edge GPU, judges that lose to episode length, latents that lose to the commanded joints.
+- Many fails trace back to our small, short-task data as much as to the methods.
 - Code, data and every number are public.
 
 ## 1. Introduction
@@ -21,12 +16,6 @@
 - 15 of 21 papers shown in simulation or on a rig above $20k; 2 on a rig under $5k like ours.
 - A small team has to guess, or re-test every claim itself, which is slow and costly.
 - This paper: re-test the claims, one at a time, on one cheap rig.
-- Shisso Robotics, the lab behind this paper, exists for this:
-  - the name: 質素 (shisso), Japanese for frugal, modest
-  - the aim: like an open hub for papers, show which methods are useful on a low-cost setup, so a small team does not have to buy a Franka to find out
-  - three conditions for every test: hardware anyone can buy; the cheapest baseline first; the bar fixed before the run
-  - every test is published with its code and data: one page per paper on shissorobotics.com, code in the public repository paper-vs-hardware
-  - this paper gathers the first 21 papers in one place
 - Example, adaptive chunking:
   - idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
   - one decision needs 20 sampled chunks → 4,751 ms on the Orin, budget 298 ms → fail
@@ -53,7 +42,6 @@
   - failure monitors and judges (7): say whether an episode fails or how far it has progressed; we test whether they catch failures better than a trivial signal
   - VLA policies (3): follow an instruction on the arm; we test whether they succeed on our arm, over 10 trials judged by the operator
   - chunking and edge inference (4): how a policy's action chunks are produced and joined; we test smoother joins and the time per chunk on the Orin
-- These are Shisso's three conditions: the rig of Section 2, then two rules.
 - Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
 - Rule 2: before the method, the cheapest baseline of its kind, on the same data (Table 1):
   - built from what we already have for free: the last frame, the joint values we send, the length of the episode, or the method with its trick switched off
@@ -166,7 +154,6 @@ Table 3: Each fail or not-proven paper, what we measured, and what on our side m
 - Several lost to a baseline with no learning: copy-last, the joints, episode length.
 - Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
 - Everything is public and every number can be rebuilt from the repository.
-- Shisso keeps going: each new paper is tested the same way and published on shissorobotics.com with its code.
 - An invitation: authors who think a fail is ours (Table 3) can tell us, and other people with a cheap rig can run the same tests.
 
 ## References

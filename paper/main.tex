@@ -16,7 +16,7 @@
 
 
 
-\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item This is why Shisso Robotics exists: re-test robot-learning papers on hardware a small team can buy, and publish what survives; this paper is the first full report. \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under \$50 of cloud GPU. \item Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item All 7 failure monitors and judges fail, but most of these fails have a cause on our side: few failures in our data, and re-implementations. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k (15 of our 21). \item We re-tested 37 of their claims on a rig of about €1,500: an SO-101 arm and a Jetson Orin NX. \item For each claim, the bar is fixed before the test and the cheapest baseline is run first. \item 12 claims hold and 18 fail, in three ways: too slow for the edge GPU, judges that lose to episode length, latents that lose to the commanded joints. \item Many fails trace back to our small, short-task data as much as to the methods. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{Introduction}
 
 
@@ -24,14 +24,6 @@
 \item 15 of 21 papers shown in simulation or on a rig above \$20k; 2 on a rig under \$5k like ours.
 \item A small team has to guess, or re-test every claim itself, which is slow and costly.
 \item This paper: re-test the claims, one at a time, on one cheap rig.
-\item Shisso Robotics, the lab behind this paper, exists for this:
-\begin{itemize}\setlength{\itemsep}{0pt}
-\item the name: {\jpfont 質素} (shisso), Japanese for frugal, modest
-\item the aim: like an open hub for papers, show which methods are useful on a low-cost setup, so a small team does not have to buy a Franka to find out
-\item three conditions for every test: hardware anyone can buy; the cheapest baseline first; the bar fixed before the run
-\item every test is published with its code and data: one page per paper on shissorobotics.com, code in the public repository paper-vs-hardware
-\item this paper gathers the first 21 papers in one place
-\end{itemize}
 \item Example, adaptive chunking:
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
@@ -72,7 +64,6 @@
 \item VLA policies (3): follow an instruction on the arm; we test whether they succeed on our arm, over 10 trials judged by the operator
 \item chunking and edge inference (4): how a policy's action chunks are produced and joined; we test smoother joins and the time per chunk on the Orin
 \end{itemize}
-\item These are Shisso's three conditions: the rig of Section 2, then two rules.
 \item Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
 \item Rule 2: before the method, the cheapest baseline of its kind, on the same data (Table 1):
 \begin{itemize}\setlength{\itemsep}{0pt}
@@ -243,7 +234,6 @@ Horizon $\times$ depth & chunking & not proven: 0.78, bar 0.70 & one policy, one
 \item Several lost to a baseline with no learning: copy-last, the joints, episode length.
 \item Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
 \item Everything is public and every number can be rebuilt from the repository.
-\item Shisso keeps going: each new paper is tested the same way and published on shissorobotics.com with its code.
 \item An invitation: authors who think a fail is ours (Table 3) can tell us, and other people with a cheap rig can run the same tests.
 \end{itemize}
 
