@@ -79,6 +79,18 @@ def register():
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
     put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
+    fam = {"world models": ["LeWorldModel", "DINO-WM", "RoboJEPA", "H-JEPA", "D-JEPA", "HWM (hierarchical latent world models)", "LeJEPA identifiability"],
+           "failure monitors and judges": ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"],
+           "VLA policies": ["SmolVLA", "VLA-JEPA", "REKI"],
+           "chunking and edge inference": ["Real-Time Chunking", "Adaptive Action Chunking (AAC)", "PACT-VLA", "Horizon × depth (Euler steps vs execution horizon)"]}
+    names = [p["paper"] for p in papers]
+    flat = [n for v in fam.values() for n in v]
+    assert sorted(flat) == sorted(names), (set(names) ^ set(flat))
+    fa = "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam)"
+    for k, key in (("world models", "f_wm"), ("failure monitors and judges", "f_mon"), ("VLA policies", "f_vla"), ("chunking and edge inference", "f_chunk")):
+        put(key, str(len(fam[k])), fa + f", {k}")
+        vc = collections.Counter(p["verdict"] for p in papers if p["paper"] in fam[k])
+        put(key + "_v", ", ".join(f"{vc[v]} {w}" for v, w in (("reproduces", "reproduce"), ("fail", "fail"), ("not proven", "not proven"), ("not tested", "not tested")) if vc[v]), fa + f", {k}: verdict counts")
     datasets()
     rig = (REG / "rig.yaml").read_text()
     eur = [int(x) for x in re.findall(r"^\s+price_eur: (\d+)\s*$", rig, re.M)]
@@ -213,6 +225,8 @@ def figures():
 
 def main():
     table = register()
+    put("rig_eur_round", "1,500", f"repro/register/expected/rig.yaml: priced parts sum to {N['rig_eur']}; {N['rig_unpriced']} small parts unpriced; rounded up")
+    put("cost_round", "50", f"cost {N['cost']} rounded up to the next 10 (written 'under $50')")
     tpl = (HERE / "DRAFT_4p.md.in").read_text()
     missing = set(re.findall(r"\{\{(\w+)\}\}", tpl)) - N.keys() - {"TABLE1"}
     assert not missing, f"placeholders without a value: {sorted(missing)}"
@@ -290,6 +304,12 @@ def to_tex(md):
                 if not set(lines[i]) <= set("|-: "):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
+            if t[0][0] != "paper" and len(t[0]) >= 4 and max(len(x) for r in t[1:] for x in r[1:]) >= 12:  # wide text table: full width
+                w = {4: [3.0, 4.6, 4.6, 4.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
+                out += [r"\begin{table*}[t]\centering\footnotesize", r"\caption{" + esc(cap) + "}", r"\begin{tabular}{" + "".join(f"p{{{x}cm}}" for x in w) + "}",
+                        r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + [" & ".join(r) + r" \\" for r in t[1:]] + \
+                       [r"\bottomrule", r"\end{tabular}", r"\end{table*}"]
+                continue
             if t[0][0] != "paper":  # small count tables: one column, one float
                 out += [r"\begin{table}[t]\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}", r"\caption{" + esc(cap) + "}",
                         (r"\resizebox{\columnwidth}{!}{" if len(t[0]) >= 5 else "") + r"\begin{tabular}{" + ("l" + "r" * (len(t[0]) - 1) if max(len(x) for r in t[1:] for x in r[1:]) < 12 else "p{1.6cm}" + "p{2.6cm}" * (len(t[0]) - 1)) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \

@@ -1,4 +1,4 @@
-# What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,350 rig
+# What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted. SKELETON: each section below is a list of facts for the author to write in his own words; tables, figure and appendix are final.*
 
@@ -6,12 +6,13 @@
 
 - Most robot-learning papers are tested in simulation or on rigs above $20k: 15 of our 21 papers; 2 under $5k.
 - Question: do their claims still hold on a cheap rig?
-- We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (€1,350 of parts), with $42.30 of cloud GPU.
+- We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under $50 of cloud GPU.
+- Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference.
 - Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts.
 - Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data.
 - Result: 12 claims hold, 18 fail, 7 are not settled.
 - Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints.
-- Advice: start any re-test from the cheapest baseline.
+- All 7 failure monitors and judges fail; all 3 VLA policies reproduce.
 - Code, data and every number are public.
 
 ## 1. Introduction
@@ -28,7 +29,7 @@
 
 ## 2. Rig and data
 
-- Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs.
+- Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs. Exact cost: €1,350 for the priced parts (2 small parts not priced yet), $42.30 of cloud GPU.
 - Teleoperated demonstrations (`so101_bowls_all_trimmed`): 182 episodes, 61,462 frames at 30 fps (about 34 minutes); two short bowl tasks (one bowl into another); split 157 train / 25 validation episodes. Used to train and test the world models and VLAs.
 - Policy rollouts (`so101-bowls-policy-rollouts`): 69 episodes of our trained policies on the arm, 44 successes and 25 failures, labelled by the operator. Used for the failure monitors.
 - ArmnetBench [arXiv:2607.24481]: 2,099 public labelled SO-101 rollouts from 7 policies. Used for the reward models and judges.
@@ -38,10 +39,17 @@
   - one task family, one arm, one room
   - outcome labels from one operator, not blind
 
-## 3. How we test
+## 3. What we tested and how
 
+- Four kinds of papers, chosen from the stack our rig runs (Table 1):
+  - world models (7): learn a latent from the camera to predict the next state or plan; we test whether the latent predicts or plans better than a signal we get for free
+  - failure monitors and judges (7): say whether an episode fails or how far it has progressed; we test whether they catch failures better than a trivial signal
+  - VLA policies (3): follow an instruction on the arm; we test whether they succeed on our arm, over 10 trials judged by the operator
+  - chunking and edge inference (4): how a policy's action chunks are produced and joined; we test smoother joins and the time per chunk on the Orin
 - Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
-- Rule 2: the cheapest baseline first, on the same data (Table 1); if the method loses to it, the bar barely matters.
+- Rule 2: before the method, the cheapest baseline of its kind, on the same data (Table 1):
+  - built from what we already have for free: the last frame, the joint values we send, the length of the episode, or the method with its trick switched off
+  - if the method loses to it, the bar barely matters
 - Verdicts: holds (bar met), fails (bar missed), not proven (test ran, cannot decide), not tested (planned).
 - A fail can be our fault, so we run a control. Example, TurboVLA (our mistake):
   - we thought the architecture made our port of the policy ignore its instruction
@@ -49,19 +57,21 @@
   - upstream's own trainer on our data: 0.020°; their released LIBERO checkpoint on our rig: 5.5°
   - → our data, not their architecture; we withdrew the claim, and it is not counted here
 
-Table 1: The cheapest baseline for each kind of method, run on the same data before the method.
+Table 1: The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.
 
-| method | cheapest baseline | why it is a fair test |
-|---|---|---|
-| state predictor | copy-last: the next state is the current one | costs nothing |
-| learned latent | the commanded joint values | the arm's state is already in them |
-| success or failure judge | episode length | on our rig it already says a lot about the outcome |
+| kind of paper | papers | what we test | cheapest baseline | verdicts |
+|---|---|---|---|---|
+| world models | 7 | predict the next state; rank or plan actions | copy-last (next state = current state); the commanded joints or the actions alone | 1 reproduce, 4 fail, 1 not proven, 1 not tested |
+| failure monitors and judges | 7 | catch failures; track progress | episode length; the same model with shuffled actions | 7 fail |
+| VLA policies | 3 | succeed on our arm | none cheaper: a success rate fixed before 10 trials | 3 reproduce |
+| chunking and edge inference | 4 | smoother joins between chunks; time per chunk | the same policy without the trick; the real-time budget on the Orin | 2 fail, 2 not proven |
 
 ## 4. Results
 
-- Figure 1 and Table 2.
+- Figure 1 and Table 2; by kind of paper in Table 1.
 - Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
 - Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
+- Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce.
 - Every paper, with its claim, bar and our result: appendix.
 
 ![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes: the clock, zero-shot judges against a trivial signal, and learned latents against the commanded joints.](fig/verdicts.png)
@@ -102,7 +112,7 @@ Table 2: Verdicts by paper and by claim.
 
 ## 8. Conclusion
 
-- 37 claims from 21 papers on a €1,350 rig, $42.30 of cloud GPU → 12 hold.
+- 37 claims from 21 papers on a rig of about €1,500, under $50 of cloud GPU → 12 hold.
 - Several lost to a baseline with no learning: copy-last, the joints, episode length.
 - Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
 - Everything is public and every number can be rebuilt from the repository.

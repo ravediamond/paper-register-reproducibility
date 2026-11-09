@@ -43,6 +43,10 @@
   "value": "42.30",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), sum of cost_usd"
  },
+ "cost_round": {
+  "value": "50",
+  "anchor": "cost 42.30 rounded up to the next 10 (written 'under $50')"
+ },
  "ex_a_bar": {
   "value": "298 ms",
   "anchor": "repro/register/expected/register.json claims, id C-019-3, bar: '≤ 298 ms'"
@@ -71,6 +75,38 @@
   "value": "0.60",
   "anchor": "repro/register/expected/register.json claims, id C-001-2, ours: '0.60 vs 0.68–0.90 action-only'"
  },
+ "f_chunk": {
+  "value": "4",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), chunking and edge inference"
+ },
+ "f_chunk_v": {
+  "value": "2 fail, 2 not proven",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), chunking and edge inference: verdict counts"
+ },
+ "f_mon": {
+  "value": "7",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), failure monitors and judges"
+ },
+ "f_mon_v": {
+  "value": "7 fail",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), failure monitors and judges: verdict counts"
+ },
+ "f_vla": {
+  "value": "3",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), VLA policies"
+ },
+ "f_vla_v": {
+  "value": "3 reproduce",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), VLA policies: verdict counts"
+ },
+ "f_wm": {
+  "value": "7",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models"
+ },
+ "f_wm_v": {
+  "value": "1 reproduce, 4 fail, 1 not proven, 1 not tested",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models: verdict counts"
+ },
  "p_fail": {
   "value": "13",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), verdict = fail"
@@ -98,6 +134,10 @@
  "rig_eur": {
   "value": "1,350",
   "anchor": "repro/register/expected/rig.yaml, sum of price_eur (parts with a stated price)"
+ },
+ "rig_eur_round": {
+  "value": "1,500",
+  "anchor": "repro/register/expected/rig.yaml: priced parts sum to 1,350; 2 small parts unpriced; rounded up"
  },
  "rig_far": {
   "value": "15",

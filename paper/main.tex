@@ -8,14 +8,14 @@
 \shissorepo{github.com/ravediamond/paper-register-reproducibility}
 \input{shisso_commit}
 \begin{document}
-\title{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,350 rig}
+\title{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}
 \author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}
 \date{}
 
 
 
 
-\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,350 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (€1,350 of parts), with \$42.30 of cloud GPU. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item Advice: start any re-test from the cheapest baseline. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (about €1,500 of parts), with under \$50 of cloud GPU. \item Four kinds of papers: world models, failure monitors and judges, VLA policies, chunking and edge inference. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item All 7 failure monitors and judges fail; all 3 VLA policies reproduce. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{Introduction}
 
 
@@ -38,7 +38,7 @@
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
-\item Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs.
+\item Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs. Exact cost: €1,350 for the priced parts (2 small parts not priced yet), \$42.30 of cloud GPU.
 \item Teleoperated demonstrations (\texttt{so101\_bowls\_all\_trimmed}): 182 episodes, 61,462 frames at 30 fps (about 34 minutes); two short bowl tasks (one bowl into another); split 157 train / 25 validation episodes. Used to train and test the world models and VLAs.
 \item Policy rollouts (\texttt{so101-bowls-policy-rollouts}): 69 episodes of our trained policies on the arm, 44 successes and 25 failures, labelled by the operator. Used for the failure monitors.
 \item ArmnetBench \citep{arxiv260724481}: 2,099 public labelled SO-101 rollouts from 7 policies. Used for the reward models and judges.
@@ -52,12 +52,23 @@
 \end{itemize}
 
 
-\section{How we test}
+\section{What we tested and how}
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item Four kinds of papers, chosen from the stack our rig runs (Table 1):
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item world models (7): learn a latent from the camera to predict the next state or plan; we test whether the latent predicts or plans better than a signal we get for free
+\item failure monitors and judges (7): say whether an episode fails or how far it has progressed; we test whether they catch failures better than a trivial signal
+\item VLA policies (3): follow an instruction on the arm; we test whether they succeed on our arm, over 10 trials judged by the operator
+\item chunking and edge inference (4): how a policy's action chunks are produced and joined; we test smoother joins and the time per chunk on the Orin
+\end{itemize}
 \item Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
-\item Rule 2: the cheapest baseline first, on the same data (Table 1); if the method loses to it, the bar barely matters.
+\item Rule 2: before the method, the cheapest baseline of its kind, on the same data (Table 1):
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item built from what we already have for free: the last frame, the joint values we send, the length of the episode, or the method with its trick switched off
+\item if the method loses to it, the bar barely matters
+\end{itemize}
 \item Verdicts: holds (bar met), fails (bar missed), not proven (test ran, cannot decide), not tested (planned).
 \item A fail can be our fault, so we run a control. Example, TurboVLA (our mistake):
 \begin{itemize}\setlength{\itemsep}{0pt}
@@ -71,28 +82,29 @@
 
 
 
-\begin{table}[t]\centering\footnotesize
-\setlength{\tabcolsep}{4pt}
-\caption{The cheapest baseline for each kind of method, run on the same data before the method.}
-\begin{tabular}{p{1.6cm}p{2.6cm}p{2.6cm}}
+\begin{table*}[t]\centering\footnotesize
+\caption{The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.}
+\begin{tabular}{p{3.0cm}p{1.1cm}p{4.0cm}p{5.2cm}p{3.6cm}}
 \toprule
-\shissohead method & cheapest baseline & why it is a fair test \\
+\shissohead kind of paper & papers & what we test & cheapest baseline & verdicts \\
 \midrule
-state predictor & copy-last: the next state is the current one & costs nothing \\
-learned latent & the commanded joint values & the arm's state is already in them \\
-success or failure judge & episode length & on our rig it already says a lot about the outcome \\
+world models & 7 & predict the next state; rank or plan actions & copy-last (next state = current state); the commanded joints or the actions alone & 1 reproduce, 4 fail, 1 not proven, 1 not tested \\
+failure monitors and judges & 7 & catch failures; track progress & episode length; the same model with shuffled actions & 7 fail \\
+VLA policies & 3 & succeed on our arm & none cheaper: a success rate fixed before 10 trials & 3 reproduce \\
+chunking and edge inference & 4 & smoother joins between chunks; time per chunk & the same policy without the trick; the real-time budget on the Orin & 2 fail, 2 not proven \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 
 \section{Results}
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
-\item Figure 1 and Table 2.
+\item Figure 1 and Table 2; by kind of paper in Table 1.
 \item Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
 \item Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
+\item Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce.
 \item Every paper, with its claim, bar and our result: appendix.
 \end{itemize}
 
@@ -159,7 +171,7 @@ not tested & 1 & 4 \\
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
-\item 37 claims from 21 papers on a €1,350 rig, \$42.30 of cloud GPU $\rightarrow$ 12 hold.
+\item 37 claims from 21 papers on a rig of about €1,500, under \$50 of cloud GPU $\rightarrow$ 12 hold.
 \item Several lost to a baseline with no learning: copy-last, the joints, episode length.
 \item Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
 \item Everything is public and every number can be rebuilt from the repository.
