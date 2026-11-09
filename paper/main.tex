@@ -9,20 +9,21 @@
 \shissorepo{github.com/ravediamond/paper-register-reproducibility}
 \input{shisso_commit}
 \begin{document}
-\title{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}
+\title{What survives on a small team's rig: re-testing 21 robot-learning papers with cheap hardware and little data}
 \author{Ravindu Somawansa\\Shisso Robotics\\\texttt{ravindu.somawansa@shissorobotics.com}\thanks{Every number with its source file: \texttt{github.com/ravediamond/paper-register-reproducibility}.}}
 \date{}
 
 
 
 
-\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k (15 of our 21). \item We re-tested 37 of their claims on a rig of about €1,500: an SO-101 arm and a Jetson Orin NX. \item For each claim, the bar is fixed before the test and the cheapest baseline is run first. \item 12 claims hold and 18 fail, in three ways: too slow for the edge GPU, judges that lose to episode length, latents that lose to the commanded joints. \item Many fails trace back to our small, short-task data as much as to the methods. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives on a small team's rig: re-testing 21 robot-learning papers with cheap hardware and little data}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k (15 of our 21). \item We re-tested 37 of their claims on a rig of about €1,500: an SO-101 arm and a Jetson Orin NX. \item For each claim, the bar is fixed before the test and the cheapest baseline is run first. \item 12 claims hold and 18 fail, in three ways: too slow for the edge GPU, judges that lose to episode length, latents that lose to the commanded joints. \item Many fails trace back to our small, short-task data as much as to the methods. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{Introduction}
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
 \item 15 of 21 papers shown in simulation or on a rig above \$20k; 2 on a rig under \$5k like ours.
 \item A small team has to guess, or re-test every claim itself, which is slow and costly.
+\item The question: does a claim hold for a small team, with cheap hardware, little data and short tasks?
 \item This paper: re-test the claims, one at a time, on one cheap rig.
 \item Example, adaptive chunking:
 \begin{itemize}\setlength{\itemsep}{0pt}

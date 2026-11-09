@@ -1,4 +1,4 @@
-# What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,500 rig
+# What survives on a small team's rig: re-testing 21 robot-learning papers with cheap hardware and little data
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted. SKELETON: each section below is a list of facts for the author to write in his own words; tables, figure and appendix are final.*
 
@@ -15,6 +15,7 @@
 
 - 15 of 21 papers shown in simulation or on a rig above $20k; 2 on a rig under $5k like ours.
 - A small team has to guess, or re-test every claim itself, which is slow and costly.
+- The question: does a claim hold for a small team, with cheap hardware, little data and short tasks?
 - This paper: re-test the claims, one at a time, on one cheap rig.
 - Example, adaptive chunking:
   - idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
