@@ -248,6 +248,7 @@ SUB = [("\\", r"\textbackslash{}"), ("&", r"\&"), ("%", r"\%"), ("$", r"\$"), ("
 def esc(s):
     for a, b in SUB:
         s = s.replace(a, b)
+    s = re.sub(r"([\u3040-\u30ff\u4e00-\u9fff]+)", r"{\\jpfont \1}", s)  # Japanese (the lab's name)
     s = re.sub(r"\[@(\d{4})\.(\d{4,5})\]", r"\\citep{arxiv\1\2}", s)
     s = re.sub(r"`([^`]*)`", r"\\texttt{\1}", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"\\textbf{\1}", s)
@@ -268,7 +269,7 @@ COLS = r"p{2.2cm}p{0.95cm}p{3.95cm}p{3.7cm}p{3.7cm}p{1.15cm}"
 
 def to_tex(md):
     out = [r"\documentclass[10pt,twocolumn]{article}", r"\usepackage[margin=0.75in]{geometry}", r"\usepackage{booktabs}",
-           r"\usepackage{graphicx}", r"\usepackage[numbers]{natbib}", r"\usepackage{style/shisso}", r"\usepackage{listings}\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,frame=tb,framerule=0.3pt,aboveskip=4pt,belowskip=4pt,upquote=true}",
+           r"\usepackage{graphicx}", r"\usepackage[numbers]{natbib}", r"\usepackage{style/shisso}", r"\IfFontExistsTF{Noto Serif CJK JP}{\newfontfamily\jpfont{Noto Serif CJK JP}}{\newcommand\jpfont{}}", r"\usepackage{listings}\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,frame=tb,framerule=0.3pt,aboveskip=4pt,belowskip=4pt,upquote=true}",
            r"\shissorepo{github.com/ravediamond/paper-register-reproducibility}", r"\input{shisso_commit}", r"\begin{document}"]
     lines, i, abstract, cap, appendix = md.splitlines(), 0, False, "", False
     while i < len(lines):

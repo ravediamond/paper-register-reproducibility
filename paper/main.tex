@@ -4,6 +4,7 @@
 \usepackage{graphicx}
 \usepackage[numbers]{natbib}
 \usepackage{style/shisso}
+\IfFontExistsTF{Noto Serif CJK JP}{\newfontfamily\jpfont{Noto Serif CJK JP}}{\newcommand\jpfont{}}
 \usepackage{listings}\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,keepspaces=true,frame=tb,framerule=0.3pt,aboveskip=4pt,belowskip=4pt,upquote=true}
 \shissorepo{github.com/ravediamond/paper-register-reproducibility}
 \input{shisso_commit}
@@ -25,7 +26,7 @@
 \item This paper: re-test the claims, one at a time, on one cheap rig.
 \item Shisso Robotics, the lab behind this paper, exists for this:
 \begin{itemize}\setlength{\itemsep}{0pt}
-\item the name: 質素 (shisso), Japanese for frugal, modest
+\item the name: {\jpfont 質素} (shisso), Japanese for frugal, modest
 \item the aim: like an open hub for papers, show which methods are useful on a low-cost setup, so a small team does not have to buy a Franka to find out
 \item three conditions for every test: hardware anyone can buy; the cheapest baseline first; the bar fixed before the run
 \item every test is published with its code and data: one page per paper on shissorobotics.com, code in the public repository paper-vs-hardware
