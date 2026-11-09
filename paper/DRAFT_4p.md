@@ -1,28 +1,55 @@
-# What survives when a paper leaves the lab: re-testing 22 robot-learning papers on a €1,350 rig, and auditing our own pre-registration
+# What survives when a paper leaves the lab: re-testing 22 robot-learning papers on a €1,350 rig
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted.*
 
 ## Abstract
 
-12 of the 37 paper claims we tested were valid on our hardware, an SO-101 arm with a Jetson Orin NX. The pieces cost €1,350 and the compute $45.10. For each claim we ran the cheapest baseline first and committed the pass mark before the test. The failures fall into three classes. Some methods miss the real-time budget on the edge GPU. Some zero-shot judges lose to a trivial signal. Some latent planners lose to the commanded joints. We propose these classes. We also read the commit history of our own gates. For most of them the bar comes before the result. For some the history does not show the order.
+Most robot-learning papers are shown in simulation or on rigs that cost more than $20k. We took 37 claims from 22 of them and re-tested each one on an SO-101 arm with a Jetson Orin NX, about €1,350 of parts and $45.10 of compute. 12 held and 18 failed. Before every test we committed the pass mark and ran the cheapest baseline the method had to beat on the same rows. The failures fall into three classes, which we propose: methods too slow for the real-time budget of the edge GPU, zero-shot judges beaten by a trivial signal such as episode length, and latent planners beaten by the commanded joints. The register, its rows and the code that rebuilds every number are public.
 
-## 1. The register
-
-![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in 58 of 87 and the result first in 0.](fig/verdicts.png)
+## 1. Introduction
 
 Our rig is an SO-101 arm and a Jetson Orin NX 16 GB. Most of the 22 papers in this study were shown on setups far from it. 9 were shown in simulation and 7 on rigs above $20k. 2 used a setup under $5k, which is where our rig falls. The appendix table gives the rig of each paper, including the 3 in between and the 1 that does not say.
 
-The register grew out of our own write-ups. Each re-test on this rig was published with its data, and there are 29 so far. This paper collects them in one table and audits how the table was kept.
+The question is simple: when a claim leaves the lab it was shown in, does it still hold on hardware a small team can buy? The register is our answer, one row per claim. It grew out of our own write-ups. Each re-test on this rig was published with its data, and there are 29 so far. This paper collects them in one table.
 
 Here is one entry. An adaptive chunking paper claims that choosing the chunk length from the entropy of sampled chunks follows the task's phases, long in transport and short at the grasp. On our edge GPU one such decision takes 4,751 ms. The budget is 298 ms. The entry records a fail on this rig. It says nothing about the method on the hardware it was shown on. Next to the verdict, the entry keeps the claim in the paper's words, our pass mark, our measurement and the published rows.
 
-For each claim we first run the cheapest signal the learned model has to beat, on the same rows. For a predictor this is copy-last. For a latent it is the commanded joints. For a judge it is episode length.
+## 2. How an entry is made
+
+Every entry follows the same two rules. First, the pass mark is written down and committed to version control before the test runs. Second, before the learned model, we run the cheapest signal it has to beat, on the same rows. For a predictor this is copy-last. For a latent it is the commanded joints. For a judge it is episode length. Section 5 checks from the commit history how well we kept the first rule.
 
 We chose the papers for the stack this rig runs (world models, VLA policies, failure monitors, chunking, edge latency), so the failure rate describes this register and not the field. The register file has every paper we have tested and every paper scheduled next, entered before its test.
 
-## 2. Auditing our own pre-registration
+## 3. Results
 
-A gate's pass mark had to be in version control before its result. Notes and commit dates can be edited by hand. Commit ancestry cannot be changed without rewriting history that others have already cloned. For each gate we find the first commit that contains its bar and the first that contains its result, and compare them (`repro/prereg-check/scripts/prereg_audit.py`, abridged):
+![Fig. 1 — what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in 58 of 87 and the result first in 0.](fig/verdicts.png)
+
+Table 3 counts the verdicts by paper and by claim row, and the appendix gives every row.
+
+> **Finding.** On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
+
+Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
+
+| verdict | papers | claim rows |
+|---|---|---|
+| reproduces | 4 | 17 |
+| fails | 13 | 20 |
+| not proven | 3 | 3 |
+| not tested | 1 | 4 |
+| withdrawn | 1 | 1 |
+| total | 22 | 45 |
+
+## 4. Three failure classes
+
+The adaptive chunking entry of §1 misses the real-time budget on the edge GPU. The method may work on faster hardware. We call this kind of failure class A, the clock.
+
+In the second case a model judged outcomes without training on this rig. We ran a learned reward model as a failure detector and it reached an AUROC of 0.818. Episode length alone reaches 0.938. We call judges of success, failure or progress that lose to a trivial signal like this class B. Class C is about learned latents. A world model ranked the executed chunk first in 0.60 of anchors, against a pass mark of 0.8, and an action-only baseline reaches 0.68–0.90. Class C holds latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline.
+
+These examples illustrate the classes and do not count them. The classes are our proposal, drawn from the author's reading of the 20 failed rows.
+
+## 5. Can the register be trusted?
+
+A verdict is only worth something if the pass mark came before the result. Notes and commit dates can be edited by hand. Commit ancestry cannot be changed without rewriting history that others have already cloned. For each gate we find the first commit that contains its bar and the first that contains its result, and compare them (`repro/prereg-check/scripts/prereg_audit.py`, abridged):
 
 ```python
 def ancestor(a, b):
@@ -36,7 +63,7 @@ def ancestor(a, b):
                 cls = "result-first"
 ```
 
-Table 1 gives the classes for the 87 gates that ran and were logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together. It says nothing about which was written first. The log has 2 more gates that are not in the table because we did not run them: one was superseded by a later test, and we dropped the other because neither of its outcomes would have changed what we built.
+Table 1 gives the classes for the 87 gates that ran and were logged by 2026-10-31. Most are bar-first and 0 are result-first. A same-commit gate is one where bar and result entered the repository together, so it says nothing about which was written first. A first pass by text search found 31 same-commit gates, mostly from batch logging; going back to the earlier files that hold their bars moved 21 of them to bar-first and 4 to no-bar. The audit table in the repository gives the evidence line for every move.
 
 Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
 
@@ -49,9 +76,7 @@ Table 1: Commit-order class of each gate. The audited column is the one the pape
 | unresolved | 1 | — | — |
 | gates | 87 | 87 | 91 |
 
-The first pass used text search and found 31 same-commit gates, which came from batch logging. For each one we went back to the earlier file that holds its bar. 21 gates moved to bar-first and 4 to no-bar, because their bar cell declares none. 6 stayed same-commit. The audit table in the repository gives the evidence line for every move. We did not re-audit the gates that were already bar-first. The reward-model progress test of 2026-11-01 is still open. Text search calls it same-commit. Its protocol (`6241570`) is older than the log commit.
-
-The early gates mixed point estimates and different intervals. We recomputed 10 of them from stored rows with one statistic, the episode bootstrap (2,000 resamples, percentile 95 % CI). For 3 of them the bar falls inside the interval (Table 2). The colour judge is a fail on the point estimate, and its interval does not settle it. The false-intervention threshold was fitted to meet its rate, so that interval is only descriptive. The register keeps the pre-registered point verdicts and marks these three as fragile.
+The early gates mixed point estimates and different intervals. We recomputed 10 of them from stored rows with one statistic, the episode bootstrap (2,000 resamples, percentile 95 % CI). For 3 of them the bar falls inside the interval (Table 2). The register keeps the pre-registered point verdicts and marks these three as fragile.
 
 Table 2: The three gates whose verdict flips somewhere inside its 95 % interval.
 
@@ -75,41 +100,15 @@ L0 PASS
 
 We ran the cold reruns from a fresh clone with no credentials. 6 gates reran and matched, 5 of them exactly. 12 more stop at the world-model environment, which is not published yet, and publishing it would unblock most of them. For the remaining 11 we need a larger GPU, a private checkpoint or the arm, or the write-up leaves out a step. We also checked the register's citations and paper-side fields against the papers' PDFs, and corrected them. The register names 38 arXiv ids. The ids missing from our papers mirror all belong to scheduled tests. One tested paper has no arXiv id, so we could not check it against a PDF.
 
-## 3. Results
-
-Table 3 counts the verdicts by paper and by claim row.
-
-> **Finding.** On claims taken from papers, 12 of 37 reproduce and 18 fail. The other 8 rows test our own baselines, for example that the commanded joints beat the world model. 5 of those hold.
-
-
-Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
-
-| verdict | papers | claim rows |
-|---|---|---|
-| reproduces | 4 | 17 |
-| fails | 13 | 20 |
-| not proven | 3 | 3 |
-| not tested | 1 | 4 |
-| withdrawn | 1 | 1 |
-| total | 22 | 45 |
-
-## 4. Three failure classes
-
-The adaptive chunking entry of §1 misses the real-time budget on the edge GPU. The method may work on faster hardware. We call this kind of failure class A, the clock.
-
-In the second case a model judged outcomes without training on this rig. We ran a learned reward model as a failure detector and it reached an AUROC of 0.818. Episode length alone reaches 0.938. We call judges of success, failure or progress that lose to a trivial signal like this class B. Class C is about learned latents. A world model ranked the executed chunk first in 0.60 of anchors, against a pass mark of 0.8, and an action-only baseline reaches 0.68–0.90. Class C holds latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline.
-
-These examples illustrate the classes and do not count them. The classes are our proposal, drawn from the author's reading of the 20 failed rows.
-
-## 5. Limitations
+## 6. Limitations
 
 One operator, the author, ran the rig and labelled the outcomes. Labels were given at rest and not always blind to the arm. Observer bias is therefore the main confound. Where commit order shows it, the pass mark predates the run, so a label could not move the bar. For 29 of the 87 gates the repository cannot show whether bar or result came first. 21 of the bar-first verdicts rest on matching a bar text in an earlier file. Under the bootstrap 3 verdicts are fragile. Cold reruns cover 6 gates so far. The unpublished world-model environment blocks most of the rest.
 
-## 6. Related work
+## 7. Related work
 
 Two works use the same arm to evaluate policies. One is a standardized real-world benchmark that reports a taxonomy of failures and recoveries for VLA policies [arXiv:2606.08881]. The other runs a fleet of SO-101 cells and evaluates policies at scale [arXiv:2607.24481]. The vla-eval tool runs VLAs across 14 simulation benchmarks [arXiv:2603.13966], and a benchmark of demonstration quality studies one method family [arXiv:2610.18869]. We do something different. We test the claims behind methods (judges, world models, latency) against thresholds fixed before the run, and we audit our own pre-registration. The closest work is RoboSeed [arXiv:2610.40026]. It scores VLA and world-action models on five dimensions, including reproduction evidence and deployment affordability. The reproduction-evidence score counts five audit milestones: configuration mapping, task records, task coverage, training records and seeds. Its authors state that the score is not a probability that a result is correct. We give one pass or fail per claim on a €1,350 rig.
 
-## 7. Conclusion
+## 8. Conclusion
 
 > **Conclusion.** We re-tested 37 paper claims on this rig, and 12 of them held. The rig cost €1,350 and the compute $45.10. Every row behind the verdicts is published. Every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). For 29 of 87 gates our history does not show the order of bar and result. Re-testing a paper on a cheap rig starts with its cheapest baseline on the same rows, with the threshold committed before the run.
 
