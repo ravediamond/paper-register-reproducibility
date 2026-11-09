@@ -15,46 +15,58 @@
 
 
 
-\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,350 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{- Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. - Question: do their claims still hold on a cheap rig? - We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (€1,350 of parts), with \$42.30 of cloud GPU. - Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. - Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. - Result: 12 claims hold, 18 fail, 7 are not settled. - Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. - Advice: start any re-test from the cheapest baseline. - Code, data and every number are public.}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
+\twocolumn[\vspace*{0.32in}\shissopanel{What survives when a paper leaves the lab: re-testing 21 robot-learning papers on a €1,350 rig}{Ravindu Somawansa\\[1pt]Shisso Robotics\\[1pt]\texttt{ravindu.somawansa@shissorobotics.com}}{\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize \item Most robot-learning papers are tested in simulation or on rigs above \$20k: 15 of our 21 papers; 2 under \$5k. \item Question: do their claims still hold on a cheap rig? \item We re-tested 37 claims from 21 papers on an SO-101 arm and a Jetson Orin NX 16 GB (€1,350 of parts), with \$42.30 of cloud GPU. \item Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts. \item Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data. \item Result: 12 claims hold, 18 fail, 7 are not settled. \item Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints. \item Advice: start any re-test from the cheapest baseline. \item Code, data and every number are public. \end{itemize}}{\textbf{Code and rows:} \texttt{github.com/ravediamond/paper-register-reproducibility}\quad\textbf{Reproduce:} \texttt{make check}. Every number carries its source file and protocol commit.}\vspace{4pt}]
 \section{Introduction}
 
 
-- 15 of 21 papers shown in simulation or on a rig above \$20k; 2 on a rig under \$5k like ours.
-- A small team has to guess, or re-test every claim itself, which is slow and costly.
-- This paper: re-test the claims, one at a time, on one cheap rig.
-- Example, adaptive chunking:
-  - idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
-  - one decision needs 20 sampled chunks $\rightarrow$ 4,751 ms on the Orin, budget 298 ms $\rightarrow$ fail
-  - a fail on our rig, not on their hardware
-- Overall: 12 of 37 hold, 18 fail.
-- Several failures are not near misses: the method loses to a baseline with no learning $\rightarrow$ three classes, Section 5.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item 15 of 21 papers shown in simulation or on a rig above \$20k; 2 on a rig under \$5k like ours.
+\item A small team has to guess, or re-test every claim itself, which is slow and costly.
+\item This paper: re-test the claims, one at a time, on one cheap rig.
+\item Example, adaptive chunking:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
+\item one decision needs 20 sampled chunks $\rightarrow$ 4,751 ms on the Orin, budget 298 ms $\rightarrow$ fail
+\item a fail on our rig, not on their hardware
+\end{itemize}
+\item Overall: 12 of 37 hold, 18 fail.
+\item Several failures are not near misses: the method loses to a baseline with no learning $\rightarrow$ three classes, Section 5.
+\end{itemize}
 
 
 \section{Rig and data}
 
 
-- Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs.
-- Teleoperated demonstrations (\texttt{so101\_bowls\_all\_trimmed}): 182 episodes, 61,462 frames at 30 fps (about 34 minutes); two short bowl tasks (one bowl into another); split 157 train / 25 validation episodes. Used to train and test the world models and VLAs.
-- Policy rollouts (\texttt{so101-bowls-policy-rollouts}): 69 episodes of our trained policies on the arm, 44 successes and 25 failures, labelled by the operator. Used for the failure monitors.
-- ArmnetBench \citep{arxiv260724481}: 2,099 public labelled SO-101 rollouts from 7 policies. Used for the reward models and judges.
-- Timing: 20 recorded episodes, 254 chunk boundaries. Used for chunking and latency.
-- Limits of the data:
-  - short tasks only, about 11 s per episode; no long-horizon task (several steps, memory) $\rightarrow$ we say nothing about long horizon
-  - one task family, one arm, one room
-  - outcome labels from one operator, not blind
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs.
+\item Teleoperated demonstrations (\texttt{so101\_bowls\_all\_trimmed}): 182 episodes, 61,462 frames at 30 fps (about 34 minutes); two short bowl tasks (one bowl into another); split 157 train / 25 validation episodes. Used to train and test the world models and VLAs.
+\item Policy rollouts (\texttt{so101-bowls-policy-rollouts}): 69 episodes of our trained policies on the arm, 44 successes and 25 failures, labelled by the operator. Used for the failure monitors.
+\item ArmnetBench \citep{arxiv260724481}: 2,099 public labelled SO-101 rollouts from 7 policies. Used for the reward models and judges.
+\item Timing: 20 recorded episodes, 254 chunk boundaries. Used for chunking and latency.
+\item Limits of the data:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item short tasks only, about 11 s per episode; no long-horizon task (several steps, memory) $\rightarrow$ we say nothing about long horizon
+\item one task family, one arm, one room
+\item outcome labels from one operator, not blind
+\end{itemize}
+\end{itemize}
 
 
 \section{How we test}
 
 
-- Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
-- Rule 2: the cheapest baseline first, on the same data (Table 1); if the method loses to it, the bar barely matters.
-- Verdicts: holds (bar met), fails (bar missed), not proven (test ran, cannot decide), not tested (planned).
-- A fail can be our fault, so we run a control. Example, TurboVLA (our mistake):
-  - we thought the architecture made our port of the policy ignore its instruction
-  - bar: swapping the task moves the output by $\geq$ 5° $\rightarrow$ our port is the bug; by $<$ 1° $\rightarrow$ the data
-  - upstream's own trainer on our data: 0.020°; their released LIBERO checkpoint on our rig: 5.5°
-  - $\rightarrow$ our data, not their architecture; we withdrew the claim, and it is not counted here
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
+\item Rule 2: the cheapest baseline first, on the same data (Table 1); if the method loses to it, the bar barely matters.
+\item Verdicts: holds (bar met), fails (bar missed), not proven (test ran, cannot decide), not tested (planned).
+\item A fail can be our fault, so we run a control. Example, TurboVLA (our mistake):
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item we thought the architecture made our port of the policy ignore its instruction
+\item bar: swapping the task moves the output by $\geq$ 5° $\rightarrow$ our port is the bug; by $<$ 1° $\rightarrow$ the data
+\item upstream's own trainer on our data: 0.020°; their released LIBERO checkpoint on our rig: 5.5°
+\item $\rightarrow$ our data, not their architecture; we withdrew the claim, and it is not counted here
+\end{itemize}
+\end{itemize}
 
 
 
@@ -62,7 +74,7 @@
 \begin{table}[t]\centering\footnotesize
 \setlength{\tabcolsep}{4pt}
 \caption{The cheapest baseline for each kind of method, run on the same data before the method.}
-\begin{tabular}{lrr}
+\begin{tabular}{p{1.6cm}p{2.6cm}p{2.6cm}}
 \toprule
 \shissohead method & cheapest baseline & why it is a fair test \\
 \midrule
@@ -77,10 +89,12 @@ success or failure judge & episode length & on our rig it already says a lot abo
 \section{Results}
 
 
-- Figure 1 and Table 2.
-- Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
-- Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
-- Every paper, with its claim, bar and our result: appendix.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item Figure 1 and Table 2.
+\item Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
+\item Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
+\item Every paper, with its claim, bar and our result: appendix.
+\end{itemize}
 
 
 \begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig/verdicts.pdf}\caption{what survived when the papers left the lab: of the 37 paper claims, 12 reproduce and 18 fail; the failures fall into three classes: the clock, zero-shot judges against a trivial signal, and learned latents against the commanded joints.}\end{figure*}
@@ -107,41 +121,49 @@ not tested & 1 & 4 \\
 \section{Three failure classes}
 
 
-- A, the clock: adaptive chunking, 4,751 ms for one decision against 298 ms; may work on a faster GPU; easiest to avoid: time the method on your device first.
-- B, judges (a model that says success, failure or progress): a 4B reward model, zero-shot on ArmnetBench, AUROC 0.818; episode length alone 0.938.
-- C, latents (a world model's vector computed from the camera): ranks the executed chunk first in 0.60 of anchors, bar 0.8; a baseline with the actions only: 0.68--0.90; the commanded joints already hold the arm's state, so the latent must add the objects, and it does not.
-- The classes are our proposal, from the author's reading of the 18 failed claims; a second reader is needed.
-- Order to test a paper on a cheap rig: time it on the device $\rightarrow$ the cheapest baseline $\rightarrow$ then the bar.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item A, the clock: adaptive chunking, 4,751 ms for one decision against 298 ms; may work on a faster GPU; easiest to avoid: time the method on your device first.
+\item B, judges (a model that says success, failure or progress): a 4B reward model, zero-shot on ArmnetBench, AUROC 0.818; episode length alone 0.938.
+\item C, latents (a world model's vector computed from the camera): ranks the executed chunk first in 0.60 of anchors, bar 0.8; a baseline with the actions only: 0.68--0.90; the commanded joints already hold the arm's state, so the latent must add the objects, and it does not.
+\item The classes are our proposal, from the author's reading of the 18 failed claims; a second reader is needed.
+\item Order to test a paper on a cheap rig: time it on the device $\rightarrow$ the cheapest baseline $\rightarrow$ then the bar.
+\end{itemize}
 
 
 \section{Limitations}
 
 
-- Data: short tasks, one task family, one arm; nothing on long horizon.
-- One operator ran the arm and labelled the outcomes, not blind.
-- Small samples and one training seed in many tests (the n of each test is in the appendix).
-- A fail on our rig is not a fail on the authors' hardware.
-- Papers chosen from the stack we run (world models, VLAs, failure monitors, chunking, edge latency): the failure rate describes these papers, not the field.
-- Our own mistakes are possible: TurboVLA (Section 3).
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item Data: short tasks, one task family, one arm; nothing on long horizon.
+\item One operator ran the arm and labelled the outcomes, not blind.
+\item Small samples and one training seed in many tests (the n of each test is in the appendix).
+\item A fail on our rig is not a fail on the authors' hardware.
+\item Papers chosen from the stack we run (world models, VLAs, failure monitors, chunking, edge latency): the failure rate describes these papers, not the field.
+\item Our own mistakes are possible: TurboVLA (Section 3).
+\end{itemize}
 
 
 \section{Related work}
 
 
-- On the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries \citep{arxiv260608881}; ArmnetBench, a fleet of SO-101 cells evaluating policies at scale \citep{arxiv260724481}.
-- In simulation: vla-eval, VLAs across 14 benchmarks \citep{arxiv260313966}; a benchmark of demonstration quality \citep{arxiv261018869}.
-- They rank policies; we test one paper claim against a bar fixed before, on one cheap rig.
-- Closest: RoboSeed \citep{arxiv261040026}, scores VLA and world-action models on five dimensions including reproduction evidence and deployment affordability; its authors say the score is not a probability that a result is correct.
-- Ours: one yes or no per claim on one rig, with the data behind it.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item On the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries \citep{arxiv260608881}; ArmnetBench, a fleet of SO-101 cells evaluating policies at scale \citep{arxiv260724481}.
+\item In simulation: vla-eval, VLAs across 14 benchmarks \citep{arxiv260313966}; a benchmark of demonstration quality \citep{arxiv261018869}.
+\item They rank policies; we test one paper claim against a bar fixed before, on one cheap rig.
+\item Closest: RoboSeed \citep{arxiv261040026}, scores VLA and world-action models on five dimensions including reproduction evidence and deployment affordability; its authors say the score is not a probability that a result is correct.
+\item Ours: one yes or no per claim on one rig, with the data behind it.
+\end{itemize}
 
 
 \section{Conclusion}
 
 
-- 37 claims from 21 papers on a €1,350 rig, \$42.30 of cloud GPU $\rightarrow$ 12 hold.
-- Several lost to a baseline with no learning: copy-last, the joints, episode length.
-- Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
-- Everything is public and every number can be rebuilt from the repository.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item 37 claims from 21 papers on a €1,350 rig, \$42.30 of cloud GPU $\rightarrow$ 12 hold.
+\item Several lost to a baseline with no learning: copy-last, the joints, episode length.
+\item Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
+\item Everything is public and every number can be rebuilt from the repository.
+\end{itemize}
 
 
 \bibliographystyle{plainnat}

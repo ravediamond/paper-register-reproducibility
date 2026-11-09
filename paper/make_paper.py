@@ -292,7 +292,7 @@ def to_tex(md):
                 i += 1
             if t[0][0] != "paper":  # small count tables: one column, one float
                 out += [r"\begin{table}[t]\centering\footnotesize", r"\setlength{\tabcolsep}{4pt}", r"\caption{" + esc(cap) + "}",
-                        (r"\resizebox{\columnwidth}{!}{" if len(t[0]) >= 5 else "") + r"\begin{tabular}{l" + "r" * (len(t[0]) - 1) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
+                        (r"\resizebox{\columnwidth}{!}{" if len(t[0]) >= 5 else "") + r"\begin{tabular}{" + ("l" + "r" * (len(t[0]) - 1) if max(len(x) for r in t[1:] for x in r[1:]) < 12 else "p{1.6cm}" + "p{2.6cm}" * (len(t[0]) - 1)) + "}", r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + \
                        [(tint(r[-1]) if t[0][-1] == "point verdict" else "") + " & ".join(r) + r" \\" for r in t[1:]] + [r"\bottomrule", r"\end{tabular}" + ("}" if len(t[0]) >= 5 else ""), r"\end{table}"]
                 continue
             spec = COLS
@@ -315,6 +315,15 @@ def to_tex(md):
                 q.append(lines[i][2:]); i += 1
             mm = re.match(r"\*\*(.+?)\*\*\s*(.*)", " ".join(q))
             out.append(r"\begin{shissofinding}[" + esc(mm.group(1)) + "]\n" + esc(mm.group(2)) + "\n" + r"\end{shissofinding}")
+            continue
+        elif re.match(r"^\s*- ", l):  # bullet lists (the skeleton): itemize, one nesting level
+            out.append(r"\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize"); depth = 0
+            while i < len(lines) and re.match(r"^\s*- ", lines[i]):
+                d = 1 if lines[i].startswith("  ") else 0
+                if d > depth: out.append(r"\begin{itemize}\setlength{\itemsep}{0pt}")
+                if d < depth: out.append(r"\end{itemize}")
+                depth = d; out.append(r"\item " + esc(lines[i].strip()[2:])); i += 1
+            out += [r"\end{itemize}"] * (depth + 1)
             continue
         elif not l.strip():
             out.append("\n")  # keep paragraph breaks: an empty markdown line ends the paragraph in LaTeX too
