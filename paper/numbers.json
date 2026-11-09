@@ -251,6 +251,10 @@
   "value": "1,350",
   "anchor": "repro/register/expected/rig.yaml, sum of price_eur (parts with a stated price)"
  },
+ "rig_far": {
+  "value": "16",
+  "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = sim + >$20k"
+ },
  "rig_gt20k": {
   "value": "7",
   "anchor": "repro/register/expected/register.json papers, their_rig_cost_class = >$20k"

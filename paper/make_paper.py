@@ -37,6 +37,7 @@ def register():
     rc = collections.Counter(p["their_rig_cost_class"] for p in papers)
     for k, name in (("sim", "sim"), ("gt20k", ">$20k"), ("5to20k", "$5–20k"), ("lt5k", "<$5k"), ("unstated", "unstated")):
         put("rig_" + k, str(rc[name]), a + f", their_rig_cost_class = {name}")
+    put("rig_far", str(rc["sim"] + rc[">$20k"]), a + ", their_rig_cost_class = sim + >$20k")
     put("cost", f"{sum(float(p.get('cost_usd') or 0) for p in papers):.2f}", a + ", sum of cost_usd")
     cl = [c for p in papers for c in p["claims"]]
     a = "repro/register/expected/register.json papers[*].claims"
