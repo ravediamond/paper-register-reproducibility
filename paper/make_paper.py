@@ -27,40 +27,50 @@ def pct(x):
     return f"{100 * x:.1f}"
 
 
+def own(c):
+    return "not a paper claim" in (c.get("stated_in") or "")
+
+
 def register():
-    papers = json.loads((REG / "register.json").read_text())["papers"]
-    a = "repro/register/expected/register.json papers"
+    """Only claims stated in the papers count. Rows that are our own claims (stated_in 'not a paper claim') belong to the other
+    papers of the series and are left out, and so is a paper with no claim of its own (TurboVLA, kept in the text as an example)."""
+    allp = json.loads((REG / "register.json").read_text())["papers"]
+    papers = [p for p in allp if any(not own(c) for c in p["claims"])]
+    dropped = [p["paper"] for p in allp if p not in papers]
+    assert dropped == ["TurboVLA"], dropped
+    a = "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none)"
     put("papers", str(len(papers)), a + ", len")
     v = collections.Counter(p["verdict"] for p in papers)
-    for k in ("reproduces", "fail", "not proven", "not tested", "withdrawn"):
+    for k in ("reproduces", "fail", "not proven", "not tested"):
         put("p_" + k.replace(" ", "_"), str(v[k]), a + f", verdict = {k}")
+    assert not v["withdrawn"]
     rc = collections.Counter(p["their_rig_cost_class"] for p in papers)
     for k, name in (("sim", "sim"), ("gt20k", ">$20k"), ("5to20k", "$5–20k"), ("lt5k", "<$5k"), ("unstated", "unstated")):
         put("rig_" + k, str(rc[name]), a + f", their_rig_cost_class = {name}")
     put("rig_far", str(rc["sim"] + rc[">$20k"]), a + ", their_rig_cost_class = sim + >$20k")
     put("cost", f"{sum(float(p.get('cost_usd') or 0) for p in papers):.2f}", a + ", sum of cost_usd")
-    cl = [c for p in papers for c in p["claims"]]
-    a = "repro/register/expected/register.json papers[*].claims"
-    put("claims", str(len(cl)), a + ", len"); put("claims_tested", str(sum(c["tested"] for c in cl)), a + ", tested = true")
+    cl = [c for p in papers for c in p["claims"] if not own(c)]
+    a = "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim'"
+    put("c_paper", str(len(cl)), a + ", len")
     cv = collections.Counter(c["verdict"] for c in cl)
-    for k in ("reproduces", "fail", "not proven", "not tested", "withdrawn"):
+    for k in ("reproduces", "fail", "not proven", "not tested"):
         put("c_" + k.replace(" ", "_"), str(cv[k]), a + f", verdict = {k}")
-    ours = [c for c in cl if "not a paper claim" in (c.get("stated_in") or "")]
-    put("c_ours", str(len(ours)), a + ", stated_in contains 'not a paper claim'")
-    put("c_ours_repro", str(sum(c["verdict"] == "reproduces" for c in ours)), a + ", ours and verdict = reproduces")
-    paper = [c for c in cl if c not in ours]
-    put("c_paper", str(len(paper)), a + ", stated_in without 'not a paper claim'")
-    put("c_paper_repro", str(sum(c["verdict"] == "reproduces" for c in paper)), a + ", paper claims, verdict = reproduces")
-    put("c_paper_fail", str(sum(c["verdict"] == "fail" for c in paper)), a + ", paper claims, verdict = fail")
-    by = {c["id"]: c for c in cl}
+    assert sum(cv.values()) == len(cl) and not cv["withdrawn"]
+    put("c_paper_repro", N["c_reproduces"], a + ", verdict = reproduces"); put("c_paper_fail", N["c_fail"], a + ", verdict = fail")
+    put("c_open", str(cv["not proven"] + cv["not tested"]), a + ", verdict = not proven + not tested")
+    allc = {c["id"]: c for p in allp for c in p["claims"]}
+    by = allc
     for key, cid, field, text in (("ex_a_ours", "C-019-3", "ours", "4,751 ms"), ("ex_a_bar", "C-019-3", "bar", "298 ms"),
                                   ("ex_b_ours", "C-010-2", "ours", "0.818"), ("ex_b_len", "C-010-2", "ours", "0.938"),
                                   ("ex_c_ours", "C-001-2", "ours", "0.60"), ("ex_c_base", "C-001-2", "ours", "0.68–0.90"),
-                                  ("ex_c_bar", "C-001-2", "bar", "0.8")):
+                                  ("ex_c_bar", "C-001-2", "bar", "0.8"),
+                                  ("tv_swap", "C-012-1", "ours", "0.020°"), ("tv_ctl", "C-012-1", "ours", "5.5°"),
+                                  ("tv_bug", "C-012-1", "bar", "≥ 5°"), ("tv_data", "C-012-1", "bar", "< 1°")):
         assert text in by[cid][field], f"{text!r} not in {cid}/{field}"
-        put(key, text, f"{a}, id {cid}, {field}: '{by[cid][field]}'")
+        put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}: '{by[cid][field]}'")
     for cid in ("C-019-3", "C-010-2", "C-001-2"):
-        assert by[cid]["verdict"] == "fail", cid
+        assert by[cid]["verdict"] == "fail" and not own(by[cid]), cid
+    assert by["C-012-1"]["verdict"] == "withdrawn"
     rows = []
     for p in papers:
         cite = " ".join(f"[@{x.strip()}]" for x in p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else ""
@@ -68,12 +78,25 @@ def register():
         cells = [name, p["their_rig_cost_class"], p["claim_tested"], p["bar"], p["ours"], p["verdict"]]
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
-    put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (Table 1)")
+    put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
+    datasets()
     rig = (REG / "rig.yaml").read_text()
     eur = [int(x) for x in re.findall(r"^\s+price_eur: (\d+)\s*$", rig, re.M)]
     put("rig_eur", f"{sum(eur):,}", "repro/register/expected/rig.yaml, sum of price_eur (parts with a stated price)")
     put("rig_unpriced", str(len(re.findall(r"^\s+price_eur: null", rig, re.M))), "repro/register/expected/rig.yaml, price_eur: null")
     return "\n".join(["| paper | their rig | claim tested | bar | our result | verdict |", "|---|---|---|---|---|---|"] + rows)
+
+
+def datasets():
+    d = json.loads((ROOT / "data" / "datasets.json").read_text()); a = "data/datasets.json "
+    for k, (g, f) in {"tel_eps": ("teleop", "episodes"), "tel_train": ("teleop", "train_episodes"), "tel_val": ("teleop", "val_episodes"),
+                      "tel_fps": ("teleop", "fps"), "ro_eps": ("rollouts", "episodes"), "ro_succ": ("rollouts", "success"),
+                      "ro_fail": ("rollouts", "failure"), "arm_n": ("armnetbench", "rollouts"), "arm_pol": ("armnetbench", "policies"),
+                      "tim_eps": ("timing", "episodes"), "tim_b": ("timing", "boundaries")}.items():
+        put(k, f"{d[g][f]:,}", a + f"{g}.{f}")
+    t = d["teleop"]
+    put("tel_frames", f"{t['frames']:,}", a + "teleop.frames"); put("tel_min", f"{t['frames'] / t['fps'] / 60:.0f}", a + "teleop.frames / fps / 60")
+    put("tel_ep_s", f"{t['frames'] / t['episodes'] / t['fps']:.0f}", a + "teleop.frames / episodes / fps")
 
 
 def prereg():
@@ -164,10 +187,9 @@ def figures():
         ax.text(x + wd / 2, 17.8, f"{n} {lab}", ha="center", va="center", fontsize=6.2, color="white", fontweight="bold"); x += wd
     cls = [("A  the clock", "adaptive chunking: one decision\n{} on the edge GPU, budget {}".format(N["ex_a_ours"], N["ex_a_bar"]), RED),
            ("B  zero-shot judges", "a learned reward model: AUROC {}\nepisode length alone: {}".format(N["ex_b_ours"], N["ex_b_len"]), RED),
-           ("C  learned latents", "world model ranks the executed chunk\nfirst in {} of anchors, bar {}".format(N["ex_c_ours"], N["ex_c_bar"]), RED),
-           ("our own gates", "bar committed before the result: {} of {};\nresult first: {}".format(N["pr_bar_first"], N["pr_rows"], N["pr_result_first"]), GREEN)]
-    ax.text(1, 12.2, "the failures fall into three classes; our own history is audited", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
-    bw, gap = 23.0, 2.0
+           ("C  learned latents", "world model ranks the executed chunk\nfirst in {} of anchors, bar {}".format(N["ex_c_ours"], N["ex_c_bar"]), RED)]
+    ax.text(1, 12.2, "the failures fall into three classes", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
+    bw, gap = 31.3, 2.05
     for i, (h, b, c) in enumerate(cls):
         xx = 1 + i * (bw + gap); ax.add_patch(FancyBboxPatch((xx, 1.0), bw, 9.4, boxstyle="round,pad=0,rounding_size=1.0", fc="white", ec=c, lw=1.7))
         ax.text(xx + bw / 2, 8.0, h, ha="center", va="center", fontsize=6.3, fontweight="bold", color=c)
@@ -191,7 +213,6 @@ def figures():
 
 def main():
     table = register()
-    prereg()
     tpl = (HERE / "DRAFT_4p.md.in").read_text()
     missing = set(re.findall(r"\{\{(\w+)\}\}", tpl)) - N.keys() - {"TABLE1"}
     assert not missing, f"placeholders without a value: {sorted(missing)}"

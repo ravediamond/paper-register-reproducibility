@@ -1,145 +1,116 @@
 # What survives when a paper leaves the lab: re-testing {{papers}} robot-learning papers on a €{{rig_eur}} rig
 
-*Ravindu Somawansa, Shisso Robotics. Draft, not submitted.*
+*Ravindu Somawansa, Shisso Robotics. Draft, not submitted. SKELETON: each section below is a list of facts for the author to write in his own words; tables, figure and appendix are final.*
 
 ## Abstract
 
-Robot-learning papers are increasingly shown in simulation or on rigs that cost more than $20k. Yet a small team often has to decide whether a method will work on far cheaper hardware. In this paper, we re-test {{c_paper}} claims from {{papers}} robot-learning papers on an SO-101 arm with a Jetson Orin NX, a rig whose parts cost €{{rig_eur}}, and find that {{c_paper_repro}} of them hold. For each claim, we commit the bar before the test and run the cheapest baseline first, on the same rows. We find that in several failures, this baseline is what the method loses to. We propose three classes of failure: methods too slow for the edge GPU, zero-shot judges that lose to the episode length, and latent planners that lose to the commanded joints. Our results suggest that a re-test on a cheap rig should start from its cheapest baseline. Every number in the paper can be rebuilt from the public repository.
+- Most robot-learning papers are tested in simulation or on rigs above $20k: {{rig_far}} of our {{papers}} papers; {{rig_lt5k}} under $5k.
+- Question: do their claims still hold on a cheap rig?
+- We re-tested {{c_paper}} claims from {{papers}} papers on an SO-101 arm and a Jetson Orin NX 16 GB (€{{rig_eur}} of parts), with ${{cost}} of cloud GPU.
+- Data: our own teleoperated demonstrations, our own policy rollouts, and a public set of SO-101 rollouts.
+- Two rules: the bar is fixed before the test, from the paper and its code only; the cheapest baseline is run first, on the same data.
+- Result: {{c_paper_repro}} claims hold, {{c_paper_fail}} fail, {{c_open}} are not settled.
+- Three failure classes: too slow for the edge GPU; judges that lose to episode length; latents that lose to the commanded joints.
+- Advice: start any re-test from the cheapest baseline.
+- Code, data and every number are public.
 
 ## 1. Introduction
 
-Recently, robot-learning methods have been shown to work well in simulation and on expensive rigs. Of the {{papers}} papers in this study, {{rig_far}} were shown in simulation or on a rig above $20k, and {{rig_lt5k}} on a setup under $5k like ours. A small team that wants to use these methods has to guess which claims still hold on its own hardware. We built the register so that we would not have to guess.
+- {{rig_far}} of {{papers}} papers shown in simulation or on a rig above $20k; {{rig_lt5k}} on a rig under $5k like ours.
+- A small team has to guess, or re-test every claim itself, which is slow and costly.
+- This paper: re-test the claims, one at a time, on one cheap rig.
+- Example, adaptive chunking:
+  - idea: choose the chunk length from the entropy of sampled chunks; long in transport, short at the grasp
+  - one decision needs 20 sampled chunks → {{ex_a_ours}} on the Orin, budget {{ex_a_bar}} → fail
+  - a fail on our rig, not on their hardware
+- Overall: {{c_paper_repro}} of {{c_paper}} hold, {{c_paper_fail}} fail.
+- Several failures are not near misses: the method loses to a baseline with no learning → three classes, Section 5.
 
-We introduce a register with one row per claim. Each row keeps the claim in the paper's words, our bar, our result and the rows behind it. The register grew out of our own write-ups: each re-test was published with its data when it ran, and there are {All {{l0}} write-ups rebuild from their published rows. The check for the cold reruns prints:
+## 2. Rig and data
 
-```text
-$ python3 repro/cold-reproduction/l0_check.py
-ok  posts: 29 (report 29)
-ok  L0 PASS: 29 (report 29)
-ok  L1 REPRO: 6 (report 6)
-ok  L1 DIFF: 0 (report 0)
-ok  L1 classes: {'REPRO': 6, '—': 3, 'SKIP': 8, 'FAIL-ENV': 12}
-L0 PASS
-```} write-ups so far.
+- Rig: SO-101 arm (5 joints + gripper), top and wrist cameras, Jetson Orin NX 16 GB for inference; training on rented cloud GPUs.
+- Teleoperated demonstrations (`so101_bowls_all_trimmed`): {{tel_eps}} episodes, {{tel_frames}} frames at {{tel_fps}} fps (about {{tel_min}} minutes); two short bowl tasks (one bowl into another); split {{tel_train}} train / {{tel_val}} validation episodes. Used to train and test the world models and VLAs.
+- Policy rollouts (`so101-bowls-policy-rollouts`): {{ro_eps}} episodes of our trained policies on the arm, {{ro_succ}} successes and {{ro_fail}} failures, labelled by the operator. Used for the failure monitors.
+- ArmnetBench [@2607.24481]: {{arm_n}} public labelled SO-101 rollouts from {{arm_pol}} policies. Used for the reward models and judges.
+- Timing: {{tim_eps}} recorded episodes, {{tim_b}} chunk boundaries. Used for chunking and latency.
+- Limits of the data:
+  - short tasks only, about {{tel_ep_s}} s per episode; no long-horizon task (several steps, memory) → we say nothing about long horizon
+  - one task family, one arm, one room
+  - outcome labels from one operator, not blind
 
-Take one row. An adaptive chunking paper claims that choosing the chunk length from the entropy of sampled chunks follows the phases of the task, with long chunks in transport and short ones at the grasp. To choose one chunk length the method samples many chunks, and on our edge GPU this takes {{ex_a_ours}}. Our real-time budget is {{ex_a_bar}}. So the row records a fail on this rig, and it says nothing about the method on the hardware it was shown on.
+## 3. How we test
 
-Over the whole register, we find that {{c_paper_repro}} of {{c_paper}} claims hold and {{c_paper_fail}} fail. Several of the failures are not near misses. In those rows the learned method loses to a baseline with no learning in it, and we think this is the main lesson of the register. We discuss these failures in Section 4, where we propose three classes for them.
+- Rule 1: the bar is written from the paper and its code only, before any result; a bar written after the result drifts toward it.
+- Rule 2: the cheapest baseline first, on the same data (Table 1); if the method loses to it, the bar barely matters.
+- Verdicts: holds (bar met), fails (bar missed), not proven (test ran, cannot decide), not tested (planned).
+- A fail can be our fault, so we run a control. Example, TurboVLA (our mistake):
+  - we thought the architecture made our port of the policy ignore its instruction
+  - bar: swapping the task moves the output by {{tv_bug}} → our port is the bug; by {{tv_data}} → the data
+  - upstream's own trainer on our data: {{tv_swap}}; their released LIBERO checkpoint on our rig: {{tv_ctl}}
+  - → our data, not their architecture; we withdrew the claim, and it is not counted here
 
-## 2. How a row is made
+Table 1: The cheapest baseline for each kind of method, run on the same data before the method.
 
-Given a claim, we first commit its bar to version control, before the test runs. We do this because a bar written after the result tends to drift toward it, even without intent. We check how well we kept this rule from the commit history in Section 5.
+| method | cheapest baseline | why it is a fair test |
+|---|---|---|
+| state predictor | copy-last: the next state is the current one | costs nothing |
+| learned latent | the commanded joint values | the arm's state is already in them |
+| success or failure judge | episode length | on our rig it already says a lot about the outcome |
 
-Before testing the learned method, we run the cheapest signal it has to beat, on the same rows. For a model that predicts the next state, this is copy-last: the next state is simply the current one. For a learned latent it is the commanded joints, because the state of the arm is already in them. For a judge of success it is the length of the episode, which on this rig already says a lot about the outcome. Running the baseline first has two benefits. First, it is cheap, since these baselines take minutes to run. Second, when a method loses to one of them, its bar no longer matters much.
+## 4. Results
 
-We chose the papers for the stack this rig runs: world models, VLA policies, failure monitors, chunking and edge latency. Therefore, the failure rate describes this register, not the field. The register file lists every tested paper and every paper scheduled next, each entered before its test, so a paper cannot be dropped after its result is known.
+- Figure 1 and Table 2.
+- Claims: {{c_paper_repro}} hold, {{c_paper_fail}} fail, {{c_not_proven}} not proven, {{c_not_tested}} not tested.
+- Papers: {{p_reproduces}} of {{papers}} reproduce, {{p_fail}} fail, {{p_not_proven}} not proven, {{p_not_tested}} not tested.
+- Every paper, with its claim, bar and our result: appendix.
 
-## 3. Results
+![Fig. 1 — what survived when the papers left the lab: of the {{c_paper}} paper claims, {{c_paper_repro}} reproduce and {{c_paper_fail}} fail; the failures fall into three classes: the clock, zero-shot judges against a trivial signal, and learned latents against the commanded joints.](fig/verdicts.png)
 
-Figure 1 summarises the register. Table 3 counts the verdicts by paper and by claim row, and the appendix gives every row.
+Table 2: Verdicts by paper and by claim.
 
-![Fig. 1 — what survived when the papers left the lab: of the {{c_paper}} paper claims, {{c_paper_repro}} reproduce and {{c_paper_fail}} fail; the failures fall into three classes (the clock, zero-shot judges against a trivial signal, learned latents against the commanded joints); our own gates have the bar committed before the result in {{pr_bar_first}} of {{pr_rows}} and the result first in {{pr_result_first}}.](fig/verdicts.png)
-
-> **Finding.** {{c_paper_repro}} of the {{c_paper}} claims taken from papers reproduce, and {{c_paper_fail}} fail. The other {{c_ours}} rows test our own baselines, for example that the commanded joints beat the world model, and {{c_ours_repro}} of them hold.
-
-Table 3: Verdicts by paper and by claim row (claim rows include our own baseline comparisons).
-
-| verdict | papers | claim rows |
+| verdict | papers | claims |
 |---|---|---|
 | reproduces | {{p_reproduces}} | {{c_reproduces}} |
 | fails | {{p_fail}} | {{c_fail}} |
 | not proven | {{p_not_proven}} | {{c_not_proven}} |
 | not tested | {{p_not_tested}} | {{c_not_tested}} |
-| withdrawn | {{p_withdrawn}} | {{c_withdrawn}} |
-| total | {{papers}} | {{claims}} |
 
-At the level of papers, {{p_reproduces}} of {{papers}} reproduce and {{p_fail}} fail.
+## 5. Three failure classes
 
-At the level of papers, {{p_reproduces}} of {{papers}} reproduce and {{p_fail}} fail.
-
-## 4. Three failure classes
-
-The adaptive chunking row fails on time. The method may work well on a faster GPU, but on the edge GPU it misses the real-time budget. We call this class A, the clock. In practice it is the easiest class to avoid, because a method can be timed on the target device before anything else is built.
-
-Class B is about judges. Used without any training on this rig, a learned reward model detects failures with an AUROC of {{ex_b_ours}}. Yet the episode length alone reaches {{ex_b_len}}. We put in class B every judge of success, failure or progress that loses to such a trivial signal. Our guess, which we have not tested, is that a zero-shot judge has never seen this rig, while the length of an episode is measured on it.
-
-Class C is about learned latents. A world model ranks the executed chunk first in {{ex_c_ours}} of anchors, below its bar of {{ex_c_bar}}, while an action-only baseline reaches {{ex_c_base}}. Class C holds the latents used to plan, rank or track progress that lose to the joints, to copy-last or to an action-only baseline. On a small arm the commanded joints already describe much of the state. Therefore, a latent has to add something the joints do not have, and in these rows it does not.
-
-These rows illustrate the classes and do not count them. The classes are our proposal, from the author's reading of the {{fail_rows}} failed claim rows, and a second reader is needed to know if they hold. In our setting, they give a natural order for checking a paper: time it on the device, then compare it with the trivial baseline on the same rows, and only then look at its bar.
-
-## 5. How far the register can be trusted
-
-A verdict means something only if its bar came before its result. Notes and commit dates can be edited by hand, while commit ancestry cannot be changed without rewriting history that others have already cloned. Therefore, for each gate we find the first commit that contains its bar and the first that contains its result, and compare them (`repro/prereg-check/scripts/prereg_audit.py`, abridged):
-
-```python
-def ancestor(a, b):
-    return subprocess.run(["git", "-C", str(RR), "merge-base", "--is-ancestor", a, b]).returncode == 0
-...
-            elif b[0] == res[0]:
-                cls = "same-commit"
-            elif ancestor(b[0], res[0]):
-                cls = "bar-first"
-            elif ancestor(res[0], b[0]):
-                cls = "result-first"
-```
-
-Table 1 gives the class of each of the {{pr_rows}} gates that ran and were logged by 2026-10-31. Most are bar-first, and {{pr_result_first}} are result-first. A same-commit gate is one whose bar and result entered the repository together, so it tells nothing about which came first. Text search alone first found {{v1_same_commit}} same-commit gates, mostly from batch logging. We went back to the earlier files that hold their bars, and {{sc_to_bf}} of them moved to bar-first and {{sc_to_nb}} to no-bar. The audit table in the repository gives the evidence for each move.
-
-Table 1: Commit-order class of each gate. The audited column is the one the paper uses; the first pass is what text search alone gave on the same gates.
-
-| class | first text pass | audited, 2026-10-31 | audited, today |
-|---|---|---|---|
-| bar-first | {{v1_bar_first}} | {{pr_bar_first}} | {{pt_bar_first}} |
-| same-commit | {{v1_same_commit}} | {{pr_same_commit}} | {{pt_same_commit}} |
-| result-first | — | {{pr_result_first}} | {{pt_result_first}} |
-| no bar | {{v1_no_bar}} | {{pr_no_bar}} | {{pt_no_bar}} |
-| unresolved | {{v1_unresolved}} | — | — |
-| gates | {{pr_rows}} | {{pr_rows}} | {{pr_today}} |
-
-The early gates mixed point estimates and different intervals. We recomputed {{rc_rows}} of them from the stored rows with one statistic, the episode bootstrap ({{rc_resamples}} resamples, percentile 95 % CI). For {{rc_flips}} gates the bar falls inside the interval (Table 2), so we mark their verdicts as fragile but keep the pre-registered point verdicts. The false-intervention threshold was fitted to meet its rate, so its interval is only descriptive.
-
-Table 2: The three gates whose verdict flips somewhere inside its 95 % interval.
-
-| gate | n | estimate | 95 % CI | bar | point verdict |
-|---|---|---|---|---|---|
-| colour judge (no learning), accuracy | {{acc_n}} | {{acc_est}} % | {{acc_lo}}–{{acc_hi}} % | ≥ {{acc_bar}} % | {{acc_verdict}} |
-| oscillation among failed episodes | {{osc_n}} | {{osc_est}} % | {{osc_lo}}–{{osc_hi}} % | ≥ {{osc_bar}} % | {{osc_verdict}} |
-| judge threshold, false interventions | {{tau_n}} | {{tau_est}} % | {{tau_lo}}–{{tau_hi}} % | ≤ {{tau_bar}} % | {{tau_verdict}} |
-
-All {{l0}} write-ups rebuild from their published rows. The check for the cold reruns prints:
-
-```text
-$ python3 repro/cold-reproduction/l0_check.py
-ok  posts: 29 (report 29)
-ok  L0 PASS: 29 (report 29)
-ok  L1 REPRO: 6 (report 6)
-ok  L1 DIFF: 0 (report 0)
-ok  L1 classes: {'REPRO': 6, '—': 3, 'SKIP': 8, 'FAIL-ENV': 12}
-L0 PASS
-```
-
-We ran the cold reruns from a fresh clone with no credentials. {{l1_repro}} gates reran and matched, {{l1_exact}} of them exactly. {{l1_env}} more stop at the world-model environment, which is not published yet. The remaining {{l1_skip}} need a larger GPU, a private checkpoint or the arm, or a step the write-up leaves out. Additionally, we checked the citations and paper-side fields of the register against the papers' PDFs, and corrected them. The register names {{ps_ids}} arXiv ids. The ids missing from our mirror of the papers all belong to scheduled tests, and one tested paper has no arXiv id, so it could not be checked against a PDF.
+- A, the clock: adaptive chunking, {{ex_a_ours}} for one decision against {{ex_a_bar}}; may work on a faster GPU; easiest to avoid: time the method on your device first.
+- B, judges (a model that says success, failure or progress): a 4B reward model, zero-shot on ArmnetBench, AUROC {{ex_b_ours}}; episode length alone {{ex_b_len}}.
+- C, latents (a world model's vector computed from the camera): ranks the executed chunk first in {{ex_c_ours}} of anchors, bar {{ex_c_bar}}; a baseline with the actions only: {{ex_c_base}}; the commanded joints already hold the arm's state, so the latent must add the objects, and it does not.
+- The classes are our proposal, from the author's reading of the {{c_paper_fail}} failed claims; a second reader is needed.
+- Order to test a paper on a cheap rig: time it on the device → the cheapest baseline → then the bar.
 
 ## 6. Limitations
 
-The largest risk is observer bias. One operator, the author, ran the rig and labelled every outcome, with the arm at rest but not always blind to it. Where the commit order is known, the bar predates the run, so a label could not move the bar. For {{pr_unprov}} of the {{pr_rows}} gates the order is not known, and {{sc_to_bf}} bar-first verdicts rest on matching the bar text in an earlier file. A blind second reader would show whether verdicts flip. Under the bootstrap {{rc_flips}} verdicts are fragile, and the cold reruns cover {{l1_repro}} gates so far, because the world-model environment is not published yet.
+- Data: short tasks, one task family, one arm; nothing on long horizon.
+- One operator ran the arm and labelled the outcomes, not blind.
+- Small samples and one training seed in many tests (the n of each test is in the appendix).
+- A fail on our rig is not a fail on the authors' hardware.
+- Papers chosen from the stack we run (world models, VLAs, failure monitors, chunking, edge latency): the failure rate describes these papers, not the field.
+- Our own mistakes are possible: TurboVLA (Section 3).
 
 ## 7. Related work
 
-**Policy evaluation.** Other work on this arm ranks policies. A real-world benchmark reports a taxonomy of failures and recoveries for VLA policies [@2606.08881], and a fleet of SO-101 cells evaluates policies at scale [@2607.24481]. In simulation, vla-eval runs VLAs across 14 benchmarks [@2603.13966], and a benchmark of demonstration quality studies one method family [@2610.18869]. While these works rank policies, we take the claim a paper makes about its method, fix a bar for it, and test it on one cheap rig.
-
-**Reproduction evidence.** The closest work is RoboSeed [@2610.40026]. It scores VLA and world-action models on five dimensions, among them reproduction evidence and deployment affordability. Its reproduction score counts audit milestones such as configuration mapping, task records and seeds, and its authors say the score is not a probability that a result is correct. A register answers a narrower question, whether a claim holds on one rig, and it gives the rows to check the answer.
+- On the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries [@2606.08881]; ArmnetBench, a fleet of SO-101 cells evaluating policies at scale [@2607.24481].
+- In simulation: vla-eval, VLAs across 14 benchmarks [@2603.13966]; a benchmark of demonstration quality [@2610.18869].
+- They rank policies; we test one paper claim against a bar fixed before, on one cheap rig.
+- Closest: RoboSeed [@2610.40026], scores VLA and world-action models on five dimensions including reproduction evidence and deployment affordability; its authors say the score is not a probability that a result is correct.
+- Ours: one yes or no per claim on one rig, with the data behind it.
 
 ## 8. Conclusion
 
-> **Conclusion.** In this paper, we re-tested {{c_paper}} claims from {{papers}} robot-learning papers on a €{{rig_eur}} rig with ${{cost}} of compute, and {{c_paper_repro}} held. We find that several methods lose to a baseline with no learning in it: copy-last, the commanded joints or the episode length. Our results suggest that anyone re-testing a paper on a cheap rig should run that baseline first, on the same rows, with the bar committed before the run. Every row is published, and every number here can be rebuilt from the repository (`github.com/ravediamond/paper-register-reproducibility`). We will keep adding rows as the scheduled tests run.
+- {{c_paper}} claims from {{papers}} papers on a €{{rig_eur}} rig, ${{cost}} of cloud GPU → {{c_paper_repro}} hold.
+- Several lost to a baseline with no learning: copy-last, the joints, episode length.
+- Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
+- Everything is public and every number can be rebuilt from the repository.
 
 ## References
 
-## Appendix: the register
+## Appendix: every paper
 
-Table 4: The register, one row per paper, generated from the register file (internal model and gate names kept). The rig price of €{{rig_eur}} counts the parts with a stated price; {{rig_unpriced}} small parts are not priced yet. Read the verdict column against the rig each paper was shown on.
+Table 3: One row per paper with a claim of its own (internal model and test names kept). The rig price of €{{rig_eur}} counts the parts with a stated price; {{rig_unpriced}} small parts are not priced yet. Read the verdict against the rig each paper was shown on.
 
 {{TABLE1}}
-
-![Fig. 2 — how every number in this paper is made: a protocol with its bar is committed before any number exists (1), the run stores its rows under repro/ (2), the result is committed after the bar and the commit order is audited (3), make l0 recomputes every number from the stored rows (4), make_paper.py writes numbers.json with each value's anchor and fills the text from it (5); make check regenerates the paper and fails on any difference.](fig/number_chain.png)
