@@ -4,31 +4,33 @@
 
 ## Abstract
 
-Most robot-learning papers are tested in simulation or on rigs that cost more than $20k; this is the case for {{rig_far}} of the {{papers}} papers we studied. We re-tested {{c_paper}} of their claims on a rig of about €{{rig_eur_round}}, an SO-101 arm with a Jetson Orin NX. For each claim the bar was fixed before the test, and the cheapest baseline was run first on the same data. {{c_paper_repro}} claims hold and {{c_paper_fail}} fail. The failures take three forms: methods too slow for the edge GPU, judges that lose to the length of the episode, and learned latents that lose to the commanded joints. Many of these failures trace back to our small, short-task data as much as to the methods themselves. The code, the data and every number in the paper are public.
+Most robot-learning papers are tested in simulation or on rigs that cost more than $20k; this is the case for {{rig_far}} of the {{papers}} papers we studied. We re-tested {{c_paper}} of their claims on a rig of about €{{rig_eur_round}}, an SO-101 arm with a Jetson Orin NX, with one protocol: the bar is fixed before the test, and the cheapest baseline, a signal we get for free, is run first on the same data. Of the {{b_n}} claims we could compare with such a baseline, {{b_lost}} lost to it. Over all claims, {{c_paper_repro}} hold; {{t_c_auth}} fail with the authors' method on our data, and {{t_c_other}} more fail only in our own variant of the method or because of our inference engine. Many of these failures trace back to our small, short-task data as much as to the methods, and we list for each one what on our side may explain it. The code, the data and every number are public.
 
 ## 1. Introduction
 
-Of the {{papers}} papers in this study, {{rig_far}} were shown in simulation or on a rig above $20k, and only {{rig_lt5k}} on a rig under $5k like ours. A small team that wants to use one of these methods has two options: trust the paper, or re-test the claim on its own hardware, which is slow and costly. The question we ask is simple: does a claim still hold for a small team, with cheap hardware, little data and short tasks?
+Of the {{papers}} papers in this study, {{rig_far}} were shown in simulation or on a rig above $20k, and only {{rig_lt5k}} on a rig under $5k like ours. A small team that wants to use one of these methods has two options: trust the paper, or re-test the claim on its own hardware, which is slow and costly. The question we ask is whether a claim still holds for a small team, with cheap hardware, little data and short tasks.
 
-To answer it, we took the claims one at a time and re-tested each on a single cheap rig. Adaptive chunking is a good example. The paper chooses the length of each action chunk from the entropy of several sampled chunks, so that the robot runs long chunks while moving between places and short ones at the grasp. To make one such decision the method samples 20 chunks, and on our Jetson Orin this took {{ex_a_ours}}, while our real-time budget is {{ex_a_bar}}. The claim fails on our rig. This does not mean it fails on the hardware it was shown on.
+We re-tested the claims one at a time on a single cheap rig, with the same protocol for each: we fix the bar before the test, and we first run the cheapest baseline, a signal we already have for free, on the same data. The baseline turned out to be the most useful part. LeWorldModel, for instance, predicts the next state of our arm far better than simply copying the last one, but it ranks the chunk the arm really executed worse than the actions alone do. Without the second baseline, we would have called it a success.
 
-Over all the claims, {{c_paper_repro}} of {{c_paper}} hold and {{c_paper_fail}} fail. Several of the failures are not near misses: the method loses to a baseline with no learning in it. Section 5 looks at these baselines, and Section 6 groups the failures into three classes. Section 7 then asks, for each failure, how much of it comes from the method and how much from our data and setup.
+Over all the claims, {{c_paper_repro}} of {{c_paper}} hold. We split the failures by whose method failed: {{t_c_auth}} fail with the authors' method on our data, {{t_c_var}} fail in a variant of the method we had to build ourselves, and {{t_c_eng}} fail because of our inference engine. Section 5 looks at the baselines, Section 6 groups the failures into three ways of failing, and Section 7 asks, for each failure, how much comes from the method and how much from our data and setup. A failure on our rig is a statement about this rig and this data, not about the method on the hardware it was shown on.
 
 ## 2. Rig and data
 
-The rig is an SO-101 arm (five joints and a gripper) with a top camera and a wrist camera. Inference runs on a Jetson Orin NX 16 GB, and training runs on rented cloud GPUs. The priced parts cost €{{rig_eur}} ({{rig_unpriced}} small parts are not priced yet), and all the cloud GPU time came to ${{cost}}.
+The rig is an SO-101 arm (five joints and a gripper) with a top camera and a wrist camera. Inference runs on a Jetson Orin NX 16 GB, and training runs on rented cloud GPUs. The priced parts come to €{{rig_eur}}; with the {{rig_unpriced}} small parts not priced yet, we put the rig at about €{{rig_eur_round}}. All the cloud GPU time came to ${{cost}}.
 
-We used four sets of data. The first is our own teleoperated demonstrations (`so101_bowls_all_trimmed`): {{tel_eps}} episodes and {{tel_frames}} frames at {{tel_fps}} fps, about {{tel_min}} minutes in total, on two short tasks where one bowl is placed into another. We split them into {{tel_train}} training and {{tel_val}} validation episodes, and used them to train and test the world models and the VLA policies. The second is a set of rollouts of our trained policies on the arm (`so101-bowls-policy-rollouts`): {{ro_eps}} episodes, {{ro_succ}} successes and {{ro_fail}} failures, labelled by the operator. We used them for the failure monitors. The third is ArmnetBench [@2607.24481], a public set of {{arm_n}} labelled SO-101 rollouts from {{arm_pol}} policies, which we used for the reward models and judges. The last is {{tim_eps}} recorded episodes with {{tim_b}} chunk boundaries, used for the chunking and latency tests.
+We used four sets of data. The first is our own teleoperated demonstrations (`so101_bowls_all_trimmed`): {{tel_eps}} episodes and {{tel_frames}} frames at {{tel_fps}} fps, about {{tel_min}} minutes in total, on two short tasks where one bowl is placed into another. We split them into {{tel_train}} training and {{tel_val}} validation episodes, and used them to train and test the world models and the VLA policies. The second is rollouts of our trained policies on the arm (`so101-bowls-policy-rollouts`): {{ro_eps}} episodes, {{ro_succ}} successes and {{ro_fail}} failures, labelled by the operator, used for the failure monitors. Most monitor tests use a main set of {{ro_p_eps}} of these episodes ({{ro_p_succ}} successes, {{ro_p_fail}} failures), which leaves out the episodes of one policy family; FAIL-Detect and SAFE split the {{ro_succ}} successes in half, {{ro_half}} to calibrate and {{ro_half}} to test, over 20 random splits. A separate set of 88 of our own episodes, recorded with the top camera only, was used to check the reward model on our rig. The third set is ArmnetBench [@2607.24481], {{arm_n}} public labelled SO-101 rollouts from {{arm_pol}} policies, used for the reward models and judges. The last is {{tim_eps}} recorded episodes with {{tim_b}} chunk boundaries, used for the chunking and latency tests.
 
 This data has clear limits. All tasks are short, about {{tel_ep_s}} s per episode, and none needs several steps or memory, so we say nothing about long-horizon tasks. There is one task family, one arm and one room. The outcome labels come from a single operator and were not given blind.
 
 ## 3. What we tested and how
 
-We chose papers from the parts of the stack our rig runs, and they fall into four kinds (Table 1). World models ({{f_wm}} papers) learn a latent from the camera to predict the next state or to plan; we test whether the latent predicts or plans better than a signal we get for free. Failure monitors and judges ({{f_mon}} papers) say whether an episode is failing or how far it has progressed; we test whether they catch failures better than a trivial signal. VLA policies ({{f_vla}} papers) follow an instruction on the arm; we test whether they succeed on our arm, over 10 trials judged by the operator. Chunking and edge inference ({{f_chunk}} papers) concern how a policy's action chunks are produced and joined; we test whether the joins are smoother and how long a chunk takes on the Orin.
+We chose papers from the parts of the stack our rig runs, and they fall into four kinds (Table 1). World models ({{f_wm}} papers) learn a latent from the camera to predict the next state or to plan; we test whether the latent predicts or plans better than a signal we get for free. Failure monitors and judges ({{f_mon}} papers) say whether an episode is failing or how far it has progressed; we test whether they catch failures better than a trivial signal. VLA policies ({{f_vla}} papers) follow an instruction on the arm; we test whether they succeed on our arm. Chunking and edge inference ({{f_chunk}} papers) concern how a policy's action chunks are produced and joined; we test whether the joins are smoother and how long a chunk takes on the Orin.
 
-Every test follows two rules. First, the bar is written from the paper and its code only, before any result is seen, because a bar written after the result tends to drift toward it. Second, before the method itself, we run the cheapest baseline of its kind on the same data. The baseline is built from what we already have for free: the last frame, the joint values we send to the arm, the length of the episode, or the method with its main idea switched off. If the method loses to this baseline, its bar hardly matters. Each claim then gets one of four verdicts: it holds (the bar is met), it fails (the bar is missed), it is not proven (the test ran but cannot decide), or it is not tested yet.
+Every test follows two rules. First, the bar is written before any result is seen, because a bar written after the result tends to drift toward it. The bars are ours: where the paper reports a number for the claim, the bar is set from it, and the register keeps that number next to ours. Second, before the method itself, we run the cheapest baseline of its kind on the same data. It is built from what we already have for free: the last frame, the joint values we send to the arm, the length of the episode, or the method with its main idea switched off. If the method loses to this baseline, its bar hardly matters.
 
-A failure can also be our own fault, so where we could we ran a control. TurboVLA is the clearest case. We believed its architecture made our port of the policy ignore its instruction. We fixed the bar first: if swapping the task moved the output by {{tv_bug}}, the bug was in our port; if by {{tv_data}}, the problem was the data. With the upstream trainer on our data, swapping the task moved the output by only {{tv_swap}}, while their released LIBERO checkpoint, run on our rig, moved it by {{tv_ctl}}. The problem was our data, not their architecture. We withdrew the claim, and it is not counted in this paper.
+Each claim gets one of four verdicts: it holds (the bar is met), it fails (the bar is missed), it is not proven (the test ran but cannot decide), or it is not tested yet. A paper fails if any of its claims fails. Because a failure can come from us rather than from the method, we split each failure by whose method failed: the authors' method run on our data, a variant we had to build because a part was not released or did not fit our rig, or our inference engine. Two of the VLA tests are weaker than the rest: SmolVLA and VLA-JEPA were judged by the operator over 10 trials with no numeric bar fixed before, and 9 successes out of 10 is compatible with a true rate anywhere between {{vla_ci}}.
+
+Where we could, we also ran a control on our own conclusions. TurboVLA is the clearest case. We believed its architecture made our port of the policy ignore its instruction, and we fixed the bar first: if swapping the task moved the output by {{tv_bug}}, the bug was in our port; if by {{tv_data}}, the problem was the data. With the upstream trainer on our data, swapping the task moved the output by only {{tv_swap}}, while their released LIBERO checkpoint, run on our rig, moved it by {{tv_ctl}}. The problem was our data, not their architecture. We withdrew the claim, and it is not counted in this paper.
 
 Table 1: The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.
 
@@ -36,21 +38,25 @@ Table 1: The four kinds of papers, what we test in each, the cheapest baseline w
 |---|---|---|---|---|
 | world models | {{f_wm}} | predict the next state; rank or plan actions | copy-last (next state = current state); the commanded joints or the actions alone | {{f_wm_v}} |
 | failure monitors and judges | {{f_mon}} | catch failures; track progress | episode length; the same model with shuffled actions | {{f_mon_v}} |
-| VLA policies | {{f_vla}} | succeed on our arm | none cheaper: a success rate fixed before 10 trials | {{f_vla_v}} |
+| VLA policies | {{f_vla}} | succeed on our arm | none: success over 10 trials judged by the operator, no numeric bar fixed before | {{f_vla_v}} |
 | chunking and edge inference | {{f_chunk}} | smoother joins between chunks; time per chunk | the same policy without the trick; the real-time budget on the Orin | {{f_chunk_v}} |
 
 ## 4. Results
 
-Figure 1 and Table 2 give the verdicts, and Table 1 breaks them down by kind of paper. Of the {{c_paper}} claims, {{c_paper_repro}} hold, {{c_paper_fail}} fail, {{c_not_proven}} are not proven and {{c_not_tested}} are not tested yet. Counted by paper, {{p_reproduces}} of the {{papers}} reproduce, {{p_fail}} fail, {{p_not_proven}} are not proven and {{p_not_tested}} is not tested. The pattern by kind is sharp: all {{f_mon}} failure monitors and judges fail, while all {{f_vla}} VLA policies reproduce. Section 7 shows that the first result is weaker evidence than it looks. The appendix gives every paper with its claim, its bar and our result.
+Table 2 and Figure 1 give the verdicts, and Table 1 breaks them down by kind of paper. Of the {{c_paper}} claims, {{c_paper_repro}} hold, {{c_not_proven}} are not proven and {{c_not_tested}} are not tested yet. Of the {{c_paper_fail}} that fail, {{t_c_auth}} fail with the authors' method on our data, {{t_c_var}} in our own variant and {{t_c_eng}} because of our engine. Counted by paper, {{p_reproduces}} of the {{papers}} reproduce, and {{t_p_auth}} fail with the authors' method. D-JEPA is counted as not tested: we ran it, but only with proxy labels, not with the success labels the paper uses.
 
-![Fig. 1 — what survived when the papers left the lab: of the {{c_paper}} paper claims, {{c_paper_repro}} reproduce and {{c_paper_fail}} fail; the failures fall into three classes: the clock, zero-shot judges against a trivial signal, and learned latents against the commanded joints.](fig/verdicts.png)
+The pattern by kind looks sharp, with all {{f_mon}} failure monitors and judges failing and all {{f_vla}} VLA policies reproducing, but neither half is strong evidence. Most of the monitor failures are in our own variants, and two of the three VLA results rest on 10 trials with no numeric bar. The appendix gives every paper with its claim, its bar and our result.
 
-Table 2: Verdicts by paper and by claim.
+![Fig. 1 — the {{c_paper}} paper claims by verdict: {{c_paper_repro}} reproduce, {{t_c_auth}} fail with the authors' method on our data, and {{t_c_other}} fail only in our variant of the method or because of our inference engine; below, the three ways the failures happen.](fig/verdicts.png)
+
+Table 2: Verdicts by paper and by claim. A paper fails if any of its claims fails; failures are split by whose method failed.
 
 | verdict | papers | claims |
 |---|---|---|
 | reproduces | {{p_reproduces}} | {{c_reproduces}} |
-| fails | {{p_fail}} | {{c_fail}} |
+| fails, authors' method | {{t_p_auth}} | {{t_c_auth}} |
+| fails, our variant | {{t_p_var}} | {{t_c_var}} |
+| fails, our engine | {{t_p_eng}} | {{t_c_eng}} |
 | not proven | {{p_not_proven}} | {{c_not_proven}} |
 | not tested | {{p_not_tested}} | {{c_not_tested}} |
 
@@ -60,9 +66,9 @@ The cheapest baseline is the signal we get for free on the same data as the meth
 
 The choice of baseline decides the verdict, even for a single model. LeWorldModel predicts the next latent far better than copy-last, with an error of {{b_lewm_pred}} against {{b_lewm_cl}}, and that claim holds. Yet the same model ranks the chunk that was really executed worse than the actions alone do, {{ex_c_ours}} against {{ex_c_base}}, and that claim fails. Predicting well is not the same as planning well, and testing only one of the two would give the wrong picture.
 
-The same baseline is also not equally strong on all data. On ArmnetBench, episode length beats the reward model ({{ex_b_len}} against {{ex_b_ours}}), because there a failed episode tends to run until the time limit. On our own 88 rollouts, where failures do not run to the time limit, length is close to chance ({{b_len_own}}). What a judge must beat therefore depends on who stopped the episode, and the baseline has to be computed on one's own data.
+The same baseline is also not equally strong on all data. On ArmnetBench, episode length beats the reward model ({{ex_b_len}} against {{ex_b_ours}}), because there a failed episode tends to run until the time limit, so the length gives the label away. On our own 88 episodes, where failures do not run to the time limit, length is close to chance ({{b_len_own}}). What a judge must beat therefore depends on who stopped the episode, and the baseline has to be computed on one's own data.
 
-Copy-last and the joints are strong partly because our task is short and simple: little moves apart from the arm, and the arm's state is already in the joints. On long tasks with many moving objects a learned latent has more to add, and we did not test that. Some papers report a cheap baseline themselves (shuffled actions for ReAP, a random pick for PACT-VLA, net joint displacement for HWM), and on our data those methods beat it too. Robometer reports no episode-length baseline. In practice, the baseline is the first thing to run: if the method loses to it, one can stop there, and only if it wins is the bar worth checking.
+Copy-last and the joints are strong partly because our task is short and simple: little moves apart from the arm, and the arm's state is already in the joints. On long tasks with many moving objects a learned latent has more to add, and we did not test that. Some papers report a cheap baseline themselves (shuffled actions for ReAP, a random pick for PACT-VLA, net joint displacement for HWM), and on our data those methods beat it too; Robometer reports no episode-length baseline. Few of these comparisons come with an interval, so a close result such as adaptive chunking's 0.973 against 0.940 should be read as a direction, not a settled loss. In practice, the baseline is the first thing to run: if the method loses to it, one can stop there, and only if it wins is the bar worth checking.
 
 Table 3: The paper claims we compared with a cheap baseline, on the same data.
 
@@ -76,71 +82,69 @@ Table 3: The paper claims we compared with a cheap baseline, on the same data.
 | ReAP | shuffled actions (failure AUROC) | 0.789 | 0.708 | beat |
 | Robometer | episode length (failure AUROC, ArmnetBench) | 0.818 | 0.938 | lost |
 | HWM | net joint displacement (cosine to the macro-action) | 0.608 | 0.551 | beat |
-| Adaptive chunking | fixed chunk length (boundary jump, lower is better) | 0.973 | 0.940 | lost |
+| Adaptive chunking | fixed chunk length (boundary jump, lower is better) | 0.973 | 0.940 | lost (no interval) |
 | PACT-VLA | a random pick (error of the executed window) | −0.27° against random | – | beat |
 | REMORA | per-frame readout (readout flips) | 0.70 × per-frame | – | beat, under its bar of 0.5 × |
 
-## 6. Three failure classes
+## 6. Three ways of failing
 
-We see three classes in the failures. The first, class A, is the clock: the method does not fit the real-time budget of the edge GPU. Adaptive chunking needs {{ex_a_ours}} for one decision against a budget of {{ex_a_bar}}. It may well work on a faster GPU, and this class is the easiest to avoid, since a method can be timed on the target device before anything else is built.
+We see three ways the methods fail. The first is the clock: the method does not fit the real-time budget of the edge GPU. Adaptive chunking needs {{ex_a_ours}} for one decision against a budget of {{ex_a_bar}}. This one is partly ours, since our engine samples without batching, and the method may well fit on a faster GPU or with batching. It is also the easiest failure to avoid, since a method can be timed on the target device before anything else is built.
 
-Class B concerns judges, the models that say whether an episode succeeds, fails or progresses. A 4B reward model used zero-shot on ArmnetBench reaches an AUROC of {{ex_b_ours}}, while episode length alone reaches {{ex_b_len}}.
+The second is a judge beaten by episode length. A 4B reward model used zero-shot on ArmnetBench reaches an AUROC of {{ex_b_ours}}, while episode length alone reaches {{ex_b_len}}. This rests on one case, and as Section 5 shows, it says more about the dataset than about judges: on ArmnetBench the length of an episode leaks its label.
 
-Class C concerns learned latents, the vectors a world model computes from the camera. Our world model ranks the executed chunk first in {{ex_c_ours}} of anchors against a bar of {{ex_c_bar}}, while a baseline using only the actions reaches {{ex_c_base}}. The commanded joints already hold the arm's state, so the latent has to add what the joints miss, such as where the objects are, and here it does not.
+The third is a learned latent beaten by the commanded joints. Our world model ranks the executed chunk first in {{ex_c_ours}} of anchors against a bar of {{ex_c_bar}}, while a baseline using only the actions reaches {{ex_c_base}}. The commanded joints already hold the arm's state, so the latent has to add what the joints miss, such as where the objects are, and on our short task it does not.
 
-These classes are our proposal, based on the author's reading of the {{c_paper_fail}} failed claims, and a second reader would be needed to confirm them. They suggest an order for testing a paper on a cheap rig: time it on the device first, then compare it with the cheapest baseline, and only then look at its bar.
+These three are our proposal, based on the author's reading of the failed claims, and a second reader would be needed to confirm them. They suggest an order for testing a paper on a cheap rig: time it on the device first, then compare it with the cheapest baseline on one's own data, and only then look at its bar.
 
 ## 7. Why they failed here: the method, our data, or our setup
 
-For each failure, Table 4 lists what on our side may explain it. Most failures have at least one such cause, so a failure here is a failure on this rig, with this data, and not a verdict on the method in general.
+For each failure, Table 4 says whose method failed and what on our side may explain it. Most failures have at least one such cause, so a failure here is a failure on this rig, with this data, and not a verdict on the method in general.
 
-Our data is small and simple. We have {{tel_train}} training episodes of one short task, about {{tel_ep_s}} s each, where the papers use hours of varied data; HWM, for instance, uses about 130 h against our 0.6 h. On a short task with one arm, the commanded joints already hold most of the state, which leaves little for a latent to add (class C). The task is also easy for our policy, since SmolVLA is at its ceiling on it, so there is little uncertainty for an entropy rule to read: the chunk length chosen by adaptive chunking sat at its minimum in 86 % of decisions. For H-JEPA, our task lies outside the regime the paper targets, as there is no gap between slow and fast parts of the scene.
+Our data is small and simple. We have {{tel_train}} training episodes of one short task, about {{tel_ep_s}} s each, where the papers use hours of varied data; HWM, for instance, uses about 130 h against our 0.6 h. On a short task with one arm, the commanded joints already hold most of the state, which leaves little for a latent to add. The task is also easy for our policy, since SmolVLA is at its ceiling on it, so there is little uncertainty for an entropy rule to read: the chunk length chosen by adaptive chunking sat at its minimum in 86 % of decisions. For H-JEPA, our task lies outside the regime the paper targets, as there is no gap between slow and fast parts of the scene.
 
 We also have too few failures. Our policies mostly succeed, and the main rollout set has only {{ro_p_fail}} failures in {{ro_p_eps}} episodes. A bar such as five failures caught out of eight is coarse, and a single episode can change the verdict (ReAP, VLA-Corrector, SURVEYOR).
 
-In several cases our version of the method is not exactly theirs. For ContactGuard we used mixed policies and two cameras, where the paper uses one policy and three cameras. For FAIL-Detect and SAFE we used our world model's surprise as the score instead of their own scores. Our VLA-Corrector verifier works on pooled image statistics, not on their 54 features with the arm state. SURVEYOR's drafter is not released, REMORA's progress atoms are written by hand, and Robometer was only tested zero-shot because our fine-tuning run never trained.
-
-Episode length is strong because of how the episodes end, not because judges are weak in general. On ArmnetBench a failed episode tends to run until the time limit, so length separates the outcomes ({{ex_b_len}}); on our own 88 rollouts, where this is not the case, length is close to chance ({{b_len_own}}).
+In {{t_p_var}} papers our version of the method is not exactly theirs. For ContactGuard we used mixed policies and two cameras, where the paper uses one policy and three cameras. For FAIL-Detect and SAFE we used our world model's surprise as the score instead of their own scores. ReAP's risk head ran on our world model's latent, and our VLA-Corrector verifier works on pooled image statistics instead of their 54 features with the arm state. The drafter of SURVEYOR (a NeurIPS 2026 workshop paper) is not released, and REMORA's progress atoms are written by hand. These are failures of our variants, and we do not claim that the authors' methods fail.
 
 Our inference engine matters as well. vla.cpp samples sequentially and has no batching, so adaptive chunking pays for 20 full passes, while the paper's 106 ms was measured with batching on an A800. For PACT-VLA, the time of the check is projected rather than measured. Finally, several tests were offline only: planning ranked recorded chunks, and chunking measured smoothness on recorded episodes. None of these ran in closed loop on the arm.
 
-Table 4: Each fail or not-proven paper, what we measured, and what on our side may explain it.
+Table 4: Each failed or not-proven paper, whose method failed, what we measured, and what on our side may explain it.
 
-| failed paper | kind | our result | what may be on our side |
+| failed paper | whose method | our result | what may be on our side |
 |---|---|---|---|
-| LeWorldModel | world model | planning rank 0.60, action-only 0.68–0.90 | one short task, 157 episodes, one seed; offline ranking only |
-| DINO-WM | world model | planning rank 0.61, action-only 0.68–0.90 | same data as LeWorldModel; one training |
-| RoboJEPA | world model | 11.8 % below copy-last, bar 15 % | near miss; the 1B model reached 15.8 % on 30 clips only |
-| H-JEPA | world model | progress ρ −0.73, bar −0.80; false stalls 52 % | our task is outside the paper's regime |
-| HWM | world model | not proven: high level worse at 2 s | 0.6 h of one task against their 130 h |
-| ContactGuard | monitor | AUROC 0.70, current latent 0.82 | mixed policies and 2 cameras against one policy and 3 cameras |
-| FAIL-Detect and SAFE | monitor | 22.7 % of successes flagged at α 5 % | our score, not theirs; 22 successes for calibration |
-| ReAP | monitor | 3 of 8 failures caught | 8 failures only |
-| VLA-Corrector | monitor | 2 of 8, AUROC 0.59 | our features, not their 54; 8 failures |
-| Robometer | judge | AUROC 0.818, length 0.938 | zero-shot only; ArmnetBench failures run to the time limit (on our rollouts length is near chance) |
-| SURVEYOR | monitor | threshold 1.249 against 0.20; 3 of 8 | their drafter not released; 8 failures |
-| REMORA | monitor | readout flips 0.70 of the per-frame readout | hand-written progress atoms |
-| Adaptive chunking | chunking | 4,751 ms per decision; length 2 in transport and at the grasp | sequential engine, no batching; task at ceiling for our policy |
-| PACT-VLA | chunking | 37 ticks of delay against 8 | check time projected; sequential engine |
-| Real-Time Chunking | chunking | not proven: 71–73 % smoother, no arm run | offline smoothness only |
-| Horizon × depth | chunking | not proven: 0.78, bar 0.70 | one policy, one task; arm test not run |
+| LeWorldModel | authors' | planning rank 0.60, action-only 0.68–0.90 | one short task, 157 episodes, one seed; offline ranking only |
+| DINO-WM | authors' | planning rank 0.61, action-only 0.68–0.90 | same data as LeWorldModel; one training |
+| RoboJEPA | authors' | 11.8 % below copy-last, bar 15 % | near miss; the 1B model reached 15.8 % on 30 clips only |
+| H-JEPA | authors' | progress ρ −0.73, bar −0.80; false stalls 52 % | our task is outside the paper's regime |
+| HWM | not proven | not proven: high level worse at 2 s | 0.6 h of one task against their 130 h |
+| ContactGuard | our variant | AUROC 0.70, current latent 0.82 | mixed policies and 2 cameras against one policy and 3 cameras |
+| FAIL-Detect and SAFE | our variant | 22.7 % of successes flagged at α 5 % | our score, not theirs; 22 successes for calibration |
+| ReAP | our variant | 3 of 8 failures caught | their risk head on our world model's latent, not their features; 8 failures |
+| VLA-Corrector | our variant | 2 of 8, AUROC 0.59 | our features, not their 54; 8 failures |
+| Robometer | authors' | AUROC 0.818, length 0.938 | zero-shot only; ArmnetBench failures run to the time limit (on our rollouts length is near chance) |
+| SURVEYOR | our variant | threshold 1.249 against 0.20; 3 of 8 | their drafter not released; 8 failures |
+| REMORA | our variant | readout flips 0.70 of the per-frame readout | hand-written progress atoms |
+| Adaptive chunking | authors' | 4,751 ms per decision; length 2 in transport and at the grasp | sequential engine, no batching; task at ceiling for our policy |
+| PACT-VLA | our engine | 37 ticks of delay against 8 | check time projected; sequential engine |
+| Real-Time Chunking | not proven | not proven: 71–73 % smoother, no arm run | offline smoothness only |
+| Horizon × depth | not proven | not proven: 0.78, bar 0.70 | one policy, one task; arm test not run |
 
 ## 8. Limitations
 
-Our data covers one short task family, about {{tel_ep_s}} s per episode, with one arm, two cameras and about {{tel_min}} minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, {{ro_p_fail}} in the main set of {{ro_p_eps}}. Several methods are our own re-implementations rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, and many tests use small samples and a single training seed. The VLA policies have no cheap baseline, only a success rate over 10 trials, which is a weaker test than the others. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, a failure on our rig is not a failure on the authors' hardware, and our own mistakes are possible, as the TurboVLA case shows (Section 3).
+Our data covers one short task family, about {{tel_ep_s}} s per episode, with one arm, two cameras and about {{tel_min}} minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, {{ro_p_fail}} in the main set of {{ro_p_eps}}. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible, as the TurboVLA case shows (Section 3).
 
 ## 9. Related work
 
-Two works evaluate policies on the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries [@2606.08881], and ArmnetBench, a fleet of SO-101 cells that evaluates policies at scale [@2607.24481]. In simulation, vla-eval runs VLAs across 14 benchmarks [@2603.13966], and another benchmark studies the quality of demonstrations [@2610.18869]. These works rank policies. We instead take the claim a paper makes about its method and test it against a bar fixed in advance, on one cheap rig. The closest work is RoboSeed [@2610.40026], which scores VLA and world-action models on five dimensions, including reproduction evidence and deployment affordability; its authors note that the score is not a probability that a result is correct. We give one yes or no per claim on one rig, with the data behind it.
+Two works evaluate policies on the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries [@2606.08881], and ArmnetBench, a fleet of SO-101 cells that evaluates policies at scale [@2607.24481]. In simulation, vla-eval runs VLAs across 14 benchmarks [@2603.13966], and another benchmark studies the quality of demonstrations [@2610.18869]. These works rank policies. We instead take the claim a paper makes about its method and test it against a bar fixed in advance, on one cheap rig. The closest work is RoboSeed [@2610.40026], which scores VLA and world-action models on five dimensions, including reproduction evidence and deployment affordability; its authors note that the score is not a probability that a result is correct. We give one verdict per claim on one rig, with the data behind it and the reason we think it failed.
 
 ## 10. Conclusion
 
-We re-tested {{c_paper}} claims from {{papers}} robot-learning papers on a rig of about €{{rig_eur_round}}, with under ${{cost_round}} of cloud GPU, and {{c_paper_repro}} of them held. Several methods lost to a baseline with no learning in it: copy-last, the commanded joints or the length of the episode. Our advice to anyone re-testing a paper on a cheap rig is to run the cheapest baseline first, on the same data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and anyone with a cheap rig can run the same tests.
+We re-tested {{c_paper}} claims from {{papers}} robot-learning papers on a rig of about €{{rig_eur_round}}, with under ${{cost_round}} of cloud GPU. {{c_paper_repro}} held, and {{t_c_auth}} failed with the authors' method on our data. The most useful part was the cheapest baseline: {{b_lost}} of the {{b_n}} methods we compared with one lost to a signal we had for free, and the same model could pass one baseline and fail another. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
 
 ## References
 
 ## Appendix: every paper
 
-Table 5: One row per paper with a claim of its own (internal model and test names kept). The rig price of €{{rig_eur}} counts the parts with a stated price; {{rig_unpriced}} small parts are not priced yet. Read the verdict against the rig each paper was shown on.
+Table 5: One row per paper with a claim of its own; FAIL-Detect and SAFE share a row. The bars are ours, written before each test, from the paper's own number where it gives one (that number is kept in the register). Internal names: W1 is our LeWorldModel and W2 our DINO-WM, both trained on our teleoperated data; names such as G1b, H0 or P1 are the ids of our tests in the repository. The rig price of €{{rig_eur}} counts the parts with a stated price; {{rig_unpriced}} small parts are not priced yet. Read the verdict against the rig each paper was shown on.
 
 {{TABLE1}}

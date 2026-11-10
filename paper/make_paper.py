@@ -39,12 +39,17 @@ def register():
     dropped = [p["paper"] for p in allp if p not in papers]
     assert dropped == ["TurboVLA"], dropped
     a = "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none)"
-    put("papers", str(len(papers)), a + ", len")
-    v = collections.Counter(p["verdict"] for p in papers)
+    wt = lambda p: len(p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else 1  # noqa: E731  FAIL-Detect and SAFE: two papers, one row
+    a += "; a row citing two arXiv ids counts as two papers"
+    put("papers", str(sum(wt(p) for p in papers)), a + ", sum of papers")
+    put("rows", str(len(papers)), "repro/register/expected/register.json papers with at least one paper claim, rows")
+    v = collections.Counter()
+    for p in papers: v[p["verdict"]] += wt(p)
     for k in ("reproduces", "fail", "not proven", "not tested"):
         put("p_" + k.replace(" ", "_"), str(v[k]), a + f", verdict = {k}")
     assert not v["withdrawn"]
-    rc = collections.Counter(p["their_rig_cost_class"] for p in papers)
+    rc = collections.Counter()
+    for p in papers: rc[p["their_rig_cost_class"]] += wt(p)
     for k, name in (("sim", "sim"), ("gt20k", ">$20k"), ("5to20k", "$5–20k"), ("lt5k", "<$5k"), ("unstated", "unstated")):
         put("rig_" + k, str(rc[name]), a + f", their_rig_cost_class = {name}")
     put("rig_far", str(rc["sim"] + rc[">$20k"]), a + ", their_rig_cost_class = sim + >$20k")
@@ -81,14 +86,43 @@ def register():
                                   ("b_len_own", "C-010-3", "note", "0.521")):
         assert text in by[cid][field], (cid, text)
         put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}")
+    # the failed claims and papers, split by whose method failed (by hand, from Table 4 of the paper)
+    ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "auth", "C-010-1": "auth", "C-010-2": "auth",
+             "C-019-1": "auth", "C-019-2": "auth",
+             "C-006-1": "var", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "var", "C-018-1": "var",
+             "C-018-2": "var", "C-022-1": "var", "C-019-3": "eng", "C-020-2": "eng"}
+    assert sorted(ctier) == sorted(c["id"] for c in cl if c["verdict"] == "fail"), "every failed claim needs a tier"
+    ta = "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier)"
+    tc = collections.Counter(ctier.values())
+    for k in ("auth", "var", "eng"):
+        put("t_c_" + k, str(tc[k]), ta + f", tier = {k}")
+    ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "auth", "Robometer": "auth",
+             "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "var", "FAIL-Detect and SAFE": "var", "ReAP": "var",
+             "VLA-Corrector": "var", "SURVEYOR": "var", "REMORA": "var", "PACT-VLA": "eng"}
+    assert sorted(ptier) == sorted(p["paper"] for p in papers if p["verdict"] == "fail"), "every failed paper needs a tier"
+    tp = collections.Counter()
+    for p in papers:
+        if p["paper"] in ptier: tp[ptier[p["paper"]]] += wt(p)
+    for k in ("auth", "var", "eng"):
+        put("t_p_" + k, str(tp[k]), ta.replace("claims", "papers").replace("ctier", "ptier") + f", tier = {k}, weighted")
+    put("t_p_other", str(tp["var"] + tp["eng"]), "t_p_var + t_p_eng"); put("t_c_other", str(tc["var"] + tc["eng"]), "t_c_var + t_c_eng")
+    # 9 of 10 trials, Wilson 95 % interval
+    import math
+    k_, n_, z = 9, 10, 1.96; c_ = (k_ + z * z / 2) / (n_ + z * z); h_ = z * math.sqrt(k_ * (n_ - k_) / n_ + z * z / 4) / (n_ + z * z)
+    for cid in ("C-011-1", "C-013-1"):
+        assert "9/10" in by[cid]["ours"] and "no numeric pass mark" in by[cid]["bar"], cid
+    put("vla_ci", f"{100 * (c_ - h_):.0f}–{100 * (c_ + h_):.0f} %", "Wilson 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')")
     for cid in ("C-019-3", "C-010-2", "C-001-2"):
         assert by[cid]["verdict"] == "fail" and not own(by[cid]), cid
     assert by["C-012-1"]["verdict"] == "withdrawn"
     rows = []
     for p in papers:
         cite = " ".join(f"[@{x.strip()}]" for x in p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else ""
-        name = p["paper"] + ((" " + cite) if cite else "")
-        cells = [name, p["their_rig_cost_class"], p["claim_tested"], p["bar"], p["ours"], p["verdict"]]
+        name = p["paper"] + ((" " + cite) if cite else "") + (" (NeurIPS 2026 workshop)" if p["paper"] == "SURVEYOR" else "")
+        verdict = p["verdict"] + {"auth": " (authors' method)", "var": " (our variant)", "eng": " (our engine)"}.get(ptier.get(p["paper"]), "")
+        if p["paper"] == "D-JEPA": verdict += " (proxy labels only)"
+        cells = [name, p["their_rig_cost_class"], p["claim_tested"], p["bar"].replace("no numeric pass mark registered", "no numeric bar"),
+                 p["ours"].replace("my data", "our data"), verdict]
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
     put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
@@ -101,8 +135,10 @@ def register():
     assert sorted(flat) == sorted(names), (set(names) ^ set(flat))
     fa = "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam)"
     for k, key in (("world models", "f_wm"), ("failure monitors and judges", "f_mon"), ("VLA policies", "f_vla"), ("chunking and edge inference", "f_chunk")):
-        put(key, str(len(fam[k])), fa + f", {k}")
-        vc = collections.Counter(p["verdict"] for p in papers if p["paper"] in fam[k])
+        put(key, str(sum(wt(p) for p in papers if p["paper"] in fam[k])), fa + f", {k}, weighted")
+        vc = collections.Counter()
+        for p in papers:
+            if p["paper"] in fam[k]: vc[p["verdict"]] += wt(p)
         put(key + "_v", ", ".join(f"{vc[v]} {w}" for v, w in (("reproduces", "reproduce"), ("fail", "fail"), ("not proven", "not proven"), ("not tested", "not tested")) if vc[v]), fa + f", {k}: verdict counts")
     datasets()
     rig = (REG / "rig.yaml").read_text()
@@ -117,8 +153,9 @@ def datasets():
     for k, (g, f) in {"tel_eps": ("teleop", "episodes"), "tel_train": ("teleop", "train_episodes"), "tel_val": ("teleop", "val_episodes"),
                       "tel_fps": ("teleop", "fps"), "ro_eps": ("rollouts", "episodes"), "ro_succ": ("rollouts", "success"),
                       "ro_fail": ("rollouts", "failure"), "arm_n": ("armnetbench", "rollouts"), "arm_pol": ("armnetbench", "policies"),
-                      "tim_eps": ("timing", "episodes"), "ro_p_eps": ("rollouts", "primary_episodes"), "ro_p_fail": ("rollouts", "primary_failure"), "tim_b": ("timing", "boundaries")}.items():
+                      "tim_eps": ("timing", "episodes"), "ro_p_eps": ("rollouts", "primary_episodes"), "ro_p_fail": ("rollouts", "primary_failure"), "ro_p_succ": ("rollouts", "primary_success"), "tim_b": ("timing", "boundaries")}.items():
         put(k, f"{d[g][f]:,}", a + f"{g}.{f}")
+    assert d["rollouts"]["success"] % 2 == 0; put("ro_half", str(d["rollouts"]["success"] // 2), a + "rollouts.success / 2 (FAIL-Detect and SAFE calibration split)")
     t = d["teleop"]
     put("tel_frames", f"{t['frames']:,}", a + "teleop.frames"); put("tel_min", f"{t['frames'] / t['fps'] / 60:.0f}", a + "teleop.frames / fps / 60")
     put("tel_ep_s", f"{t['frames'] / t['episodes'] / t['fps']:.0f}", a + "teleop.frames / episodes / fps")
@@ -202,16 +239,16 @@ def figures():
     FIG = HERE / "fig"; FIG.mkdir(exist_ok=True); sys.path.insert(0, str(HERE / "style")); import shisso_colors as sc; sc.use()
     GREEN, AMBER, RED = sc.CATEGORICAL[2], sc.CATEGORICAL[1], sc.CATEGORICAL[3]
     f = lambda k: int(N[k])  # noqa: E731
-    tot, rep, fail = f("c_paper"), f("c_paper_repro"), f("c_paper_fail")
-    other = tot - rep - fail
+    tot, rep, fa_, fv = f("c_paper"), f("c_paper_repro"), f("t_c_auth"), f("t_c_other")
+    other = tot - rep - fa_ - fv
     fig, ax = plt.subplots(figsize=(7.0, 1.95)); ax.set_xlim(0, 100); ax.set_ylim(0, 24); ax.axis("off")
-    ax.text(1, 22.2, f"{tot} paper claims re-tested on the {N['rig_eur']} euro rig, by verdict", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
+    ax.text(1, 22.2, f"{tot} paper claims re-tested on a rig of about {N['rig_eur_round']} euros, by verdict", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
     x = 1.0; W = 98.0
-    for n, lab, c in [(rep, "reproduce", GREEN), (fail, "fail", RED), (other, "not proven or not tested", "#8A90A0")]:
+    for n, lab, c in [(rep, "reproduce", GREEN), (fa_, "fail: authors' method", RED), (fv, "fail: our variant or engine", AMBER), (other, "open", "#8A90A0")]:
         wd = W * n / tot; ax.add_patch(FancyBboxPatch((x, 15.2), wd, 5.2, boxstyle="round,pad=0,rounding_size=0.8", fc=c, ec="white", lw=1.2))
         ax.text(x + wd / 2, 17.8, f"{n} {lab}", ha="center", va="center", fontsize=6.2, color="white", fontweight="bold"); x += wd
     cls = [("A  the clock", "adaptive chunking: one decision\n{} on the edge GPU, budget {}".format(N["ex_a_ours"], N["ex_a_bar"]), RED),
-           ("B  zero-shot judges", "a learned reward model: AUROC {}\nepisode length alone: {}".format(N["ex_b_ours"], N["ex_b_len"]), RED),
+           ("B  a judge against episode length", "reward model AUROC {}, length alone {}\n(ArmnetBench; one case)".format(N["ex_b_ours"], N["ex_b_len"]), RED),
            ("C  learned latents", "world model ranks the executed chunk\nfirst in {} of anchors, bar {}".format(N["ex_c_ours"], N["ex_c_bar"]), RED)]
     ax.text(1, 12.2, "the failures fall into three classes", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
     bw, gap = 31.3, 2.05

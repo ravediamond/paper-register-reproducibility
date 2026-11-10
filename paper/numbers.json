@@ -69,7 +69,7 @@
  },
  "cost": {
   "value": "42.30",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), sum of cost_usd"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, sum of cost_usd"
  },
  "cost_round": {
   "value": "50",
@@ -105,23 +105,23 @@
  },
  "f_chunk": {
   "value": "4",
-  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), chunking and edge inference"
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), chunking and edge inference, weighted"
  },
  "f_chunk_v": {
   "value": "2 fail, 2 not proven",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), chunking and edge inference: verdict counts"
  },
  "f_mon": {
-  "value": "7",
-  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), failure monitors and judges"
+  "value": "8",
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), failure monitors and judges, weighted"
  },
  "f_mon_v": {
-  "value": "7 fail",
+  "value": "8 fail",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), failure monitors and judges: verdict counts"
  },
  "f_vla": {
   "value": "3",
-  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), VLA policies"
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), VLA policies, weighted"
  },
  "f_vla_v": {
   "value": "3 reproduce",
@@ -129,35 +129,35 @@
  },
  "f_wm": {
   "value": "7",
-  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models"
+  "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models, weighted"
  },
  "f_wm_v": {
   "value": "1 reproduce, 4 fail, 1 not proven, 1 not tested",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models: verdict counts"
  },
  "p_fail": {
-  "value": "13",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), verdict = fail"
+  "value": "14",
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = fail"
  },
  "p_not_proven": {
   "value": "3",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), verdict = not proven"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = not proven"
  },
  "p_not_tested": {
   "value": "1",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), verdict = not tested"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = not tested"
  },
  "p_reproduces": {
   "value": "4",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), verdict = reproduces"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = reproduces"
  },
  "papers": {
-  "value": "21",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), len"
+  "value": "22",
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, sum of papers"
  },
  "rig_5to20k": {
   "value": "3",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = $5–20k"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = $5–20k"
  },
  "rig_eur": {
   "value": "1,350",
@@ -168,20 +168,20 @@
   "anchor": "repro/register/expected/rig.yaml: priced parts sum to 1,350; 2 small parts unpriced; rounded up"
  },
  "rig_far": {
-  "value": "15",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = sim + >$20k"
+  "value": "16",
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = sim + >$20k"
  },
  "rig_gt20k": {
-  "value": "7",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = >$20k"
+  "value": "8",
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = >$20k"
  },
  "rig_lt5k": {
   "value": "2",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = <$5k"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = <$5k"
  },
  "rig_sim": {
   "value": "8",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = sim"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = sim"
  },
  "rig_unpriced": {
   "value": "2",
@@ -189,7 +189,7 @@
  },
  "rig_unstated": {
   "value": "1",
-  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none), their_rig_cost_class = unstated"
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = unstated"
  },
  "ro_eps": {
   "value": "69",
@@ -199,6 +199,10 @@
   "value": "25",
   "anchor": "data/datasets.json rollouts.failure"
  },
+ "ro_half": {
+  "value": "22",
+  "anchor": "data/datasets.json rollouts.success / 2 (FAIL-Detect and SAFE calibration split)"
+ },
  "ro_p_eps": {
   "value": "50",
   "anchor": "data/datasets.json rollouts.primary_episodes"
@@ -207,9 +211,49 @@
   "value": "8",
   "anchor": "data/datasets.json rollouts.primary_failure"
  },
+ "ro_p_succ": {
+  "value": "42",
+  "anchor": "data/datasets.json rollouts.primary_success"
+ },
  "ro_succ": {
   "value": "44",
   "anchor": "data/datasets.json rollouts.success"
+ },
+ "rows": {
+  "value": "21",
+  "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
+ },
+ "t_c_auth": {
+  "value": "8",
+  "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = auth"
+ },
+ "t_c_eng": {
+  "value": "2",
+  "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = eng"
+ },
+ "t_c_other": {
+  "value": "10",
+  "anchor": "t_c_var + t_c_eng"
+ },
+ "t_c_var": {
+  "value": "8",
+  "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
+ },
+ "t_p_auth": {
+  "value": "6",
+  "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"
+ },
+ "t_p_eng": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = eng, weighted"
+ },
+ "t_p_other": {
+  "value": "8",
+  "anchor": "t_p_var + t_p_eng"
+ },
+ "t_p_var": {
+  "value": "7",
+  "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = var, weighted"
  },
  "table1_rows": {
   "value": "21",
@@ -266,5 +310,9 @@
  "tv_swap": {
   "value": "0.020°",
   "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on our data; LIBERO control 5.5°'"
+ },
+ "vla_ci": {
+  "value": "60–98 %",
+  "anchor": "Wilson 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')"
  }
 }
