@@ -106,7 +106,7 @@ def compute():
     claims = [rows[c] for c in order]
     cnt = {k: sum(r["outcome"] == k for r in claims) for k in ["beats", "loses", "unclear", "rows not available"]}
     return {"protocol": "repro/baseline-bootstrap/PROTOCOL.md", "resamples": N_RES, "seed": SEED, "interval": "percentile 95 %",
-            "counts": cnt, "claims": claims}
+            "comparisons": len(claims), "counts": cnt, "claims": claims}
 
 
 def main():

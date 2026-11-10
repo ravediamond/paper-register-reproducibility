@@ -3,6 +3,7 @@
  "resamples": 2000,
  "seed": 0,
  "interval": "percentile 95 %",
+ "comparisons": 11,
  "counts": {
   "beats": 2,
   "loses": 1,
