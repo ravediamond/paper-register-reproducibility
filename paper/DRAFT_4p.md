@@ -59,13 +59,29 @@ But this data has limits that explain some of the failures:
 
 ## 3. What we tested and how
 
-We chose papers from the parts of the stack our rig runs, and they fall into four kinds (Table 1). World models (7 papers) learn a latent from the camera to predict the next state or to plan; we test whether the latent predicts or plans better than a signal we get for free. Failure monitors and judges (8 papers) say whether an episode is failing or how far it has progressed; we test whether they catch failures better than a trivial signal. VLA policies (3 papers) follow an instruction on the arm; we test whether they succeed on our arm. Chunking and edge inference (4 papers) concern how a policy's action chunks are produced and joined; we test whether the joins are smoother and how long a chunk takes on the Orin.
+There are 4 kinds of papers we picked for re-tests (see Table 1 for details):
 
-Every test follows two rules. First, the bar is written before any result is seen, because a bar written after the result tends to drift toward it. The bars are ours: where the paper reports a number for the claim, the bar is set from it, and the register keeps that number next to ours. Second, before the method itself, we run the cheapest baseline of its kind on the same data. It is built from what we already have for free: the last frame, the joint values we send to the arm, the length of the episode, or the method with its main idea switched off. If the method loses to this baseline, its bar hardly matters.
+- World models (7 papers): the goal is to learn a latent from the cameras to predict or plan. In this case, the question is "does the latent beat a free signal?"
+- Failure monitors and judges (8 papers): the goal is to detect if an episode fails, or how far it has progressed. In this case, the question is "does the monitor beat a trivial signal?"
+- VLA policies (3 papers): the goal is to follow and execute an instruction on the arm.
+- Chunking and edge inference (4 papers): the goal is to improve how action chunks are made and joined, by making it smoother or faster.
 
-Each claim gets one of four verdicts: it holds (the bar is met), it fails (the bar is missed), it is not proven (the test ran but cannot decide), or it is not tested yet. A paper fails if any of its claims fails. Because a failure can come from us rather than from the method, we split each failure by whose method failed: the authors' method run on our data, a variant we had to build because a part was not released or did not fit our rig, our inference engine, or a task outside the regime the paper targets. Two of the VLA tests are weaker than the rest: SmolVLA and VLA-JEPA were judged by the operator over 10 trials with no numeric bar fixed before, and 9 successes out of 10 is compatible with a true rate anywhere between 60–98 % (Wilson score interval, 95 %).
+All the papers were chosen because we judged that they could reasonably run on our rig, which filters out many papers from the get-go.
 
-Where we could, we also ran a control on our own conclusions. TurboVLA is the clearest case. We believed its architecture made our port of the policy ignore its instruction, and we fixed the bar first: if swapping the task moved the output by ≥ 5°, the bug was in our port; if by < 1°, the problem was the data. With the upstream trainer on our data, swapping the task moved the output by only 0.020°, while their released LIBERO checkpoint, run on our rig, moved it by 5.5°. The problem was our data, not their architecture. We withdrew the claim, and it is not counted in this paper.
+We used 2 rules to re-test the claims.
+
+Rule 1: the bar to achieve to validate the claim needs to be written from the paper and its code, not after running the claim once. This avoids contaminating the bar with our own results. Where the paper gives a number, the bar comes from it; otherwise the bar is ours.
+
+Rule 2: we create and launch the cheapest baseline first, on the same data. It is built from cheap things that can be used on our tasks, like the last frame, the joint values or the episode length. If the method loses to it, the bar is not useful. For example, does a failure monitor catch failures better than directly checking the episode length?
+
+There are only 4 verdicts possible for each re-test: holds, meaning the bar is met; fails, so the bar is missed; not proven, because we cannot decide considering our rig and context; and not tested, not run yet (because of time to test, cost, ...). A paper is considered failed if any of its claims fails. We decided that because, for us, a paper that is only half successful is considered failed. All the failures can be categorized in 4 categories:
+
+- the paper's method failed
+- our variant of the method failed (because we could not use the paper's method directly)
+- the limitation of our inference engine
+- or a task that goes outside the paper's scope
+
+We had 2 cases of weaker bar: for SmolVLA and VLA-JEPA, we had no numeric bar, so instead we launched 10 trials judged by a human. 9 out of 10 were a success, which means a true rate anywhere from 60–98 % (Wilson interval, 95%).
 
 Table 1: The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.
 
@@ -161,7 +177,7 @@ Table 4: Each failed or not-proven paper, whose method failed, what we measured,
 
 ## 8. Limitations
 
-Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons could be run for only 7 of 11, because for the others the per-episode rows were not stored or a re-run did not reproduce the stored result. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible, as the TurboVLA case shows (Section 3).
+Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons could be run for only 7 of 11, because for the others the per-episode rows were not stored or a re-run did not reproduce the stored result. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible.
 
 ## 9. Related work
 
