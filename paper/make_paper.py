@@ -35,9 +35,10 @@ def register():
     """Only claims stated in the papers count. Rows that are our own claims (stated_in 'not a paper claim') belong to the other
     papers of the series and are left out, and so is a paper with no claim of its own (TurboVLA, kept in the text as an example)."""
     allp = json.loads((REG / "register.json").read_text())["papers"]
-    papers = [p for p in allp if any(not own(c) for c in p["claims"])]
+    # D-JEPA is left out: its one claim was only run with proxy labels, so it was never tested (owner's decision, 2026-11-10)
+    papers = [p for p in allp if any(not own(c) for c in p["claims"]) and p["paper"] != "D-JEPA"]
     dropped = [p["paper"] for p in allp if p not in papers]
-    assert dropped == ["TurboVLA"], dropped
+    assert sorted(dropped) == ["D-JEPA", "TurboVLA"], dropped
     a = "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none)"
     wt = lambda p: len(p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else 1  # noqa: E731  FAIL-Detect and SAFE: two papers, one row
     a += "; a row citing two arXiv ids counts as two papers"
@@ -165,7 +166,7 @@ def register():
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
     put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
-    fam = {"world models": ["LeWorldModel", "DINO-WM", "RoboJEPA", "H-JEPA", "D-JEPA", "HWM (hierarchical latent world models)", "LeJEPA identifiability"],
+    fam = {"world models": ["LeWorldModel", "DINO-WM", "RoboJEPA", "H-JEPA", "HWM (hierarchical latent world models)", "LeJEPA identifiability"],
            "failure monitors and judges": ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"],
            "VLA policies": ["SmolVLA", "VLA-JEPA", "REKI"],
            "chunking and edge inference": ["Real-Time Chunking", "Adaptive Action Chunking (AAC)", "PACT-VLA", "Horizon × depth (Euler steps vs execution horizon)"]}

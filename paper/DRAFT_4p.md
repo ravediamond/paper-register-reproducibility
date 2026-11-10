@@ -1,20 +1,20 @@
-# What survives on a small team's rig: re-testing 22 robot-learning papers with cheap hardware and little data
+# What survives on a small team's rig: re-testing 21 robot-learning papers with cheap hardware and little data
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted.*
 
 ## Abstract
 
-Most of the robotic papers are either tested in sim or on expensive rigs. From our tested papers, 16 out of 22 were done in simulation or on rigs above $20k, and only 2 on rigs under $5k. But the question is, does a claim still validate for smaller teams with cheaper hardware, less data and shorter tasks? This is what we want to answer in this paper. For that we re-tested 37 claims out of 22 papers on our cheap hardware, an Nvidia Jetson Orin NX 16GB and a robot arm SO-101 (about €1,500). We used the same protocol for each claim: a bar fixed before any testing, and the cheapest baseline tested first. Out of the 37 claims, only 11 had a cheap baseline to test against, and among them only 3 are worse than this baseline. Among those 3, only the LeWorldModel one is a clean fail: for ContactGuard we had to modify the method to fit our rig, and Robometer's loss comes from how its dataset ends the episodes. LeWorldModel picked the chunk the arm really executed less often than a baseline using the actions alone, at every distance we tested. Our results: 12 claims hold, 7 fail using the paper's method, 8 fail on our variation, 2 on our inference engine and 1 on a task outside the paper's regime. Most of the failures come as much from the papers' methods as from our short tasks, small data and our own variants, and for each we explain why. The code, data and all numbers are public and can be replicated.
+Most of the robotic papers are either tested in sim or on expensive rigs. From our tested papers, 16 out of 21 were done in simulation or on rigs above $20k, and only 1 on a rig under $5k. But the question is, does a claim still validate for smaller teams with cheaper hardware, less data and shorter tasks? This is what we want to answer in this paper. For that we re-tested 36 claims out of 21 papers on our cheap hardware, an Nvidia Jetson Orin NX 16GB and a robot arm SO-101 (about €1,500). We used the same protocol for each claim: a bar fixed before any testing, and the cheapest baseline tested first. Out of the 36 claims, only 11 had a cheap baseline to test against, and among them only 3 are worse than this baseline. Among those 3, only the LeWorldModel one is a clean fail: for ContactGuard we had to modify the method to fit our rig, and Robometer's loss comes from how its dataset ends the episodes. LeWorldModel picked the chunk the arm really executed less often than a baseline using the actions alone, at every distance we tested. Our results: 12 claims hold, 7 fail using the paper's method, 8 fail on our variation, 2 on our inference engine and 1 on a task outside the paper's regime. Most of the failures come as much from the papers' methods as from our short tasks, small data and our own variants, and for each we explain why. The code, data and all numbers are public and can be replicated.
 
 ## 1. Introduction
 
-Out of the 22 papers we tested, 16 of them are done in simulation or on expensive rigs above $20k, and only 2 on rigs under $5k. This means small teams can either trust the paper or re-test the claim on their own hardware. Both of them are costly, either when validating or debugging if it does not work. The question really is, do the papers' claims still hold on cheap hardware, with little data and short tasks? And this is the environment small teams or solo founders have.
+Out of the 21 papers we tested, 16 of them are done in simulation or on expensive rigs above $20k, and only 1 on a rig under $5k. This means small teams can either trust the paper or re-test the claim on their own hardware. Both of them are costly, either when validating or debugging if it does not work. The question really is, do the papers' claims still hold on cheap hardware, with little data and short tasks? And this is the environment small teams or solo founders have.
 
 To answer this question, we re-tested each claim on our own cheap rig. We used the same testing protocol each time: a bar fixed before any test, and the cheapest baseline (low cost or free) run first on the same data, to filter out claims early before investing in them.
 
 We found out that this cheap baseline was really useful to validate claims. For example with LeWorldModel, the goal was to predict the next state of the arm and plan with it. For that we had a first baseline where it needed to beat a copy-last method, and it passed (error 0.31 vs 0.89). But for ranking the chunk the arm really executed, the model scored worse than using the actions alone (0.60 vs 0.68–0.90). Without that second baseline, we would have called the paper a success.
 
-Out of the 37 claims, only 12 hold on our rig. The failures are split between the paper's method failing (7), our variant of the method failing (8), our inference engine (2) and one outside the paper's regime. But, and it is important to say it again, a fail on our rig does not mean the paper is wrong: it just does not work on our specific setup and data.
+Out of the 36 claims, only 12 hold on our rig. The failures are split between the paper's method failing (7), our variant of the method failing (8), our inference engine (2) and one outside the paper's regime. But, and it is important to say it again, a fail on our rig does not mean the paper is wrong: it just does not work on our specific setup and data.
 
 ## 2. Rig and data
 
@@ -63,7 +63,7 @@ But this data has limits that explain some of the failures:
 
 There are 4 kinds of papers we picked for re-tests (see Table 1 for details):
 
-- World models (7 papers): the goal is to learn a latent from the cameras to predict or plan. In this case, the question is "does the latent beat a free signal?"
+- World models (6 papers): the goal is to learn a latent from the cameras to predict or plan. In this case, the question is "does the latent beat a free signal?"
 - Failure monitors and judges (8 papers): the goal is to detect if an episode fails, or how far it has progressed. In this case, the question is "does the monitor beat a trivial signal?"
 - VLA policies (3 papers): the goal is to follow and execute an instruction on the arm.
 - Chunking and edge inference (4 papers): the goal is to improve how action chunks are made and joined, by making it smoother or faster.
@@ -89,18 +89,18 @@ Table 1: The four kinds of papers, what we test in each, the cheapest baseline w
 
 | kind of paper | papers | what we test | cheapest baseline | verdicts |
 |---|---|---|---|---|
-| world models | 7 | predict the next state; rank or plan actions | copy-last (next state = current state); the commanded joints or the actions alone | 1 reproduce, 4 fail, 1 not proven, 1 not tested |
+| world models | 6 | predict the next state; rank or plan actions | copy-last (next state = current state); the commanded joints or the actions alone | 1 reproduce, 4 fail, 1 not proven |
 | failure monitors and judges | 8 | catch failures; track progress | episode length; the same model with shuffled actions | 8 fail |
 | VLA policies | 3 | succeed on our arm | none: success over 10 trials judged by the operator, no numeric bar fixed before | 3 reproduce |
 | chunking and edge inference | 4 | smoother joins between chunks; time per chunk | the same policy without the trick; the real-time budget on the Orin | 2 fail, 2 not proven |
 
 ## 4. Results
 
-Table 2 and Figure 1 show the verdicts, and Table 1 breaks them down by kind of paper. Out of the 37 tested claims, 12 hold, 18 fail (7 using the papers' methods, 8 using our variant, 2 on our inference engine and 1 outside the paper's scope), 3 are not proven and 4 not tested. At the paper level, 4 are validated, 14 fail, 3 are not proven and 1 is not tested.
+Table 2 and Figure 1 show the verdicts, and Table 1 breaks them down by kind of paper. Out of the 36 tested claims, 12 hold, 18 fail (7 using the papers' methods, 8 using our variant, 2 on our inference engine and 1 outside the paper's scope), 3 are not proven and 3 not tested. At the paper level, 4 are validated, 14 fail and 3 are not proven.
 
 The pattern by kind looks revealing (all 8 failure monitors and judges have failed, all 3 VLA policies reproduce) but is actually limited. 7 out of 8 monitors used our own variant, so they cannot directly serve as evidence. As for the VLAs, for 2 of the 3 there were no numbers to use as bars, so we just ran trials and recorded the number of fails.
 
-![Fig. 1 — the 37 paper claims by verdict: 12 reproduce, 7 fail with the authors' method on our data, 11 fail only in our variant of the method, because of our inference engine or outside the paper's regime, and the rest are open.](fig/verdicts.png)
+![Fig. 1 — the 36 paper claims by verdict: 12 reproduce, 7 fail with the authors' method on our data, 11 fail only in our variant of the method, because of our inference engine or outside the paper's regime, and the rest are open.](fig/verdicts.png)
 
 Table 2: Verdicts by paper and by claim. A paper fails if any of its claims fails; failures are split by whose method failed.
 
@@ -112,7 +112,7 @@ Table 2: Verdicts by paper and by claim. A paper fails if any of its claims fail
 | fails, our engine | 1 | 2 |
 | fails, outside the paper's regime | 1 | 1 |
 | not proven | 3 | 3 |
-| not tested | 1 | 4 |
+| not tested | 0 | 3 |
 
 ## 5. The cheapest baseline
 
@@ -187,13 +187,13 @@ Two works evaluate policies on the same arm: a real-world VLA benchmark with a t
 
 ## 10. Conclusion
 
-We re-tested 37 claims from 22 robot-learning papers on a rig of about €1,500, with under $50 of cloud GPU. 12 held, and 7 failed with the authors' method on our data. The most useful part was the cheapest baseline: the same world model could pass one baseline and fail another, and 5 of the 11 methods we compared with one lost to a signal we had for free, although only 3 of these losses have an interval below zero, and only LeWorldModel's is a clean case with the authors' method. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
+We re-tested 36 claims from 21 robot-learning papers on a rig of about €1,500, with under $50 of cloud GPU. 12 held, and 7 failed with the authors' method on our data. The most useful part was the cheapest baseline: the same world model could pass one baseline and fail another, and 5 of the 11 methods we compared with one lost to a signal we had for free, although only 3 of these losses have an interval below zero, and only LeWorldModel's is a clean case with the authors' method. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
 
 ## References
 
 ## Appendix: every paper
 
-Table 5: One row per paper with a claim of its own; FAIL-Detect and SAFE share a row. The bars are ours, written before each test, from the paper's own number where it gives one (that number is kept in the register). Internal names: W1 is our LeWorldModel and W2 our DINO-WM, both trained on our teleoperated data; names such as G1b, H0 or P1 are the ids of our tests in the repository. The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict against the rig each paper was shown on.
+Table 5: One row per paper with a claim of its own; FAIL-Detect and SAFE share a row. D-JEPA is left out: its only claim was run with proxy labels, not the paper's success labels, so it was never really tested. The bars are ours, written before each test, from the paper's own number where it gives one (that number is kept in the register). Internal names: W1 is our LeWorldModel and W2 our DINO-WM, both trained on our teleoperated data; names such as G1b, H0 or P1 are the ids of our tests in the repository. The rig price of €1,350 counts the parts with a stated price; 2 small parts are not priced yet. Read the verdict against the rig each paper was shown on.
 
 | paper | their rig | claim tested | bar | our result | verdict |
 |---|---|---|---|---|---|
@@ -201,7 +201,6 @@ Table 5: One row per paper with a claim of its own; FAIL-Detect and SAFE share a
 | DINO-WM [arXiv:2411.04983] | sim | A predictor on frozen DINOv2 patches plans better than one on a learned latent. | G1b top-1 ≥ 0.8 at some target distance. | arm-pose R² 0.92 (vs 0.57 for W1); G1b top-1 0.55–0.61; no-model baseline 0.68–0.90 | fail (authors' method) |
 | RoboJEPA [arXiv:2610.10515] | >$20k | Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer. | 9-step L1 ≥ 15 % below copy-last (300M) and ≥ 5 % below shuffled actions; 2-view encoder ≤ 200 ms on the Orin. | 11.8 % below copy-last (300M; 1B 15.8 % on 30 clips); 9–10 % below shuffled; encoder 526 ms on the Orin NX | fail (authors' method) |
 | H-JEPA [arXiv:2610.06805] | sim | A slow second level makes latent distance track task progress. | Progress monotonicity Spearman ρ ≤ −0.80; false stalls ≤ 10 %. | level-2 ρ −0.73; false stalls 52 % | fail (outside the paper's regime) |
-| D-JEPA [arXiv:2609.24749] | <$5k | A decision-aligned ranking operator on a frozen world model picks better action chunks. | G1b regret ≤ 0.10 and ≤ the action-only baseline + 0.05. | regret 0.263 (W1 alone 0.263; action-only −0.007) | not tested (proxy labels only) |
 | ContactGuard [arXiv:2608.13438] | $5–20k | An event-anchored probe on imagined latents predicts grasp failure better than the current latent. | AUROC ≥ 0.85 and ≥ 0.05 above the current latent. | 0.70 imagined vs 0.82 current | fail (our variant) |
 | FAIL-Detect and SAFE [arXiv:2503.08558] [arXiv:2506.09937] | >$20k | A conformal band on a learned failure score keeps false alarms at α while catching failures. | Successes flagged ≤ 1/20; failures flagged ≥ 50 %. | 22.7 % of successes flagged at α = 5 %; 46 % of failures caught | fail (our variant) |
 | ReAP [arXiv:2610.16309] | $5–20k | A risk head on an action-conditioned latent warns before failures. | ≥ 5/8 failures caught at ≤ 1/20 false interventions; action-conditioned iff true ≥ shuffled + 0.05. | v1 AUROC 0.93 came from time and length; v2 0.789 vs 0.708 shuffled, 3/8 at 5/42 | fail (our variant) |

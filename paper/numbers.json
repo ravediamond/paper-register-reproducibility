@@ -116,15 +116,15 @@
   "anchor": "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim', verdict = not proven"
  },
  "c_not_tested": {
-  "value": "4",
+  "value": "3",
   "anchor": "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim', verdict = not tested"
  },
  "c_open": {
-  "value": "7",
+  "value": "6",
   "anchor": "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim', verdict = not proven + not tested"
  },
  "c_paper": {
-  "value": "37",
+  "value": "36",
   "anchor": "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim', len"
  },
  "c_paper_fail": {
@@ -200,11 +200,11 @@
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), VLA policies: verdict counts"
  },
  "f_wm": {
-  "value": "7",
+  "value": "6",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models, weighted"
  },
  "f_wm_v": {
-  "value": "1 reproduce, 4 fail, 1 not proven, 1 not tested",
+  "value": "1 reproduce, 4 fail, 1 not proven",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models: verdict counts"
  },
  "p_fail": {
@@ -216,7 +216,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = not proven"
  },
  "p_not_tested": {
-  "value": "1",
+  "value": "0",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = not tested"
  },
  "p_reproduces": {
@@ -224,7 +224,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = reproduces"
  },
  "papers": {
-  "value": "22",
+  "value": "21",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, sum of papers"
  },
  "rig_5to20k": {
@@ -248,7 +248,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = >$20k"
  },
  "rig_lt5k": {
-  "value": "2",
+  "value": "1",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = <$5k"
  },
  "rig_sim": {
@@ -292,7 +292,7 @@
   "anchor": "data/datasets.json rollouts.success"
  },
  "rows": {
-  "value": "21",
+  "value": "20",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
  },
  "t_c_auth": {
@@ -340,7 +340,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = var, weighted"
  },
  "table1_rows": {
-  "value": "21",
+  "value": "20",
   "anchor": "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)"
  },
  "tel_ep_s": {
