@@ -68,6 +68,19 @@ def register():
                                   ("tv_bug", "C-012-1", "bar", "≥ 5°"), ("tv_data", "C-012-1", "bar", "< 1°")):
         assert text in by[cid][field], f"{text!r} not in {cid}/{field}"
         put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}: '{by[cid][field]}'")
+    # the cheapest-baseline comparisons among the paper claims, outcome read by hand from bar and ours (Table 5)
+    base = {"C-001-1": "beat", "C-001-2": "lost", "C-002-1": "lost", "C-003-1": "under", "C-006-1": "lost", "C-008-1": "beat",
+            "C-010-2": "lost", "C-016-2": "beat", "C-019-2": "lost", "C-020-1": "beat", "C-022-1": "under"}
+    ba = "repro/register/expected/register.json claims " + ", ".join(base) + " (compared with a cheap baseline; outcome by hand)"
+    for cid, o in base.items():
+        assert not own(by[cid]) and by[cid]["verdict"] == {"beat": "reproduces", "lost": "fail", "under": "fail"}[o], cid
+    put("b_n", str(len(base)), ba + ", len"); bc = collections.Counter(base.values())
+    for k in ("beat", "lost", "under"):
+        put("b_" + k, str(bc[k]), ba + f", outcome = {k}")
+    for key, cid, field, text in (("b_lewm_pred", "C-001-1", "ours", "0.31"), ("b_lewm_cl", "C-001-1", "ours", "0.89"),
+                                  ("b_len_own", "C-010-3", "note", "0.521")):
+        assert text in by[cid][field], (cid, text)
+        put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}")
     for cid in ("C-019-3", "C-010-2", "C-001-2"):
         assert by[cid]["verdict"] == "fail" and not own(by[cid]), cid
     assert by["C-012-1"]["verdict"] == "withdrawn"
@@ -306,7 +319,7 @@ def to_tex(md):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
             if t[0][0] != "paper" and len(t[0]) >= 4 and max(len(x) for r in t[1:] for x in r[1:]) >= 12:  # wide text table: full width
-                w = {4: [2.8, 1.8, 5.6, 6.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
+                w = [2.6, 4.2, 3.0, 2.4, 4.4] if t[0][0] == "method" else {4: [2.8, 1.8, 5.6, 6.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
                 out += [r"\begin{table*}[t]\centering\footnotesize", r"\caption{" + esc(cap) + "}", r"\begin{tabular}{" + "".join(f"p{{{x}cm}}" for x in w) + "}",
                         r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + [" & ".join(r) + r" \\" for r in t[1:]] + \
                        [r"\bottomrule", r"\end{tabular}", r"\end{table*}"]

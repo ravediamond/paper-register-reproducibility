@@ -7,6 +7,34 @@
   "value": "7",
   "anchor": "data/datasets.json armnetbench.policies"
  },
+ "b_beat": {
+  "value": "4",
+  "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = beat"
+ },
+ "b_len_own": {
+  "value": "0.521",
+  "anchor": "repro/register/expected/register.json claims, id C-010-3, note"
+ },
+ "b_lewm_cl": {
+  "value": "0.89",
+  "anchor": "repro/register/expected/register.json claims, id C-001-1, ours"
+ },
+ "b_lewm_pred": {
+  "value": "0.31",
+  "anchor": "repro/register/expected/register.json claims, id C-001-1, ours"
+ },
+ "b_lost": {
+  "value": "5",
+  "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = lost"
+ },
+ "b_n": {
+  "value": "11",
+  "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), len"
+ },
+ "b_under": {
+  "value": "2",
+  "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = under"
+ },
  "c_fail": {
   "value": "18",
   "anchor": "repro/register/expected/register.json papers[*].claims without stated_in 'not a paper claim', verdict = fail"

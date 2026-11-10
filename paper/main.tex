@@ -32,7 +32,7 @@
 \item a fail on our rig, not on their hardware
 \end{itemize}
 \item Overall: 12 of 37 hold, 18 fail.
-\item Several failures are not near misses: the method loses to a baseline with no learning $\rightarrow$ three classes, Section 5.
+\item Several failures are not near misses: the method loses to a baseline with no learning $\rightarrow$ what the baseline caught, Section 5; three classes, Section 6.
 \end{itemize}
 
 
@@ -106,7 +106,7 @@ chunking and edge inference & 4 & smoother joins between chunks; time per chunk 
 \item Figure 1 and Table 2; by kind of paper in Table 1.
 \item Claims: 12 hold, 18 fail, 3 not proven, 4 not tested.
 \item Papers: 4 of 21 reproduce, 13 fail, 3 not proven, 1 not tested.
-\item Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce; Section 6 shows why the first is weaker evidence than it looks.
+\item Pattern by kind: all 7 monitors and judges fail, all 3 VLA policies reproduce; Section 7 shows why the first is weaker evidence than it looks.
 \item Every paper, with its claim, bar and our result: appendix.
 \end{itemize}
 
@@ -132,6 +132,54 @@ not tested & 1 & 4 \\
 \end{table}
 
 
+\section{The cheapest baseline}
+
+
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item What it is: the signal we get for free, on the same data as the method (Table 1); it needs no training and runs in minutes.
+\item Run for 11 paper claims (Table 3): the method clearly beat it in 4, beat it by less than its bar in 2, and lost to it in 5.
+\item The baseline you pick decides the verdict, even for one model:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item LeWorldModel predicts the next latent far better than copy-last (error 0.31 against 0.89) $\rightarrow$ holds
+\item the same model ranks the executed chunk worse than the actions alone (0.60 against 0.68--0.90) $\rightarrow$ fails
+\item so predicting well is not the same as planning well; testing only one of the two would give the wrong picture
+\end{itemize}
+\item The same baseline is not equally strong on all data:
+\begin{itemize}\setlength{\itemsep}{0pt}
+\item episode length beats the reward model on ArmnetBench (0.938 against 0.818), where failures run to the time limit
+\item on our own 88 rollouts, where they do not, length is near chance (0.521)
+\item $\rightarrow$ compute the baseline on your own data; what a judge must beat depends on who stopped the episode
+\end{itemize}
+\item Copy-last and the joints are strong partly because our task is short and simple: little moves except the arm, and the arm is in the joints. On long tasks with many moving objects, a learned latent has more to add; we did not test that.
+\item Some papers report a cheap baseline themselves (ReAP: shuffled actions; PACT-VLA: a random pick; HWM: net joint displacement), and on our data those methods beat it too. Robometer reports no episode-length baseline.
+\item In practice: run the baseline first; if the method loses, stop there; if it wins, then check the bar.
+\end{itemize}
+
+
+
+
+\begin{table*}[t]\centering\footnotesize
+\caption{The paper claims we compared with a cheap baseline, on the same data.}
+\begin{tabular}{p{2.6cm}p{4.2cm}p{3.0cm}p{2.4cm}p{4.4cm}}
+\toprule
+\shissohead method & baseline (what is measured) & method & baseline & outcome \\
+\midrule
+LeWorldModel & copy-last (latent error at 30 steps, lower is better) & 0.31 & 0.89 & beat \\
+LeWorldModel & actions alone (executed chunk ranked first) & 0.60 & 0.68--0.90 & lost \\
+DINO-WM & actions alone (executed chunk ranked first) & 0.61 & 0.68--0.90 & lost \\
+RoboJEPA & copy-last (9-step latent error) & 11.8 \% below copy-last & -- & beat, under its bar of 15 \% \\
+ContactGuard & the current latent (failure AUROC) & 0.70 & 0.82 & lost \\
+ReAP & shuffled actions (failure AUROC) & 0.789 & 0.708 & beat \\
+Robometer & episode length (failure AUROC, ArmnetBench) & 0.818 & 0.938 & lost \\
+HWM & net joint displacement (cosine to the macro-action) & 0.608 & 0.551 & beat \\
+Adaptive chunking & fixed chunk length (boundary jump, lower is better) & 0.973 & 0.940 & lost \\
+PACT-VLA & a random pick (error of the executed window) & $-$0.27° against random & -- & beat \\
+REMORA & per-frame readout (readout flips) & 0.70 $\times$ per-frame & -- & beat, under its bar of 0.5 $\times$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+
 \section{Three failure classes}
 
 
@@ -148,7 +196,7 @@ not tested & 1 & 4 \\
 
 
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
-\item For each fail, what on our side may explain it (Table 3); most fails have at least one cause of ours, so a fail here is a fail on this rig, with this data.
+\item For each fail, what on our side may explain it (Table 4); most fails have at least one cause of ours, so a fail here is a fail on this rig, with this data.
 \item Our data is small and simple:
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item 157 training episodes of one short task (about 11 s) against hours of varied data in the papers (HWM: about 0.6 h against their about 130 h)
@@ -206,7 +254,7 @@ Horizon $\times$ depth & chunking & not proven: 0.78, bar 0.70 & one policy, one
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
 \item Data: one short task family (about 11 s per episode), one arm, two cameras, about 34 minutes of demonstrations; nothing on long horizon (several steps, memory) or on varied scenes.
 \item Few failures to test monitors on (8 in the main set of 50).
-\item Several methods are our re-implementation, not the authors' code end to end (Table 3).
+\item Several methods are our re-implementation, not the authors' code end to end (Table 4).
 \item Offline tests for planning and chunking; no closed-loop run on the arm for them.
 \item One operator ran the arm and labelled the outcomes, not blind; small samples and one training seed in many tests.
 \item VLA policies have no cheap baseline, only a success rate over 10 trials: a weaker test than the others.
@@ -235,7 +283,7 @@ Horizon $\times$ depth & chunking & not proven: 0.78, bar 0.70 & one policy, one
 \item Several lost to a baseline with no learning: copy-last, the joints, episode length.
 \item Advice: run the cheapest baseline first, on the same data, with the bar fixed before the test.
 \item Everything is public and every number can be rebuilt from the repository.
-\item An invitation: authors who think a fail is ours (Table 3) can tell us, and other people with a cheap rig can run the same tests.
+\item An invitation: authors who think a fail is ours (Table 4) can tell us, and other people with a cheap rig can run the same tests.
 \end{itemize}
 
 
@@ -289,6 +337,6 @@ D-JEPA \citep{arxiv260924749} & $<$\$5k & A decision-aligned ranking operator on
 \rowcolor{shissofail}REMORA \citep{arxiv261039125} & $>$\$20k & Reading a progress distribution out at the supported peak nearest the previous estimate steadies the estimate and lets it fall during real setbacks, with no worse detection of the stages. & Against per-frame argmax: premature not higher and missed $\leq$ +2 points (P1); flips halved, CI upper $\leq$ 0.7 (P2); a decrease inside $\geq$ 50 \% of the reversal windows with $\leq$ 20 \% false regressions (P3). & premature 0.22 vs 0.25, missed equal (P1 pass); flips 0.70 $\times$ argmax, CI 0.48--0.94 (P2 fail); setback recall 2/7, false 0.52 (P3 fail); MAE 0.184 vs median 0.218 & fail \\
 \bottomrule
 \end{tabular}
-\par\medskip Table 4, continued.
+\par\medskip Table 5, continued.
 \end{table}
 \end{document}
