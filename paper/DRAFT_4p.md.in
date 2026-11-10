@@ -16,11 +16,46 @@ Out of the {{c_paper}} claims, only {{c_paper_repro}} hold on our rig. The failu
 
 ## 2. Rig and data
 
-The rig is an SO-101 arm (five joints and a gripper) with a top camera and a wrist camera. Inference runs on a Jetson Orin NX 16 GB, and training runs on rented cloud GPUs. The priced parts come to €{{rig_eur}}; with the {{rig_unpriced}} small parts not priced yet, we put the rig at about €{{rig_eur_round}}. All the cloud GPU time came to ${{cost}}.
+Here's the rig we used for re-tests:
 
-We used four sets of data. The first is our own teleoperated demonstrations (`so101_bowls_all_trimmed`): {{tel_eps}} episodes and {{tel_frames}} frames at {{tel_fps}} fps, about {{tel_min}} minutes in total, on two short tasks where one bowl is placed into another. We split them into {{tel_train}} training and {{tel_val}} validation episodes, and used them to train and test the world models and the VLA policies. The second is rollouts of our trained policies on the arm (`so101-bowls-policy-rollouts`): {{ro_eps}} episodes, {{ro_succ}} successes and {{ro_fail}} failures, labelled by the operator, used for the failure monitors. Most monitor tests use a main set of {{ro_p_eps}} of these episodes ({{ro_p_succ}} successes, {{ro_p_fail}} failures), which leaves out the episodes of one policy family; FAIL-Detect and SAFE split the {{ro_succ}} successes in half, {{ro_half}} to calibrate and {{ro_half}} to test, over 20 random splits. A separate set of 88 of our own episodes, recorded with the top camera only, was used to check the reward model on our rig. The third set is ArmnetBench [@2607.24481], {{arm_n}} public labelled SO-101 rollouts from {{arm_pol}} policies, used for the reward models and judges. The last is {{tim_eps}} recorded episodes with {{tim_b}} chunk boundaries, used for the chunking and latency tests.
+- A robot arm SO-101: 5 joints + gripper, 1 wrist camera and 1 front-top camera
+- Leader + follower arm: all teleoperation done using the leader arm
+- A Nvidia Jetson Orin NX 16GB: runs the inference
+- Cloud GPU instances for training only
 
-This data has clear limits. All tasks are short, about {{tel_ep_s}} s per episode, and none needs several steps or memory, so we say nothing about long-horizon tasks. There is one task family, one arm and one room. The outcome labels come from a single operator and were not given blind.
+The estimated cost of the whole rig is about €{{rig_eur_round}}, plus under ${{cost_round}} of cloud GPU (for all re-tests).
+
+Here's the data we used:
+
+The teleoperated data (HF dataset: so101_bowls_all_trimmed):
+
+- 2 short tasks: put one bowl into another
+- {{tel_eps}} episodes, {{tel_frames}} frames at {{tel_fps}} fps, about {{tel_min}} min
+- split: {{tel_train}} episodes in the train set, {{tel_val}} in the validation set
+- mostly used for the world models and the VLA policies
+
+Some policy rollouts:
+
+- {{ro_eps}} episodes: {{ro_succ}} successes, {{ro_fail}} failures, labelled by hand by the operator
+- main set for most monitor tests: {{ro_p_eps}} episodes ({{ro_p_succ}} successes / {{ro_p_fail}} failures), leaving out the episodes of one policy family (TurboVLA's)
+- FAIL-Detect / SAFE: the {{ro_succ}} successes split in half, {{ro_half}} to calibrate and {{ro_half}} to test, over 20 random splits
+- a separate set of 88 of our own episodes, top camera only, to check the reward model directly on our rig
+
+The ArmnetBench dataset (public, HF dataset: armnet/armnetbench_v01_lerobot_so101) [@2607.24481]: {{arm_n}} labelled SO-101 rollouts from {{arm_pol}} policies, used for the reward models and judges.
+
+The timing set:
+
+- {{tim_eps}} recorded episodes
+- {{tim_b}} chunk boundaries
+
+This is used for analysing and measuring chunking and latency.
+
+But this data has limits that explain some of the failures:
+
+- Short tasks only: each episode is about {{tel_ep_s}} s
+- No multi-step, memory-based or long-horizon tasks
+- Everything has been done in one place, with one robot and one task family, which means this may not translate to real-world usage of such tasks.
+- All the rollout outcomes have been judged by one human, so they are subjective (not blind).
 
 ## 3. What we tested and how
 

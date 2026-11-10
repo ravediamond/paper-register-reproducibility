@@ -16,11 +16,46 @@ Out of the 37 claims, only 12 hold on our rig. The failures are split between th
 
 ## 2. Rig and data
 
-The rig is an SO-101 arm (five joints and a gripper) with a top camera and a wrist camera. Inference runs on a Jetson Orin NX 16 GB, and training runs on rented cloud GPUs. The priced parts come to €1,350; with the 2 small parts not priced yet, we put the rig at about €1,500. All the cloud GPU time came to $42.30.
+Here's the rig we used for re-tests:
 
-We used four sets of data. The first is our own teleoperated demonstrations (`so101_bowls_all_trimmed`): 182 episodes and 61,462 frames at 30 fps, about 34 minutes in total, on two short tasks where one bowl is placed into another. We split them into 157 training and 25 validation episodes, and used them to train and test the world models and the VLA policies. The second is rollouts of our trained policies on the arm (`so101-bowls-policy-rollouts`): 69 episodes, 44 successes and 25 failures, labelled by the operator, used for the failure monitors. Most monitor tests use a main set of 50 of these episodes (42 successes, 8 failures), which leaves out the episodes of one policy family; FAIL-Detect and SAFE split the 44 successes in half, 22 to calibrate and 22 to test, over 20 random splits. A separate set of 88 of our own episodes, recorded with the top camera only, was used to check the reward model on our rig. The third set is ArmnetBench [arXiv:2607.24481], 2,099 public labelled SO-101 rollouts from 7 policies, used for the reward models and judges. The last is 20 recorded episodes with 254 chunk boundaries, used for the chunking and latency tests.
+- A robot arm SO-101: 5 joints + gripper, 1 wrist camera and 1 front-top camera
+- Leader + follower arm: all teleoperation done using the leader arm
+- A Nvidia Jetson Orin NX 16GB: runs the inference
+- Cloud GPU instances for training only
 
-This data has clear limits. All tasks are short, about 11 s per episode, and none needs several steps or memory, so we say nothing about long-horizon tasks. There is one task family, one arm and one room. The outcome labels come from a single operator and were not given blind.
+The estimated cost of the whole rig is about €1,500, plus under $50 of cloud GPU (for all re-tests).
+
+Here's the data we used:
+
+The teleoperated data (HF dataset: so101_bowls_all_trimmed):
+
+- 2 short tasks: put one bowl into another
+- 182 episodes, 61,462 frames at 30 fps, about 34 min
+- split: 157 episodes in the train set, 25 in the validation set
+- mostly used for the world models and the VLA policies
+
+Some policy rollouts:
+
+- 69 episodes: 44 successes, 25 failures, labelled by hand by the operator
+- main set for most monitor tests: 50 episodes (42 successes / 8 failures), leaving out the episodes of one policy family (TurboVLA's)
+- FAIL-Detect / SAFE: the 44 successes split in half, 22 to calibrate and 22 to test, over 20 random splits
+- a separate set of 88 of our own episodes, top camera only, to check the reward model directly on our rig
+
+The ArmnetBench dataset (public, HF dataset: armnet/armnetbench_v01_lerobot_so101) [arXiv:2607.24481]: 2,099 labelled SO-101 rollouts from 7 policies, used for the reward models and judges.
+
+The timing set:
+
+- 20 recorded episodes
+- 254 chunk boundaries
+
+This is used for analysing and measuring chunking and latency.
+
+But this data has limits that explain some of the failures:
+
+- Short tasks only: each episode is about 11 s
+- No multi-step, memory-based or long-horizon tasks
+- Everything has been done in one place, with one robot and one task family, which means this may not translate to real-world usage of such tasks.
+- All the rollout outcomes have been judged by one human, so they are subjective (not blind).
 
 ## 3. What we tested and how
 
