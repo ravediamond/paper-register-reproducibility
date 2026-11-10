@@ -1,0 +1,128 @@
+{
+ "protocol": "repro/baseline-bootstrap/PROTOCOL.md",
+ "resamples": 2000,
+ "seed": 0,
+ "interval": "percentile 95 %",
+ "counts": {
+  "beats": 2,
+  "loses": 1,
+  "unclear": 1,
+  "rows not available": 7
+ },
+ "claims": [
+  {
+   "claim": "C-001-1",
+   "comparison": "LeWorldModel vs copy-last, latent error at K = 30",
+   "outcome": "rows not available",
+   "needed_file": "per-anchor open-loop error of the model and of copy-last at K = 30 with the episode id, written by g1_suite.py (not stored; only means)"
+  },
+  {
+   "claim": "C-001-2",
+   "comparison": "LeWorldModel ranking vs action-only, top-1",
+   "outcome": "rows not available",
+   "needed_file": "per-anchor top-1 hit of the model and of the action-only baseline for each target distance d, with the episode id, written by g1b_range.py (not stored; g1b_range_w1.json has accuracy per cell only)"
+  },
+  {
+   "claim": "C-002-1",
+   "comparison": "DINO-WM ranking vs action-only, top-1",
+   "outcome": "rows not available",
+   "needed_file": "per-anchor top-1 hits of W2 and of the action-only baseline per target distance, with the episode id (g1_w2prime_best_g1b.json has accuracy per cell only)"
+  },
+  {
+   "claim": "C-003-1",
+   "comparison": "RoboJEPA 300M vs copy-last, 9-step latent L1",
+   "outcome": "rows not available",
+   "needed_file": "per-clip model and copy-last errors, written by gate_a_eval.py (gateA_summary.json has per-horizon means only)"
+  },
+  {
+   "claim": "C-006-1",
+   "comparison": "ContactGuard imagined-latent vs current-latent probe, failure AUROC",
+   "outcome": "rows not available",
+   "needed_file": "per-rollout out-of-fold scores of both probes for the 65 scored rollouts (w1c_summary.json has fold means only)"
+  },
+  {
+   "claim": "C-008-1",
+   "comparison": "ReAP risk head vs shuffled actions, failure AUROC",
+   "outcome": "rows not available",
+   "needed_file": "per-rollout risk scores, true and shuffled actions, for the 50 rollouts (monitors_v2.json has aggregates only)"
+  },
+  {
+   "claim": "C-010-2",
+   "comparison": "Robometer-4B zero-shot vs episode length (failure AUROC)",
+   "unit": "rollout",
+   "n_units": 2047,
+   "method": 0.8184,
+   "baseline": 0.9383,
+   "point_difference": -0.12,
+   "ci95": [
+    -0.1501,
+    -0.0937
+   ],
+   "outcome": "loses",
+   "source_files": [
+    "ravediamond/paper-vs-hardware posts/2026-10-23-paper-vs-hardware-robometer (g9a-ab ab_top.jsonl + ab_top_rescore.jsonl)",
+    "repro/baseline-bootstrap/data/robometer_rollouts.csv"
+   ]
+  },
+  {
+   "claim": "C-016-2",
+   "comparison": "HWM learned macro-actions vs net joint displacement, cosine",
+   "outcome": "rows not available",
+   "needed_file": "per-anchor cosines of the learned and displacement macro-actions for the 700 anchors, written by hwm_train.py (gate0.json has means and standard errors only)"
+  },
+  {
+   "claim": "C-019-2",
+   "comparison": "AAC + overwrite vs fixed chunk + overwrite (median boundary jump, delay 8; positive = AAC lower)",
+   "unit": "episode (all boundaries of a resampled episode kept together)",
+   "n_units": 20,
+   "n_boundaries": 254,
+   "method": 0.9728,
+   "baseline": 0.9395,
+   "point_difference": -0.0333,
+   "ci95": [
+    -0.1725,
+    0.0643
+   ],
+   "outcome": "unclear",
+   "source_files": [
+    "ravediamond/paper-vs-hardware posts/2026-10-30-paper-vs-hardware-adaptive-chunking/out/aac_gate0/rows.jsonl",
+    "repro/baseline-bootstrap/data/aac_boundaries.csv"
+   ]
+  },
+  {
+   "claim": "C-020-1",
+   "comparison": "PACT selection vs random pick (executed-window error, degrees; positive = PACT lower)",
+   "unit": "episode (20), 254 boundaries",
+   "n_units": 20,
+   "point_difference": 0.2695,
+   "ci95": [
+    0.0864,
+    0.4416
+   ],
+   "outcome": "beats",
+   "reused_stored_ci": true,
+   "source_files": [
+    "ravediamond/paper-vs-hardware posts/2026-10-30-paper-vs-hardware-pact/expected/gate_b.json: k8.pact_minus_random.ci95",
+    "repro/baseline-bootstrap/data/pact_gate_b_k8.json"
+   ]
+  },
+  {
+   "claim": "C-022-1",
+   "comparison": "REMORA nearest-peak vs per-frame readout (flips ratio, null = 1, lower is better)",
+   "unit": "episode (34 test rollouts)",
+   "n_units": 34,
+   "point_difference": 0.7044,
+   "point_is": "ratio",
+   "ci95": [
+    0.4836,
+    0.9419
+   ],
+   "outcome": "beats",
+   "reused_stored_ci": true,
+   "source_files": [
+    "ravediamond/paper-vs-hardware posts/2026-10-31-paper-vs-hardware-remora-readout/expected/summary.json: paired.flips_ratio_ci95",
+    "repro/baseline-bootstrap/data/remora_paired.json"
+   ]
+  }
+ ]
+}

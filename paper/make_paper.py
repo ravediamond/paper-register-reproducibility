@@ -82,6 +82,23 @@ def register():
     put("b_n", str(len(base)), ba + ", len"); bc = collections.Counter(base.values())
     for k in ("beat", "lost", "under"):
         put("b_" + k, str(bc[k]), ba + f", outcome = {k}")
+    # paired bootstrap on the same comparisons (repro/baseline-bootstrap, WS-212): counts and the Table 3 interval column
+    bsj = json.loads((R / "baseline-bootstrap/expected/bootstrap.json").read_text()); bsa = "repro/baseline-bootstrap/expected/bootstrap.json"
+    assert sorted(c["claim"] for c in bsj["claims"]) == sorted(base), "bootstrap rows must be the Table 3 rows"
+    bso = collections.Counter(c["outcome"] for c in bsj["claims"])
+    for key, o in (("bs_beats", "beats"), ("bs_loses", "loses"), ("bs_unclear", "unclear"), ("bs_na", "rows not available")):
+        put(key, str(bso[o]), bsa + f", claims with outcome = {o}")
+    put("bs_have", str(len(base) - bso["rows not available"]), bsa + ", claims with an interval")
+    sg = lambda v: ("+" if v > 0 else "−" if v < 0 else "") + f"{abs(v):.2f}"
+    for c in bsj["claims"]:
+        if "ci95" in c:
+            lo, hi = c["ci95"]
+            cell = (f"ratio {c['point_difference']:.2f} [{lo:.2f}, {hi:.2f}]" if c.get("point_is") == "ratio"
+                    else f"{sg(c['point_difference'])} [{sg(lo)}, {sg(hi)}]")
+            cell += f", {c['outcome']}"
+        else:
+            cell = "rows not available"
+        put("bs_ci_" + c["claim"].lower().replace("-", ""), cell, bsa + f", claim {c['claim']}: point_difference, ci95, outcome")
     for key, cid, field, text in (("b_lewm_pred", "C-001-1", "ours", "0.31"), ("b_lewm_cl", "C-001-1", "ours", "0.89"),
                                   ("b_len_own", "C-010-3", "note", "0.521")):
         assert text in by[cid][field], (cid, text)
@@ -360,7 +377,7 @@ def to_tex(md):
                     t.append([esc(x.strip()) for x in lines[i].strip("|").split("|")])
                 i += 1
             if t[0][0] != "paper" and len(t[0]) >= 4 and max(len(x) for r in t[1:] for x in r[1:]) >= 12:  # wide text table: full width
-                w = [2.6, 4.2, 3.0, 2.4, 4.4] if t[0][0] == "method" else {4: [2.8, 1.8, 5.6, 6.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
+                w = ([2.2, 3.7, 2.4, 2.2, 2.6, 3.9] if len(t[0]) == 6 else [2.6, 4.2, 3.0, 2.4, 4.4]) if t[0][0] == "method" else {4: [2.8, 1.8, 5.6, 6.6], 5: [3.0, 1.1, 4.0, 5.2, 3.6]}[len(t[0])]
                 out += [r"\begin{table*}[t]\centering\footnotesize", r"\caption{" + esc(cap) + "}", r"\begin{tabular}{" + "".join(f"p{{{x}cm}}" for x in w) + "}",
                         r"\toprule", r"\shissohead " + " & ".join(t[0]) + r" \\", r"\midrule"] + [" & ".join(r) + r" \\" for r in t[1:]] + \
                        [r"\bottomrule", r"\end{tabular}", r"\end{table*}"]

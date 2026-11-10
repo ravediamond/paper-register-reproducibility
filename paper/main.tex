@@ -109,7 +109,7 @@ not tested & 1 & 4 \\
 \section{The cheapest baseline}
 
 
-The cheapest baseline is the signal we get for free on the same data as the method (Table 1). It needs no training and runs in minutes. We compared 11 paper claims with such a baseline (Table 3). The method clearly beat it in 4 cases, beat it by less than its bar in 2, and lost to it in 5. The losses are not equally strong. LeWorldModel and DINO-WM are the clearest, but they are the same test on the same data, run on two models. ContactGuard's loss is in our variant, Robometer's comes from how the dataset ends its episodes (below), and adaptive chunking's 0.973 against 0.940 has no interval. A paired bootstrap over episodes for all 11 rows is still to be run; until then, the count of losses should be read with this in mind.
+The cheapest baseline is the signal we get for free on the same data as the method (Table 1). It needs no training and runs in minutes. We compared 11 paper claims with such a baseline (Table 3). The method clearly beat it in 4 cases, beat it by less than its bar in 2, and lost to it in 5. The losses are not equally strong. LeWorldModel and DINO-WM are the clearest, but they are the same test on the same data, run on two models. ContactGuard's loss is in our variant, Robometer's comes from how the dataset ends its episodes (below), and adaptive chunking's 0.973 against 0.940 has no interval. We ran a paired bootstrap over episodes (2,000 resamples, 95 \% percentile interval, protocol frozen before any number) on the 4 of the 11 rows whose per-episode rows or interval are stored. Of the 5 losses, 1 has its interval below zero (Robometer); the interval of adaptive chunking contains zero, and PACT-VLA and REMORA beat their baselines. The other 7 rows, among them the losses of LeWorldModel, DINO-WM and ContactGuard, have no interval because their per-episode scores were not stored, so the count of losses should be read with this in mind.
 
 
 The choice of baseline decides the verdict, even for a single model. LeWorldModel predicts the next latent far better than copy-last, with an error of 0.31 against 0.89, and that claim holds. Yet the same model ranks the chunk that was really executed worse than the actions alone do, 0.60 against 0.68--0.90, and that claim fails. Predicting well is not the same as planning well, and testing only one of the two would give the wrong picture.
@@ -125,21 +125,21 @@ Copy-last and the joints are strong partly because our task is short and simple:
 
 \begin{table*}[t]\centering\footnotesize
 \caption{The paper claims we compared with a cheap baseline, on the same data.}
-\begin{tabular}{p{2.6cm}p{4.2cm}p{3.0cm}p{2.4cm}p{4.4cm}}
+\begin{tabular}{p{2.2cm}p{3.7cm}p{2.4cm}p{2.2cm}p{2.6cm}p{3.9cm}}
 \toprule
-\shissohead method & baseline (what is measured) & method & baseline & outcome \\
+\shissohead method & baseline (what is measured) & method & baseline & outcome & paired difference, positive = method better [95 \% interval] \\
 \midrule
-LeWorldModel & copy-last (latent error at 30 steps, lower is better) & 0.31 & 0.89 & beat \\
-LeWorldModel & actions alone (executed chunk ranked first) & 0.60 & 0.68--0.90 & lost \\
-DINO-WM & actions alone (executed chunk ranked first) & 0.61 & 0.68--0.90 & lost \\
-RoboJEPA & copy-last (9-step latent error) & 11.8 \% below copy-last & -- & beat, under its bar of 15 \% \\
-ContactGuard & the current latent (failure AUROC) & 0.70 & 0.82 & lost \\
-ReAP & shuffled actions (failure AUROC) & 0.789 & 0.708 & beat \\
-Robometer & episode length (failure AUROC, ArmnetBench) & 0.818 & 0.938 & lost \\
-HWM & net joint displacement (cosine to the macro-action) & 0.608 & 0.551 & beat \\
-Adaptive chunking & fixed chunk length (boundary jump, lower is better) & 0.973 & 0.940 & lost (no interval) \\
-PACT-VLA & a random pick (error of the executed window) & $-$0.27° against random & -- & beat \\
-REMORA & per-frame readout (readout flips) & 0.70 $\times$ per-frame & -- & beat, under its bar of 0.5 $\times$ \\
+LeWorldModel & copy-last (latent error at 30 steps, lower is better) & 0.31 & 0.89 & beat & rows not available \\
+LeWorldModel & actions alone (executed chunk ranked first) & 0.60 & 0.68--0.90 & lost & rows not available \\
+DINO-WM & actions alone (executed chunk ranked first) & 0.61 & 0.68--0.90 & lost & rows not available \\
+RoboJEPA & copy-last (9-step latent error) & 11.8 \% below copy-last & -- & beat, under its bar of 15 \% & rows not available \\
+ContactGuard & the current latent (failure AUROC) & 0.70 & 0.82 & lost & rows not available \\
+ReAP & shuffled actions (failure AUROC) & 0.789 & 0.708 & beat & rows not available \\
+Robometer & episode length (failure AUROC, ArmnetBench) & 0.818 & 0.938 & lost & $-$0.12 [$-$0.15, $-$0.09], loses \\
+HWM & net joint displacement (cosine to the macro-action) & 0.608 & 0.551 & beat & rows not available \\
+Adaptive chunking & fixed chunk length (boundary jump, lower is better) & 0.973 & 0.940 & lost & $-$0.03 [$-$0.17, +0.06], unclear \\
+PACT-VLA & a random pick (error of the executed window) & $-$0.27° against random & -- & beat & +0.27 [+0.09, +0.44], beats \\
+REMORA & per-frame readout (readout flips) & 0.70 $\times$ per-frame & -- & beat, under its bar of 0.5 $\times$ & ratio 0.70 [0.48, 0.94], beats \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -201,7 +201,7 @@ Horizon $\times$ depth & not proven & not proven: 0.78, bar 0.70 & one policy, o
 \section{Limitations}
 
 
-Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons is still to be run. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible, as the TurboVLA case shows (Section 3).
+Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons could be run for only 4 of 11, because the others did not store per-episode rows. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible, as the TurboVLA case shows (Section 3).
 
 
 \section{Related work}

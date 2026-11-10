@@ -1,0 +1,20 @@
+{
+ "test_episodes": 34,
+ "paired": {
+  "premature_R3_minus_R1_mean": -0.058823529411764705,
+  "premature_ci95": [
+   -0.17647058823529413,
+   0.0
+  ],
+  "missed_R3_minus_R1_mean": 0.0,
+  "missed_ci95": [
+   0.0,
+   0.0
+  ],
+  "flips_R3_over_R1": 0.7044334975369458,
+  "flips_ratio_ci95": [
+   0.48363154726068636,
+   0.9418604651162791
+  ]
+ }
+}
