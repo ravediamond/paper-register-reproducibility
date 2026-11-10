@@ -118,10 +118,12 @@ def register():
                                   ("b_len_own", "C-010-3", "note", "0.521")):
         assert text in by[cid][field], (cid, text)
         put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}")
-    # the failed claims and papers, split by whose method failed (by hand, from Table 4 of the paper)
+    # the failed claims and papers, split by whose method failed (by hand, from Table 4 of the paper). Rule (owner, 2026-11-10):
+    # a method that is close to the paper's and only changed to fit our rig counts as the authors' method.
+    # ContactGuard: same recipe, 2 views and mixed policies; SURVEYOR's threshold claim: their rule on the same kind of latent.
     ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "scope", "C-010-1": "auth", "C-010-2": "auth",
              "C-019-1": "auth", "C-019-2": "auth",
-             "C-006-1": "var", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "var", "C-018-1": "var",
+             "C-006-1": "auth", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "var", "C-018-1": "auth",
              "C-018-2": "var", "C-022-1": "var", "C-019-3": "eng", "C-020-2": "eng"}
     assert sorted(ctier) == sorted(c["id"] for c in cl if c["verdict"] == "fail"), "every failed claim needs a tier"
     ta = "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier)"
@@ -130,8 +132,8 @@ def register():
         put("t_c_" + k, str(tc[k]), ta + f", tier = {k}")
     fam_mon = ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"]
     ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "scope", "Robometer": "auth",
-             "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "var", "FAIL-Detect and SAFE": "var", "ReAP": "var",
-             "VLA-Corrector": "var", "SURVEYOR": "var", "REMORA": "var", "PACT-VLA": "eng"}
+             "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "auth", "FAIL-Detect and SAFE": "var", "ReAP": "var",
+             "VLA-Corrector": "var", "SURVEYOR": "auth", "REMORA": "var", "PACT-VLA": "eng"}
     assert sorted(ptier) == sorted(p["paper"] for p in papers if p["verdict"] == "fail"), "every failed paper needs a tier"
     tp = collections.Counter()
     for p in papers:

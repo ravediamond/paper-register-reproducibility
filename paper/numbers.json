@@ -296,7 +296,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
  },
  "t_c_auth": {
-  "value": "7",
+  "value": "9",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = auth"
  },
  "t_c_eng": {
@@ -304,7 +304,7 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = eng"
  },
  "t_c_other": {
-  "value": "11",
+  "value": "9",
   "anchor": "t_c_var + t_c_eng + t_c_scope"
  },
  "t_c_scope": {
@@ -312,15 +312,15 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = scope"
  },
  "t_c_var": {
-  "value": "8",
+  "value": "6",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
  },
  "t_mon_var": {
-  "value": "7",
+  "value": "5",
   "anchor": "failed monitor papers whose tier is 'var' (weighted)"
  },
  "t_p_auth": {
-  "value": "5",
+  "value": "7",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"
  },
  "t_p_eng": {
@@ -328,7 +328,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = eng, weighted"
  },
  "t_p_other": {
-  "value": "9",
+  "value": "7",
   "anchor": "t_p_var + t_p_eng + t_p_scope"
  },
  "t_p_scope": {
@@ -336,7 +336,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = scope, weighted"
  },
  "t_p_var": {
-  "value": "7",
+  "value": "5",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = var, weighted"
  },
  "table1_rows": {
