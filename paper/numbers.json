@@ -107,6 +107,18 @@
   "value": "0",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = rerun does not match the stored result"
  },
+ "bs_rj": {
+  "value": "11.8 %",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-003-1 point_difference (fraction below copy-last)"
+ },
+ "bs_rj_hi": {
+  "value": "12.9 %",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-003-1 ci95 high"
+ },
+ "bs_rj_lo": {
+  "value": "10.8",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-003-1 ci95 low"
+ },
  "bs_unclear": {
   "value": "2",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = unclear"

@@ -119,6 +119,9 @@ def register():
             if c["unit"].startswith("window"):
                 cell += " (unit = window)"
         put("bs_ci_" + c["claim"].lower().replace("-", ""), cell, bsa + f", claim {c['claim']}: point_difference, ci95, outcome")
+    rj = next(c for c in bsj["claims"] if c["claim"] == "C-003-1"); assert rj["ci95"][1] < 0.15
+    put("bs_rj", f"{rj['point_difference']*100:.1f} %", bsa + ", claim C-003-1 point_difference (fraction below copy-last)")
+    put("bs_rj_lo", f"{rj['ci95'][0]*100:.1f}", bsa + ", claim C-003-1 ci95 low"); put("bs_rj_hi", f"{rj['ci95'][1]*100:.1f} %", bsa + ", claim C-003-1 ci95 high")
     for key, cid, field, text in (("b_lewm_pred", "C-001-1", "ours", "0.31"), ("b_lewm_cl", "C-001-1", "ours", "0.89"),
                                   ("b_len_own", "C-010-3", "note", "0.521")):
         assert text in by[cid][field], (cid, text)
