@@ -207,6 +207,30 @@
   "value": "1 reproduce, 4 fail, 1 not proven",
   "anchor": "repro/register/expected/register.json papers, grouped by hand in make_paper.py (fam), world models: verdict counts"
  },
+ "fs_fp": {
+  "value": "9.1 %",
+  "anchor": "repro/conformal-check/expected/conformal_check.json papers_band_eq2.success_flagged.median"
+ },
+ "fs_fp_old": {
+  "value": "22.7 %",
+  "anchor": "repro/conformal-check/expected/conformal_check.json stored_band_replay.success_flagged.median"
+ },
+ "fs_refwd": {
+  "value": "24",
+  "anchor": "repro/variants/faildetect-safe/NOTES.md: '24 successes and 6 failures'"
+ },
+ "fs_refwd_f": {
+  "value": "6",
+  "anchor": "same line"
+ },
+ "fs_tp": {
+  "value": "24 %",
+  "anchor": "repro/conformal-check/expected/conformal_check.json papers_band_eq2.failure_flagged.median"
+ },
+ "fs_tp_old": {
+  "value": "46 %",
+  "anchor": "repro/conformal-check/expected/conformal_check.json stored_band_replay.failure_flagged.median"
+ },
  "p_fail": {
   "value": "14",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, verdict = fail"

@@ -143,6 +143,16 @@ def register():
     tmv = sum(wt(p) for p in papers if ptier.get(p["paper"]) == "var" and p["paper"] in fam_mon)
     put("t_mon_var", str(tmv), "failed monitor papers whose tier is 'var' (weighted)")
     put("t_p_other", str(tp["var"] + tp["eng"] + tp["scope"]), "t_p_var + t_p_eng + t_p_scope"); put("t_c_other", str(tc["var"] + tc["eng"] + tc["scope"]), "t_c_var + t_c_eng + t_c_scope")
+    # FAIL-Detect / SAFE: our first conformal band was wrong (WS-214); the paper uses the band built as the papers do
+    cc = json.loads((ROOT / "repro" / "conformal-check" / "expected" / "conformal_check.json").read_text()); ca = "repro/conformal-check/expected/conformal_check.json "
+    pb, sb = cc["papers_band_eq2"], cc["stored_band_replay"]
+    assert pb["c007_1"] == "fail" and pb["c007_2"] == "fail"
+    put("fs_fp", f"{100 * pb['success_flagged']['median']:.1f} %", ca + "papers_band_eq2.success_flagged.median")
+    put("fs_tp", f"{100 * pb['failure_flagged']['median']:.0f} %", ca + "papers_band_eq2.failure_flagged.median")
+    put("fs_fp_old", f"{100 * sb['success_flagged']['median']:.1f} %", ca + "stored_band_replay.success_flagged.median")
+    nt = (ROOT / "repro" / "variants" / "faildetect-safe" / "NOTES.md").read_text(); assert "24 successes and 6 failures" in nt
+    put("fs_refwd", "24", "repro/variants/faildetect-safe/NOTES.md: '24 successes and 6 failures'"); put("fs_refwd_f", "6", "same line")
+    put("fs_tp_old", f"{100 * sb['failure_flagged']['median']:.0f} %", ca + "stored_band_replay.failure_flagged.median")
     # 9 of 10 trials, Wilson 95 % interval
     import math
     k_, n_, z = 9, 10, 1.96; c_ = (k_ + z * z / 2) / (n_ + z * z); h_ = z * math.sqrt(k_ * (n_ - k_) / n_ + z * z / 4) / (n_ + z * z)
@@ -161,6 +171,9 @@ def register():
         if p["paper"] == "Adaptive Action Chunking (AAC)": verdict += "; the latency claim: our engine (no batched sampling)"
         if p["paper"] == "D-JEPA": verdict += " (proxy labels only)"
         bar_, ours_ = p["bar"], p["ours"]
+        if p["paper"] == "FAIL-Detect and SAFE":
+            old = "22.7 % of successes flagged at α = 5 %; 46 % of failures caught"
+            assert old in ours_; ours_ = ours_.replace(old, f"{N['fs_fp']} of successes flagged at α = 5 %; {N['fs_tp']} of failures caught (papers' band; our first band, built wrong, gave {N['fs_fp_old']} and {N['fs_tp_old']})")
         for a_, b_ in {"VLA-JEPA": [("; for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency", ""), ("; reranking no-go (0.76, 1.84×)", "")]}.get(p["paper"], []):
             assert a_ in bar_ + ours_, (p["paper"], a_); bar_, ours_ = bar_.replace(a_, b_), ours_.replace(a_, b_)
         cells = [name, p["their_rig_cost_class"], p["claim_tested"], bar_.replace("no numeric pass mark registered", "no numeric bar"),
