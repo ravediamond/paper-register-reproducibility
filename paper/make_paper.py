@@ -171,9 +171,6 @@ def register():
         if p["paper"] == "Adaptive Action Chunking (AAC)": verdict += "; the latency claim: our engine (no batched sampling)"
         if p["paper"] == "D-JEPA": verdict += " (proxy labels only)"
         bar_, ours_ = p["bar"], p["ours"]
-        if p["paper"] == "FAIL-Detect and SAFE":
-            old = "22.7 % of successes flagged at α = 5 %; 46 % of failures caught"
-            assert old in ours_; ours_ = ours_.replace(old, f"{N['fs_fp']} of successes flagged at α = 5 %; {N['fs_tp']} of failures caught (papers' band; our first band, built wrong, gave {N['fs_fp_old']} and {N['fs_tp_old']})")
         for a_, b_ in {"VLA-JEPA": [("; for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency", ""), ("; reranking no-go (0.76, 1.84×)", "")]}.get(p["paper"], []):
             assert a_ in bar_ + ours_, (p["paper"], a_); bar_, ours_ = bar_.replace(a_, b_), ours_.replace(a_, b_)
         cells = [name, p["their_rig_cost_class"], p["claim_tested"], bar_.replace("no numeric pass mark registered", "no numeric bar"),

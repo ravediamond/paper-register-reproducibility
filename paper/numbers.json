@@ -405,19 +405,19 @@
  },
  "tv_bug": {
   "value": "≥ 5°",
-  "anchor": "repro/register/expected/register.json claims, id C-012-1, bar: 'task swap ≥ 5° → our port was the bug; < 1° → the data'"
+  "anchor": "repro/register/expected/register.json claims, id C-012-1, bar: 'task swap ≥ 5° → my port was the bug; < 1° → the data'"
  },
  "tv_ctl": {
   "value": "5.5°",
-  "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on our data; LIBERO control 5.5°'"
+  "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on my data; LIBERO control 5.5°'"
  },
  "tv_data": {
   "value": "< 1°",
-  "anchor": "repro/register/expected/register.json claims, id C-012-1, bar: 'task swap ≥ 5° → our port was the bug; < 1° → the data'"
+  "anchor": "repro/register/expected/register.json claims, id C-012-1, bar: 'task swap ≥ 5° → my port was the bug; < 1° → the data'"
  },
  "tv_swap": {
   "value": "0.020°",
-  "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on our data; LIBERO control 5.5°'"
+  "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on my data; LIBERO control 5.5°'"
  },
  "vla_ci": {
   "value": "60–98 %",

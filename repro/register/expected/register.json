@@ -8,8 +8,8 @@
   "cost_usd": 45.1
  },
  "gates": {
-  "total": 93,
-  "fail": 27,
+  "total": 95,
+  "fail": 29,
   "pass": 14,
   "not_proven": 5,
   "void": 3,
@@ -312,7 +312,7 @@
    "code": [
     "https://github.com/facebookresearch/robo_jepa"
    ],
-   "claim_tested": "Pretrained RoboJEPA predicts our latents, uses the actions, and runs on the robot's computer.",
+   "claim_tested": "Pretrained RoboJEPA predicts my latents, uses the actions, and runs on the robot's computer.",
    "bar": "9-step L1 ≥ 15 % below copy-last (300M) and ≥ 5 % below shuffled actions; 2-view encoder ≤ 200 ms on the Orin.",
    "theirs": "rollout error frontier near E ≈ 0.22; latency not reported",
    "ours": "11.8 % below copy-last (300M; 1B 15.8 % on 30 clips); 9–10 % below shuffled; encoder 526 ms on the Orin NX",
@@ -710,7 +710,7 @@
    "claim_tested": "A conformal band on a learned failure score keeps false alarms at α while catching failures.",
    "bar": "Successes flagged ≤ 1/20; failures flagged ≥ 50 %.",
    "theirs": "false alarms ≤ α on in-distribution successes (conformal coverage bound)",
-   "ours": "22.7 % of successes flagged at α = 5 %; 46 % of failures caught",
+   "ours": "9.1 % of successes flagged at α = 5 %; 24 % of failures caught (first band built wrong, see WS-214: 22.7 % / 46 %)",
    "their_rig": "bimanual Franka Panda station (FAIL-Detect); Franka Panda + WidowX (SAFE); A100 GPUs",
    "their_rig_cost_class": ">$20k",
    "their_rig_cost_estimated": true,
@@ -760,7 +760,7 @@
      },
      "stated_in": "FAIL-Detect §IV-B; SAFE §4.3 (coverage ≥ 1 − α)",
      "theirs": "false alarms ≤ α",
-     "ours": "22.7 % at α = 5 %",
+     "ours": "9.1 % at α = 5 %",
      "bar": "successes flagged ≤ 1/20",
      "verdict": "fail",
      "tested": true,
@@ -768,15 +768,15 @@
      "source_file": "2026-10-23-paper-vs-hardware-contactguard/expected/w1c_summary.json",
      "checks": [
       {
-       "file": "2026-10-23-paper-vs-hardware-contactguard/expected/w1c_summary.json",
-       "json": "c2.success_flagged.median",
-       "value": 0.2273,
+       "file": "../../../paper-register-reproducibility/repro/conformal-check/expected/conformal_check.json",
+       "json": "papers_band_eq2.success_flagged.median",
+       "value": 0.0909,
        "tol": 0.0005,
-       "shown": "22.7 %",
+       "shown": "9.1 %",
        "scale": 100
       }
      ],
-     "note": "one world model's surprise as the score; their own scores were not reimplemented"
+     "note": "one world model's surprise as the score; their own scores were not reimplemented. Corrected 2026-11-10: my first band was built wrong, see WS-214: 22.7 % / 46 %; this is the papers' band, medians over 20 splits."
     },
     {
      "id": "C-007-2",
@@ -791,7 +791,7 @@
      },
      "stated_in": "FAIL-Detect Fig. 4–5; SAFE Table 1",
      "theirs": "high recall at the target α",
-     "ours": "46 %",
+     "ours": "24 %",
      "bar": "failures flagged ≥ 50 %",
      "verdict": "fail",
      "tested": true,
@@ -799,15 +799,15 @@
      "source_file": "2026-10-23-paper-vs-hardware-contactguard/expected/w1c_summary.json",
      "checks": [
       {
-       "file": "2026-10-23-paper-vs-hardware-contactguard/expected/w1c_summary.json",
-       "json": "c2.failure_flagged.median",
-       "value": 0.46,
+       "file": "../../../paper-register-reproducibility/repro/conformal-check/expected/conformal_check.json",
+       "json": "papers_band_eq2.failure_flagged.median",
+       "value": 0.24,
        "tol": 0.0005,
-       "shown": "46 %",
+       "shown": "24 %",
        "scale": 100
       }
      ],
-     "note": ""
+     "note": "Corrected 2026-11-10: my first band was built wrong, see WS-214: 22.7 % / 46 %; this is the papers' band, medians over 20 splits."
     }
    ]
   },
@@ -937,12 +937,12 @@
    "claim_tested": "A verifier on observable history flags a failing rollout early enough to correct it.",
    "bar": "≥ 5/8 failures at ≤ 1/20 false interventions.",
    "theirs": "54-feature GRU verifier AUROC 0.90",
-   "ours": "the paper's verifier family on our rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30",
+   "ours": "the paper's verifier family on my rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30",
    "their_rig": "LIBERO and LIBERO-Plus (sim, Franka Panda); real robot not named",
    "their_rig_cost_class": "sim",
    "their_rig_source": "Experimental Setup",
    "n": "50 episodes, 8 failures",
-   "not_proven": "Their exact 54-feature verifier (with proprioceptive state) and its recovery prompt were not run here; our GRU uses pooled RGB statistics and actions.",
+   "not_proven": "Their exact 54-feature verifier (with proprioceptive state) and its recovery prompt were not run here; my GRU uses pooled RGB statistics and actions.",
    "verdict": "fail",
    "gate_ids": [
     "W1-A"
@@ -1163,7 +1163,7 @@
        "shown": "0.818"
       }
      ],
-     "note": "on our own 88 rollouts length is near chance (0.521): where failures do not run to the timeout, length says little"
+     "note": "on my own 88 rollouts length is near chance (0.521): where failures do not run to the timeout, length says little"
     }
    ]
   },
@@ -1298,10 +1298,10 @@
    "code": [
     "https://github.com/H-EmbodVis/TurboVLA"
    ],
-   "claim_tested": "Our claim that the architecture made the policy ignore its instruction.",
-   "bar": "Task swap ≥ 5° and per-layout ≥ 75 % → our port was the bug; < 1° with the control ≥ 0.095 → the data.",
+   "claim_tested": "My claim that the architecture made the policy ignore its instruction.",
+   "bar": "Task swap ≥ 5° and per-layout ≥ 75 % → my port was the bug; < 1° with the control ≥ 0.095 → the data.",
    "theirs": "LIBERO-Goal 97.4 → 11.6 without language (Table 3)",
-   "ours": "upstream's own trainer on our data: task swap 0.020°, per-layout 38.9 %; control, their released LIBERO checkpoint run here: 0.105 (≈ 5.5° of pan)",
+   "ours": "upstream's own trainer on my data: task swap 0.020°, per-layout 38.9 %; control, their released LIBERO checkpoint run here: 0.105 (≈ 5.5° of pan)",
    "their_rig": "LIBERO and RoboTwin 2.0 (sim) on an RTX 4090; real: AgileX Piper",
    "their_rig_cost_class": "sim",
    "their_rig_source": "§4.1, Table 1",
@@ -1329,11 +1329,11 @@
      ]
     }
    ],
-   "summary_source": "method, LIBERO and RoboTwin results; our diagnosis in book ch. 8.3",
+   "summary_source": "method, LIBERO and RoboTwin results; my diagnosis in book ch. 8.3",
    "claims": [
     {
      "id": "C-012-1",
-     "subject": "TurboVLA on our data",
+     "subject": "TurboVLA on my data",
      "relation": "≥",
      "object": "pass mark",
      "metric": "task-swap action change",
@@ -1342,10 +1342,10 @@
       "setting": "bowls data",
       "trainer": "upstream's"
      },
-     "stated_in": "not a paper claim: ours (that our port, not the data, made it ignore the instruction)",
+     "stated_in": "not a paper claim: ours (that my port, not the data, made it ignore the instruction)",
      "theirs": "LIBERO control 5.5° of pan",
-     "ours": "0.020° on our data; LIBERO control 5.5°",
-     "bar": "task swap ≥ 5° → our port was the bug; < 1° → the data",
+     "ours": "0.020° on my data; LIBERO control 5.5°",
+     "bar": "task swap ≥ 5° → my port was the bug; < 1° → the data",
      "verdict": "withdrawn",
      "tested": true,
      "gate": "exp-turbovla-faithful-path-a",
@@ -1364,7 +1364,7 @@
        "shown": "5.5"
       }
      ],
-     "note": "our data, not the port: the instruction is redundant on 94 % of frames"
+     "note": "my data, not the port: the instruction is redundant on 94 % of frames"
     }
    ]
   },
@@ -1863,7 +1863,7 @@
      ]
     }
    ],
-   "summary_source": "abstract, theory, simulation experiments; our post's reading",
+   "summary_source": "abstract, theory, simulation experiments; my post's reading",
    "claims": [
     {
      "id": "C-017-1",
@@ -1990,7 +1990,7 @@
      ]
     }
    ],
-   "summary_source": "method and experiments (workshop paper); our post's reading",
+   "summary_source": "method and experiments (workshop paper); my post's reading",
    "claims": [
     {
      "id": "C-018-1",
