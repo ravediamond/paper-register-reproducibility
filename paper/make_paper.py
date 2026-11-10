@@ -86,16 +86,30 @@ def register():
     bsj = json.loads((R / "baseline-bootstrap/expected/bootstrap.json").read_text()); bsa = "repro/baseline-bootstrap/expected/bootstrap.json"
     assert sorted(c["claim"] for c in bsj["claims"]) == sorted(base), "bootstrap rows must be the Table 3 rows"
     bso = collections.Counter(c["outcome"] for c in bsj["claims"])
-    for key, o in (("bs_beats", "beats"), ("bs_loses", "loses"), ("bs_unclear", "unclear"), ("bs_na", "rows not available")):
+    NOM, NAV = "rerun does not match the stored result", "rows not available"
+    for key, o in (("bs_beats", "beats"), ("bs_loses", "loses"), ("bs_unclear", "unclear"), ("bs_nomatch", NOM), ("bs_navail", NAV)):
         put(key, str(bso[o]), bsa + f", claims with outcome = {o}")
-    put("bs_have", str(len(base) - bso["rows not available"]), bsa + ", claims with an interval")
+    put("bs_na", str(bso[NOM] + bso[NAV]), bsa + ", claims without an interval (re-run not matching, or no rows)")
+    put("bs_have", str(sum("ci95" in c for c in bsj["claims"])), bsa + ", claims with an interval")
     sg = lambda v: ("+" if v > 0 else "−" if v < 0 else "") + f"{abs(v):.2f}"
     for c in bsj["claims"]:
-        if "ci95" in c:
+        if "per_d" in c:   # a range of baselines: worst and best case over the target distance d
+            def one(k):
+                p = c["per_d"][k]; return f"d = {k[1:]}: {sg(p['point_difference'])} [{sg(p['ci95'][0])}, {sg(p['ci95'][1])}]"
+            cell = f"worst case {one(c['worst_d'])}; best case {one(c['best_d'])}, {c['outcome']}"
+        elif "ci95" in c:
             lo, hi = c["ci95"]
             cell = (f"ratio {c['point_difference']:.2f} [{lo:.2f}, {hi:.2f}]" if c.get("point_is") == "ratio"
                     else f"{sg(c['point_difference'])} [{sg(lo)}, {sg(hi)}]")
             cell += f", {c['outcome']}"
+        elif c["outcome"] == NOM:   # both values, as the protocol (Amendment 1) requires
+            st, rr = c["stored"], c["rerun"]
+            if "d30_Hd" in st:
+                cell = f"{NOM} (d = 30: stored {st['d30_Hd']:.2f}, re-run {rr['d30_Hd']:.2f})"
+            elif "model_mse_k30" in st:
+                cell = f"{NOM} (stored {st['model_mse_k30']:.2f}, re-run {rr['model_mse_k30']:.2f})"
+            else:
+                cell = f"{NOM} (true actions: stored {st['true']:.3f}, re-run {rr['true']:.3f})"
         else:
             cell = "rows not available"
         put("bs_ci_" + c["claim"].lower().replace("-", ""), cell, bsa + f", claim {c['claim']}: point_difference, ci95, outcome")

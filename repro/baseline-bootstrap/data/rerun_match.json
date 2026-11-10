@@ -1,0 +1,313 @@
+{
+ "note": "WS-213 match gate: stored aggregate vs aggregate recomputed from the re-run (PROTOCOL.md Amendment 1). Only comparisons with every value equal are bootstrapped.",
+ "g1b_w1": {
+  "model": {
+   "d5_H5": {
+    "stored": 0.4509,
+    "rerun": 0.4509,
+    "equal": true
+   },
+   "d5_H10": {
+    "stored": 0.2418,
+    "rerun": 0.2418,
+    "equal": true
+   },
+   "d5_H30": {
+    "stored": 0.0484,
+    "rerun": 0.0484,
+    "equal": true
+   },
+   "d5_Hd": {
+    "stored": 0.4509,
+    "rerun": 0.4509,
+    "equal": true
+   },
+   "d10_H5": {
+    "stored": 0.3499,
+    "rerun": 0.3499,
+    "equal": true
+   },
+   "d10_H10": {
+    "stored": 0.5064,
+    "rerun": 0.5064,
+    "equal": true
+   },
+   "d10_H30": {
+    "stored": 0.0939,
+    "rerun": 0.0939,
+    "equal": true
+   },
+   "d10_Hd": {
+    "stored": 0.5064,
+    "rerun": 0.5064,
+    "equal": true
+   },
+   "d15_H5": {
+    "stored": 0.1878,
+    "rerun": 0.1878,
+    "equal": true
+   },
+   "d15_H10": {
+    "stored": 0.4139,
+    "rerun": 0.4139,
+    "equal": true
+   },
+   "d15_H30": {
+    "stored": 0.1693,
+    "rerun": 0.1693,
+    "equal": true
+   },
+   "d15_Hd": {
+    "stored": 0.5733,
+    "rerun": 0.5733,
+    "equal": true
+   },
+   "d20_H5": {
+    "stored": 0.0925,
+    "rerun": 0.0925,
+    "equal": true
+   },
+   "d20_H10": {
+    "stored": 0.2319,
+    "rerun": 0.2319,
+    "equal": true
+   },
+   "d20_H30": {
+    "stored": 0.3087,
+    "rerun": 0.3087,
+    "equal": true
+   },
+   "d20_Hd": {
+    "stored": 0.6031,
+    "rerun": 0.6031,
+    "equal": true
+   },
+   "d30_H5": {
+    "stored": 0.0583,
+    "rerun": 0.0583,
+    "equal": true
+   },
+   "d30_H10": {
+    "stored": 0.0967,
+    "rerun": 0.0967,
+    "equal": true
+   },
+   "d30_H30": {
+    "stored": 0.6046,
+    "rerun": 0.6046,
+    "equal": true
+   },
+   "d30_Hd": {
+    "stored": 0.6046,
+    "rerun": 0.6046,
+    "equal": true
+   }
+  },
+  "action_only": {
+   "d5_Hd": {
+    "stored": 0.6842,
+    "rerun": 0.6842,
+    "equal": true
+   },
+   "d10_Hd": {
+    "stored": 0.8777,
+    "rerun": 0.8777,
+    "equal": true
+   },
+   "d15_Hd": {
+    "stored": 0.9047,
+    "rerun": 0.9047,
+    "equal": true
+   },
+   "d20_Hd": {
+    "stored": 0.9033,
+    "rerun": 0.9033,
+    "equal": true
+   },
+   "d30_Hd": {
+    "stored": 0.8734,
+    "rerun": 0.8734,
+    "equal": true
+   }
+  },
+  "anchors": 703,
+  "matches": true
+ },
+ "g1b_w2": {
+  "model": {
+   "d5_H5": {
+    "stored": 0.5832,
+    "rerun": 0.5846,
+    "equal": false
+   },
+   "d5_H10": {
+    "stored": 0.3229,
+    "rerun": 0.3172,
+    "equal": false
+   },
+   "d5_H30": {
+    "stored": 0.0213,
+    "rerun": 0.0228,
+    "equal": false
+   },
+   "d5_Hd": {
+    "stored": 0.5832,
+    "rerun": 0.5846,
+    "equal": false
+   },
+   "d10_H5": {
+    "stored": 0.2546,
+    "rerun": 0.2617,
+    "equal": false
+   },
+   "d10_H10": {
+    "stored": 0.6458,
+    "rerun": 0.6472,
+    "equal": false
+   },
+   "d10_H30": {
+    "stored": 0.0711,
+    "rerun": 0.0754,
+    "equal": false
+   },
+   "d10_Hd": {
+    "stored": 0.6458,
+    "rerun": 0.6472,
+    "equal": false
+   },
+   "d15_H5": {
+    "stored": 0.091,
+    "rerun": 0.0925,
+    "equal": false
+   },
+   "d15_H10": {
+    "stored": 0.3186,
+    "rerun": 0.3158,
+    "equal": false
+   },
+   "d15_H30": {
+    "stored": 0.2333,
+    "rerun": 0.2304,
+    "equal": false
+   },
+   "d15_Hd": {
+    "stored": 0.6302,
+    "rerun": 0.6245,
+    "equal": false
+   },
+   "d20_H5": {
+    "stored": 0.0242,
+    "rerun": 0.0171,
+    "equal": false
+   },
+   "d20_H10": {
+    "stored": 0.1152,
+    "rerun": 0.1138,
+    "equal": false
+   },
+   "d20_H30": {
+    "stored": 0.4822,
+    "rerun": 0.4822,
+    "equal": true
+   },
+   "d20_Hd": {
+    "stored": 0.6273,
+    "rerun": 0.6188,
+    "equal": false
+   },
+   "d30_H5": {
+    "stored": 0.0071,
+    "rerun": 0.0071,
+    "equal": true
+   },
+   "d30_H10": {
+    "stored": 0.0156,
+    "rerun": 0.0171,
+    "equal": false
+   },
+   "d30_H30": {
+    "stored": 0.5903,
+    "rerun": 0.6017,
+    "equal": false
+   },
+   "d30_Hd": {
+    "stored": 0.5903,
+    "rerun": 0.6017,
+    "equal": false
+   }
+  },
+  "matches": false,
+  "stored": {
+   "d5_Hd": 0.5832,
+   "d10_Hd": 0.6458,
+   "d15_Hd": 0.6302,
+   "d20_Hd": 0.6273,
+   "d30_Hd": 0.5903
+  },
+  "rerun": {
+   "d5_Hd": 0.5846,
+   "d10_Hd": 0.6472,
+   "d15_Hd": 0.6245,
+   "d20_Hd": 0.6188,
+   "d30_Hd": 0.6017
+  },
+  "cells_equal": 2,
+  "cells": 20
+ },
+ "hwm": {
+  "learned": {
+   "stored": 0.6078,
+   "rerun": 0.6078,
+   "equal": true
+  },
+  "disp": {
+   "stored": 0.551,
+   "rerun": 0.551,
+   "equal": true
+  },
+  "matches": true
+ },
+ "w1c": {
+  "scored_episodes": 65,
+  "stored_scored_episodes": 65,
+  "imagined": {
+   "stored": 0.7013,
+   "rerun": 0.7013,
+   "equal": true
+  },
+  "current": {
+   "stored": 0.8199,
+   "rerun": 0.8199,
+   "equal": true
+  },
+  "matches": true
+ },
+ "reap": {
+  "true": {
+   "stored": 0.7887,
+   "rerun": 0.7857,
+   "equal": false
+  },
+  "shuffled": {
+   "stored": 0.7083,
+   "rerun": 0.7083,
+   "equal": true
+  },
+  "matches": false
+ },
+ "sens_w1": {
+  "stored": {
+   "model_mse_k30": 0.31331,
+   "copy_last_mse_k30": 0.89271
+  },
+  "rerun": {
+   "model_mse_k30": 0.31558,
+   "copy_last_mse_k30": 0.89891
+  },
+  "matches": false
+ },
+ "robojepa": {
+  "matches": null,
+  "missing": "V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt) not on this machine; Gate A also ran on an A100"
+ }
+}

@@ -36,19 +36,19 @@
   "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = under"
  },
  "bs_beats": {
-  "value": "2",
+  "value": "3",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = beats"
  },
  "bs_ci_c0011": {
-  "value": "rows not available",
+  "value": "rerun does not match the stored result (stored 0.31, re-run 0.32)",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-001-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0012": {
-  "value": "rows not available",
+  "value": "worst case d = 10: −0.37 [−0.42, −0.32]; best case d = 5: −0.23 [−0.29, −0.18], loses",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-001-2: point_difference, ci95, outcome"
  },
  "bs_ci_c0021": {
-  "value": "rows not available",
+  "value": "rerun does not match the stored result (d = 30: stored 0.59, re-run 0.60)",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-002-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0031": {
@@ -56,11 +56,11 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-003-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0061": {
-  "value": "rows not available",
+  "value": "−0.12 [−0.24, −0.01], loses",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-006-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0081": {
-  "value": "rows not available",
+  "value": "rerun does not match the stored result (true actions: stored 0.789, re-run 0.786)",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-008-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0102": {
@@ -68,7 +68,7 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-010-2: point_difference, ci95, outcome"
  },
  "bs_ci_c0162": {
-  "value": "rows not available",
+  "value": "+0.06 [+0.03, +0.08], beats",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-016-2: point_difference, ci95, outcome"
  },
  "bs_ci_c0192": {
@@ -84,16 +84,24 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-022-1: point_difference, ci95, outcome"
  },
  "bs_have": {
-  "value": "4",
+  "value": "7",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with an interval"
  },
  "bs_loses": {
-  "value": "1",
+  "value": "3",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = loses"
  },
  "bs_na": {
-  "value": "7",
+  "value": "4",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims without an interval (re-run not matching, or no rows)"
+ },
+ "bs_navail": {
+  "value": "1",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = rows not available"
+ },
+ "bs_nomatch": {
+  "value": "3",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = rerun does not match the stored result"
  },
  "bs_unclear": {
   "value": "1",

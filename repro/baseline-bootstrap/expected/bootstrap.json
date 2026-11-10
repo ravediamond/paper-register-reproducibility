@@ -5,47 +5,182 @@
  "interval": "percentile 95 %",
  "comparisons": 11,
  "counts": {
-  "beats": 2,
-  "loses": 1,
+  "beats": 3,
+  "loses": 3,
   "unclear": 1,
-  "rows not available": 7
+  "rerun does not match the stored result": 3,
+  "rows not available": 1
  },
  "claims": [
   {
    "claim": "C-001-1",
    "comparison": "LeWorldModel vs copy-last, latent error at K = 30",
-   "outcome": "rows not available",
-   "needed_file": "per-anchor open-loop error of the model and of copy-last at K = 30 with the episode id, written by g1_suite.py (not stored; only means)"
+   "outcome": "rerun does not match the stored result",
+   "compared": "mean squared latent error at K = 30 over 192 windows",
+   "stored": {
+    "model_mse_k30": 0.31331,
+    "copy_last_mse_k30": 0.89271
+   },
+   "rerun": {
+    "model_mse_k30": 0.31558,
+    "copy_last_mse_k30": 0.89891
+   },
+   "source_files": [
+    "repro/baseline-bootstrap/data/rerun_match.json",
+    "repro/baseline-bootstrap/data/not_matched/"
+   ]
   },
   {
    "claim": "C-001-2",
    "comparison": "LeWorldModel ranking vs action-only, top-1",
-   "outcome": "rows not available",
-   "needed_file": "per-anchor top-1 hit of the model and of the action-only baseline for each target distance d, with the episode id, written by g1b_range.py (not stored; g1b_range_w1.json has accuracy per cell only)"
+   "unit": "episode",
+   "n_units": 25,
+   "n_anchors": 703,
+   "per_d": {
+    "d5": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.4509,
+     "baseline": 0.6842,
+     "point_difference": -0.2333,
+     "ci95": [
+      -0.2859,
+      -0.1796
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d10": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.5064,
+     "baseline": 0.8777,
+     "point_difference": -0.3713,
+     "ci95": [
+      -0.4226,
+      -0.3186
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d15": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.5733,
+     "baseline": 0.9047,
+     "point_difference": -0.3314,
+     "ci95": [
+      -0.3813,
+      -0.2824
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d20": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6031,
+     "baseline": 0.9033,
+     "point_difference": -0.3001,
+     "ci95": [
+      -0.354,
+      -0.2446
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d30": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6046,
+     "baseline": 0.8734,
+     "point_difference": -0.2688,
+     "ci95": [
+      -0.3338,
+      -0.204
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    }
+   },
+   "worst_d": "d10",
+   "best_d": "d5",
+   "point_difference": -0.3713,
+   "ci95": [
+    -0.4226,
+    -0.3186
+   ],
+   "outcome": "loses",
+   "source_files": [
+    "projects/vla-jepa-world-model/wm_train/g1b_range.py, g1_diag.py (re-run WS-213)",
+    "repro/baseline-bootstrap/data/g1b_rows_w1.csv"
+   ]
   },
   {
    "claim": "C-002-1",
    "comparison": "DINO-WM ranking vs action-only, top-1",
-   "outcome": "rows not available",
-   "needed_file": "per-anchor top-1 hits of W2 and of the action-only baseline per target distance, with the episode id (g1_w2prime_best_g1b.json has accuracy per cell only)"
+   "outcome": "rerun does not match the stored result",
+   "compared": "top-1 per target distance (H = d), cells equal 2 of 20",
+   "stored": {
+    "d5_Hd": 0.5832,
+    "d10_Hd": 0.6458,
+    "d15_Hd": 0.6302,
+    "d20_Hd": 0.6273,
+    "d30_Hd": 0.5903
+   },
+   "rerun": {
+    "d5_Hd": 0.5846,
+    "d10_Hd": 0.6472,
+    "d15_Hd": 0.6245,
+    "d20_Hd": 0.6188,
+    "d30_Hd": 0.6017
+   },
+   "source_files": [
+    "repro/baseline-bootstrap/data/rerun_match.json",
+    "repro/baseline-bootstrap/data/not_matched/"
+   ]
   },
   {
    "claim": "C-003-1",
    "comparison": "RoboJEPA 300M vs copy-last, 9-step latent L1",
    "outcome": "rows not available",
-   "needed_file": "per-clip model and copy-last errors, written by gate_a_eval.py (gateA_summary.json has per-horizon means only)"
+   "needed_file": "per-clip errors need gate_a_eval.py with the V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt, not on this machine; Gate A ran on an A100); the 300M predictor checkpoint is at ~/rj/models/wm-300m but is not enough"
   },
   {
    "claim": "C-006-1",
    "comparison": "ContactGuard imagined-latent vs current-latent probe, failure AUROC",
-   "outcome": "rows not available",
-   "needed_file": "per-rollout out-of-fold scores of both probes for the 65 scored rollouts (w1c_summary.json has fold means only)"
+   "unit": "rollout",
+   "n_units": 65,
+   "method": 0.7013,
+   "baseline": 0.8199,
+   "point_difference": -0.1186,
+   "ci95": [
+    -0.2362,
+    -0.0066
+   ],
+   "outcome": "loses",
+   "source_files": [
+    "scripts/run_w1c_offline.py c1 (re-run WS-213)",
+    "repro/baseline-bootstrap/data/w1c_rows.csv"
+   ]
   },
   {
    "claim": "C-008-1",
    "comparison": "ReAP risk head vs shuffled actions, failure AUROC",
-   "outcome": "rows not available",
-   "needed_file": "per-rollout risk scores, true and shuffled actions, for the 50 rollouts (monitors_v2.json has aggregates only)"
+   "outcome": "rerun does not match the stored result",
+   "compared": "median AUROC over 5 seeds, primary 50 rollouts",
+   "stored": {
+    "true": 0.7887,
+    "shuffled": 0.7083
+   },
+   "rerun": {
+    "true": 0.7857,
+    "shuffled": 0.7083
+   },
+   "source_files": [
+    "repro/baseline-bootstrap/data/rerun_match.json",
+    "repro/baseline-bootstrap/data/not_matched/"
+   ]
   },
   {
    "claim": "C-010-2",
@@ -68,8 +203,21 @@
   {
    "claim": "C-016-2",
    "comparison": "HWM learned macro-actions vs net joint displacement, cosine",
-   "outcome": "rows not available",
-   "needed_file": "per-anchor cosines of the learned and displacement macro-actions for the 700 anchors, written by hwm_train.py (gate0.json has means and standard errors only)"
+   "unit": "episode",
+   "n_units": 25,
+   "method": 0.6078,
+   "baseline": 0.551,
+   "point_difference": 0.0568,
+   "ci95": [
+    0.0346,
+    0.0797
+   ],
+   "outcome": "beats",
+   "n_anchors": 700,
+   "source_files": [
+    "projects/hwm-crossover/scripts/hwm_train.py evaluate(), stored f2_*.pt (re-run WS-213)",
+    "repro/baseline-bootstrap/data/hwm_rows.csv"
+   ]
   },
   {
    "claim": "C-019-2",

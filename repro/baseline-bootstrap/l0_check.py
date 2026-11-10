@@ -1,6 +1,8 @@
-"""L0: paired episode bootstrap on the 11 baseline comparisons (protocol: PROTOCOL.md, frozen in commit 7ac1567).
+"""L0: paired episode bootstrap on the 11 baseline comparisons (protocol: PROTOCOL.md, frozen in commit 7ac1567; Amendment 1, WS-213).
 Recomputes the intervals of the rows whose per-unit rows are stored (data/), reads the two reused intervals, and compares
-with expected/bootstrap.json. `python3 l0_check.py --write` regenerates expected/bootstrap.json."""
+with expected/bootstrap.json. `python3 l0_check.py --write` regenerates expected/bootstrap.json.
+Rows written by the re-runs of Amendment 1 are in data/*_rows*.csv; data/rerun_match.json holds, per re-run, the stored
+aggregate and the recomputed one (the match gate); a comparison that does not match is not bootstrapped."""
 import json, sys
 from pathlib import Path
 import numpy as np
@@ -8,6 +10,8 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 N_RES, SEED = 2000, 0
 EXP = HERE / "expected/bootstrap.json"
+NOMATCH = "rerun does not match the stored result"
+NA_TXT = "rows not available"
 
 
 def auroc(y, s):
@@ -70,6 +74,99 @@ def aac():
                              "repro/baseline-bootstrap/data/aac_boundaries.csv"]}
 
 
+def boot_groups(ep, stat, seed=SEED, n_res=N_RES):
+    """Episode bootstrap: resample episodes with replacement (their rows stay together), stat(row indices) per resample."""
+    eps = sorted(set(ep.tolist())); idx = {e: np.where(ep == e)[0] for e in eps}
+    rng = np.random.default_rng(seed); out = []
+    while len(out) < n_res:
+        v = stat(np.concatenate([idx[e] for e in rng.choice(eps, len(eps))]))
+        if v is not None:
+            out.append(v)
+    return out, len(eps)
+
+
+def pack(claim, comparison, unit, n_units, m, b, diff, ci, **kw):
+    return {"claim": claim, "comparison": comparison, "unit": unit, "n_units": int(n_units), "method": m, "baseline": b,
+            "point_difference": diff, "ci95": [round(c, 4) for c in ci], "outcome": outcome(*ci), **kw}
+
+
+def matches():
+    return json.loads((HERE / "data/rerun_match.json").read_text())
+
+
+def g1b_w1():
+    """C-001-2: top-1 of W1 minus top-1 of the action-only baseline, H = d, at each target distance d."""
+    d = np.genfromtxt(HERE / "data/g1b_rows_w1.csv", delimiter=",", skip_header=1, dtype=int)
+    mt = matches()["g1b_w1"]; per = {}
+    assert len(set(d[:, 0])) == 25 and (d[:, 2] == 5).sum() == 703
+    for dd in sorted(set(d[:, 2].tolist())):
+        r = d[d[:, 2] == dd]; mo, ac = r[:, 3].astype(float), r[:, 4].astype(float)
+        assert round(mo.mean(), 4) == mt["model"][f"d{dd}_Hd"]["stored"] and round(ac.mean(), 4) == mt["action_only"][f"d{dd}_Hd"]["stored"], dd
+        v, n = boot_groups(r[:, 0], lambda ii: float(mo[ii].mean() - ac[ii].mean()))
+        ci = pct(v)
+        per[f"d{dd}"] = pack("C-001-2", "", "episode", n, round(mo.mean(), 4), round(ac.mean(), 4), round(mo.mean() - ac.mean(), 4), ci, n_anchors=len(r))
+        del per[f"d{dd}"]["claim"], per[f"d{dd}"]["comparison"]
+    lo_ub = min(per, key=lambda k: (per[k]["ci95"][1], per[k]["point_difference"]))      # worst case: lowest upper bound
+    hi_lb = max(per, key=lambda k: (per[k]["ci95"][0], per[k]["point_difference"]))      # best case: highest lower bound
+    outs = {p["outcome"] for p in per.values()}
+    return {"claim": "C-001-2", "comparison": "LeWorldModel ranking vs action-only, top-1", "unit": "episode", "n_units": 25, "n_anchors": 703,
+            "per_d": per, "worst_d": lo_ub, "best_d": hi_lb, "point_difference": per[lo_ub]["point_difference"], "ci95": per[lo_ub]["ci95"],
+            "outcome": outs.pop() if len(outs) == 1 else "unclear",
+            "source_files": ["projects/vla-jepa-world-model/wm_train/g1b_range.py, g1_diag.py (re-run WS-213)", "repro/baseline-bootstrap/data/g1b_rows_w1.csv"]}
+
+
+def mismatch(claim, comparison, key, what, stored, rerun):
+    """The re-run does not reproduce the stored aggregate: both values are written, nothing is bootstrapped (PROTOCOL.md Amendment 1)."""
+    assert matches()[key]["matches"] is False
+    return {"claim": claim, "comparison": comparison, "outcome": NOMATCH, "compared": what, "stored": stored, "rerun": rerun,
+            "source_files": ["repro/baseline-bootstrap/data/rerun_match.json", "repro/baseline-bootstrap/data/not_matched/"]}
+
+
+def hwm():
+    """C-016-2: mean cosine of the learned macro-actions minus that of net joint displacement; unit = episode."""
+    d = np.genfromtxt(HERE / "data/hwm_rows.csv", delimiter=",", skip_header=1)
+    ep, a, b = d[:, 0].astype(int), d[:, 2], d[:, 3]; mt = matches()["hwm"]
+    assert len(d) == 700 and round(a.mean(), 4) == mt["learned"]["stored"] and round(b.mean(), 4) == mt["disp"]["stored"]
+    v, n = boot_groups(ep, lambda ii: float(a[ii].mean() - b[ii].mean()))
+    return pack("C-016-2", "HWM learned macro-actions vs net joint displacement, cosine", "episode", n, round(a.mean(), 4), round(b.mean(), 4),
+                round(a.mean() - b.mean(), 4), pct(v), n_anchors=len(d),
+                source_files=["projects/hwm-crossover/scripts/hwm_train.py evaluate(), stored f2_*.pt (re-run WS-213)", "repro/baseline-bootstrap/data/hwm_rows.csv"])
+
+
+def auroc_seeds(rows, col, agg, idx=None):
+    """rows: dict seed -> (y, scores per column); AUROC per seed on idx, aggregated; None if a seed has one class only."""
+    out = []
+    for sd, (y, sc) in rows.items():
+        a = auroc(y if idx is None else y[idx], sc[col] if idx is None else sc[col][idx])
+        if a is None:
+            return None
+        out.append(a)
+    return float(agg(out))
+
+
+def w1c():
+    """C-006-1: AUROC of the imagined-latent probe minus the current-latent probe; per seed on the out-of-fold scores of the
+    resampled rollouts, mean over the 5 seeds; unit = rollout."""
+    d = np.genfromtxt(HERE / "data/w1c_rows.csv", delimiter=",", skip_header=1)
+    ep, y, sd = d[:, 0].astype(int), d[:, 1].astype(int), d[:, 2].astype(int); mt = matches()["w1c"]
+    eps = sorted(set(ep.tolist())); assert len(eps) == 65
+    rows = {}
+    for s in sorted(set(sd.tolist())):
+        k = np.where(sd == s)[0]; o = np.argsort(ep[k]); k = k[o]
+        rows[s] = (y[k].astype(bool), {"imag": d[k, 3], "cur": d[k, 4]})
+    a0, b0 = auroc_seeds(rows, "imag", np.mean), auroc_seeds(rows, "cur", np.mean)
+    assert round(a0, 4) == mt["imagined"]["stored"] and round(b0, 4) == mt["current"]["stored"], (a0, b0)
+    rng = np.random.default_rng(SEED); out = []; n = len(eps)
+    while len(out) < N_RES:
+        i = rng.integers(0, n, n)
+        x, z = auroc_seeds(rows, "imag", np.mean, i), auroc_seeds(rows, "cur", np.mean, i)
+        if x is None or z is None:
+            continue
+        out.append(x - z)
+    return pack("C-006-1", "ContactGuard imagined-latent vs current-latent probe, failure AUROC", "rollout", n, round(a0, 4), round(b0, 4),
+                round(a0 - b0, 4), pct(out), source_files=["scripts/run_w1c_offline.py c1 (re-run WS-213)", "repro/baseline-bootstrap/data/w1c_rows.csv"])
+
+
 def reused():
     p = json.loads((HERE / "data/pact_gate_b_k8.json").read_text())["k8_pact_minus_random"]
     lo, hi = p["ci95"]  # PACT minus random on an error: lower is better, so sign flipped
@@ -87,24 +184,23 @@ def reused():
     return [pact, rem]
 
 
-NA = {  # claim -> (comparison, file that would be needed)
-    "C-001-1": ("LeWorldModel vs copy-last, latent error at K = 30", "per-anchor open-loop error of the model and of copy-last at K = 30 with the episode id, written by g1_suite.py (not stored; only means)"),
-    "C-001-2": ("LeWorldModel ranking vs action-only, top-1", "per-anchor top-1 hit of the model and of the action-only baseline for each target distance d, with the episode id, written by g1b_range.py (not stored; g1b_range_w1.json has accuracy per cell only)"),
-    "C-002-1": ("DINO-WM ranking vs action-only, top-1", "per-anchor top-1 hits of W2 and of the action-only baseline per target distance, with the episode id (g1_w2prime_best_g1b.json has accuracy per cell only)"),
-    "C-003-1": ("RoboJEPA 300M vs copy-last, 9-step latent L1", "per-clip model and copy-last errors, written by gate_a_eval.py (gateA_summary.json has per-horizon means only)"),
-    "C-006-1": ("ContactGuard imagined-latent vs current-latent probe, failure AUROC", "per-rollout out-of-fold scores of both probes for the 65 scored rollouts (w1c_summary.json has fold means only)"),
-    "C-008-1": ("ReAP risk head vs shuffled actions, failure AUROC", "per-rollout risk scores, true and shuffled actions, for the 50 rollouts (monitors_v2.json has aggregates only)"),
-    "C-016-2": ("HWM learned macro-actions vs net joint displacement, cosine", "per-anchor cosines of the learned and displacement macro-actions for the 700 anchors, written by hwm_train.py (gate0.json has means and standard errors only)"),
+NA = {  # claim -> (comparison, why no row exists)
+    "C-003-1": ("RoboJEPA 300M vs copy-last, 9-step latent L1", "per-clip errors need gate_a_eval.py with the V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt, not on this machine; Gate A ran on an A100); the 300M predictor checkpoint is at ~/rj/models/wm-300m but is not enough"),
 }
 
 
 def compute():
-    rows = {r["claim"]: r for r in [robometer(), aac()] + reused()}
+    mm = matches(); w2 = mm["g1b_w2"]; sn = mm["sens_w1"]; rp = mm["reap"]
+    rows = {r["claim"]: r for r in [robometer(), aac(), g1b_w1(), hwm(), w1c()] + reused()}
+    rows["C-002-1"] = mismatch("C-002-1", "DINO-WM ranking vs action-only, top-1", "g1b_w2", "top-1 per target distance (H = d), cells equal %d of %d" % (w2["cells_equal"], w2["cells"]), w2["stored"], w2["rerun"])
+    rows["C-001-1"] = mismatch("C-001-1", "LeWorldModel vs copy-last, latent error at K = 30", "sens_w1", "mean squared latent error at K = 30 over 192 windows", sn["stored"], sn["rerun"])
+    rows["C-008-1"] = mismatch("C-008-1", "ReAP risk head vs shuffled actions, failure AUROC", "reap", "median AUROC over 5 seeds, primary 50 rollouts",
+                               {"true": rp["true"]["stored"], "shuffled": rp["shuffled"]["stored"]}, {"true": rp["true"]["rerun"], "shuffled": rp["shuffled"]["rerun"]})
     for c, (cmp_, need) in NA.items():
-        rows[c] = {"claim": c, "comparison": cmp_, "outcome": "rows not available", "needed_file": need}
+        rows[c] = {"claim": c, "comparison": cmp_, "outcome": NA_TXT, "needed_file": need}
     order = ["C-001-1", "C-001-2", "C-002-1", "C-003-1", "C-006-1", "C-008-1", "C-010-2", "C-016-2", "C-019-2", "C-020-1", "C-022-1"]
     claims = [rows[c] for c in order]
-    cnt = {k: sum(r["outcome"] == k for r in claims) for k in ["beats", "loses", "unclear", "rows not available"]}
+    cnt = {k: sum(r["outcome"] == k for r in claims) for k in ["beats", "loses", "unclear", NOMATCH, NA_TXT]}
     return {"protocol": "repro/baseline-bootstrap/PROTOCOL.md", "resamples": N_RES, "seed": SEED, "interval": "percentile 95 %",
             "comparisons": len(claims), "counts": cnt, "claims": claims}
 
@@ -116,7 +212,7 @@ def main():
     want = json.loads(EXP.read_text())
     ok = got == want
     for r in got["claims"]:
-        print(f"{r['claim']}: {r['outcome']}", r.get("ci95", ""))
+        print(f"{r['claim']}: {r['outcome']}", r.get("ci95", ""), r.get("worst_d", ""), r.get("best_d", ""))
     print("counts", got["counts"])
     print("L0 PASS" if ok else "L0 FAIL (differs from expected/bootstrap.json)")
 
