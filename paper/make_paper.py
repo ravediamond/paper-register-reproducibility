@@ -127,6 +127,7 @@ def register():
     tc = collections.Counter(ctier.values())
     for k in ("auth", "var", "eng", "scope"):
         put("t_c_" + k, str(tc[k]), ta + f", tier = {k}")
+    fam_mon = ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"]
     ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "scope", "Robometer": "auth",
              "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "var", "FAIL-Detect and SAFE": "var", "ReAP": "var",
              "VLA-Corrector": "var", "SURVEYOR": "var", "REMORA": "var", "PACT-VLA": "eng"}
@@ -136,6 +137,8 @@ def register():
         if p["paper"] in ptier: tp[ptier[p["paper"]]] += wt(p)
     for k in ("auth", "var", "eng", "scope"):
         put("t_p_" + k, str(tp[k]), ta.replace("claims", "papers").replace("ctier", "ptier") + f", tier = {k}, weighted")
+    tmv = sum(wt(p) for p in papers if ptier.get(p["paper"]) == "var" and p["paper"] in fam_mon)
+    put("t_mon_var", str(tmv), "failed monitor papers whose tier is 'var' (weighted)")
     put("t_p_other", str(tp["var"] + tp["eng"] + tp["scope"]), "t_p_var + t_p_eng + t_p_scope"); put("t_c_other", str(tc["var"] + tc["eng"] + tc["scope"]), "t_c_var + t_c_eng + t_c_scope")
     # 9 of 10 trials, Wilson 95 % interval
     import math

@@ -315,6 +315,10 @@
   "value": "8",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
  },
+ "t_mon_var": {
+  "value": "7",
+  "anchor": "failed monitor papers whose tier is 'var' (weighted)"
+ },
  "t_p_auth": {
   "value": "5",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"

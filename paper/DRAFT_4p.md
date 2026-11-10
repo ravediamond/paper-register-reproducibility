@@ -96,9 +96,9 @@ Table 1: The four kinds of papers, what we test in each, the cheapest baseline w
 
 ## 4. Results
 
-Table 2 and Figure 1 give the verdicts, and Table 1 breaks them down by kind of paper. Of the 37 claims, 12 hold, 3 are not proven and 4 are not tested yet. Of the 18 that fail, 7 fail with the authors' method on our data, 8 in our own variant, 2 because of our engine and 1 on a task outside the paper's regime. Counted by paper, 4 of the 22 reproduce, and 5 fail with the authors' method. D-JEPA is counted as not tested: we ran it, but only with proxy labels, not with the success labels the paper uses.
+Table 2 and Figure 1 show the verdicts, and Table 1 breaks them down by kind of paper. Out of the 37 tested claims, 12 hold, 18 fail (7 using the papers' methods, 8 using our variant, 2 on our inference engine and 1 outside the paper's scope), 3 are not proven and 4 not tested. At the paper level, 4 are validated, 14 fail, 3 are not proven and 1 is not tested.
 
-The pattern by kind looks sharp, with all 8 failure monitors and judges failing and all 3 VLA policies reproducing, but neither half is strong evidence. Most of the monitor failures are in our own variants, and two of the three VLA results rest on 10 trials with no numeric bar. The appendix gives every paper with its claim, its bar and our result.
+The pattern by kind looks revealing (all 8 failure monitors and judges have failed, all 3 VLA policies reproduce) but is actually limited. 7 out of 8 monitors used our own variant, so they cannot directly serve as evidence. As for the VLAs, for 2 of the 3 there were no numbers to use as bars, so we just ran trials and recorded the number of fails.
 
 ![Fig. 1 — the 37 paper claims by verdict: 12 reproduce, 7 fail with the authors' method on our data, 11 fail only in our variant of the method, because of our inference engine or outside the paper's regime, and the rest are open.](fig/verdicts.png)
 

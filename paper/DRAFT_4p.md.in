@@ -96,9 +96,9 @@ Table 1: The four kinds of papers, what we test in each, the cheapest baseline w
 
 ## 4. Results
 
-Table 2 and Figure 1 give the verdicts, and Table 1 breaks them down by kind of paper. Of the {{c_paper}} claims, {{c_paper_repro}} hold, {{c_not_proven}} are not proven and {{c_not_tested}} are not tested yet. Of the {{c_paper_fail}} that fail, {{t_c_auth}} fail with the authors' method on our data, {{t_c_var}} in our own variant, {{t_c_eng}} because of our engine and {{t_c_scope}} on a task outside the paper's regime. Counted by paper, {{p_reproduces}} of the {{papers}} reproduce, and {{t_p_auth}} fail with the authors' method. D-JEPA is counted as not tested: we ran it, but only with proxy labels, not with the success labels the paper uses.
+Table 2 and Figure 1 show the verdicts, and Table 1 breaks them down by kind of paper. Out of the {{c_paper}} tested claims, {{c_paper_repro}} hold, {{c_paper_fail}} fail ({{t_c_auth}} using the papers' methods, {{t_c_var}} using our variant, {{t_c_eng}} on our inference engine and {{t_c_scope}} outside the paper's scope), {{c_not_proven}} are not proven and {{c_not_tested}} not tested. At the paper level, {{p_reproduces}} are validated, {{p_fail}} fail, {{p_not_proven}} are not proven and {{p_not_tested}} is not tested.
 
-The pattern by kind looks sharp, with all {{f_mon}} failure monitors and judges failing and all {{f_vla}} VLA policies reproducing, but neither half is strong evidence. Most of the monitor failures are in our own variants, and two of the three VLA results rest on 10 trials with no numeric bar. The appendix gives every paper with its claim, its bar and our result.
+The pattern by kind looks revealing (all {{f_mon}} failure monitors and judges have failed, all {{f_vla}} VLA policies reproduce) but is actually limited. {{t_mon_var}} out of {{f_mon}} monitors used our own variant, so they cannot directly serve as evidence. As for the VLAs, for 2 of the 3 there were no numbers to use as bars, so we just ran trials and recorded the number of fails.
 
 ![Fig. 1 — the {{c_paper}} paper claims by verdict: {{c_paper_repro}} reproduce, {{t_c_auth}} fail with the authors' method on our data, {{t_c_other}} fail only in our variant of the method, because of our inference engine or outside the paper's regime, and the rest are open.](fig/verdicts.png)
 
