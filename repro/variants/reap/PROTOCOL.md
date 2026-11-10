@@ -99,7 +99,9 @@ The register's verdict is "fail" before this run. A pass moves C-008-2 to "repro
 Two episodes per dataset: frame counts against metadata, token arrays of shape (frames, 28, 384), a hand-computed ramp
 target, a hand-computed threshold on a toy score list, and a one-batch overfit of Stage 1 on 64 frames.
 
-## 9. Deviations (empty)
+## 9. Deviations
+
+1. 2026-11-10, before any number: section 4 item 9 says 24 feature steps for T_common 374; frames 0, 15, ..., 360 are 25 steps. The rule (steps with frame index below 374) is unchanged; 25 is the arithmetic result.
 
 ## 10. Exploratory
 
