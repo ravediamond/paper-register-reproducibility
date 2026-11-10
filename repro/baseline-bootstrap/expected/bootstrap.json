@@ -5,11 +5,11 @@
  "interval": "percentile 95 %",
  "comparisons": 11,
  "counts": {
-  "beats": 4,
+  "beats": 5,
   "loses": 4,
   "unclear": 2,
   "rerun does not match the stored result": 0,
-  "rows not available": 1
+  "rows not available": 0
  },
  "claims": [
   {
@@ -229,9 +229,27 @@
   },
   {
    "claim": "C-003-1",
-   "comparison": "RoboJEPA 300M vs copy-last, 9-step latent L1",
-   "outcome": "rows not available",
-   "needed_file": "per-clip errors need gate_a_eval.py with the V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt, not on this machine; Gate A ran on an A100); the 300M predictor checkpoint is at ~/rj/models/wm-300m but is not enough"
+   "comparison": "RoboJEPA 300M vs copy-last, 9-step latent L1 (reduction = 1 - model / copy-last; bar 0.15)",
+   "unit": "episode",
+   "n_units": 25,
+   "method": 0.3314,
+   "baseline": 0.3759,
+   "point_difference": 0.1183,
+   "ci95": [
+    0.1078,
+    0.1288
+   ],
+   "outcome": "beats",
+   "point_is": "fraction below copy-last",
+   "bar": 0.15,
+   "bar_inside_interval": false,
+   "n_clips": 60,
+   "outcome_note": "outcome = interval against 0; the bar 0.15 is reported beside it",
+   "source_files": [
+    "road-to-robotics branch exp/robojepa-gate commit 20f820d, results/gateA/gateA_300m_300k_settinga.json (stored raw result, per_clip)",
+    "repro/baseline-bootstrap/data/robojepa_rows.csv",
+    "repro/baseline-bootstrap/data/robojepa_match.json"
+   ]
   },
   {
    "claim": "C-006-1",

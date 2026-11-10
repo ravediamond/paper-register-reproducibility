@@ -260,14 +260,33 @@ def reap():
                 near_match={"stored": st, "rerun": rr}, source_files=["repro/baseline-bootstrap/data/not_matched/reap_rows.csv (re-run WS-213)"])
 
 
-NA = {  # claim -> (comparison, why no row exists)
-    "C-003-1": ("RoboJEPA 300M vs copy-last, 9-step latent L1", "per-clip errors need gate_a_eval.py with the V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt, not on this machine; Gate A ran on an A100); the 300M predictor checkpoint is at ~/rj/models/wm-300m but is not enough"),
-}
+def robojepa():
+    """C-003-1 (Amendment 3): 1 - mean model L1 / mean copy-last L1 (steps 1 to 9, clips of the resampled episodes), RoboJEPA 300M @ 300k, setting a; unit = episode.
+    Rows copied from the stored raw Gate A result (data/robojepa_match.json, not a re-run); the bar 0.15 is the register's."""
+    import csv
+    r = list(csv.DictReader(open(HERE / "data/robojepa_rows.csv")))
+    ep = np.array([x["episode"] for x in r]); m = np.array([float(x["model_l1_mean_1_9"]) for x in r]); c = np.array([float(x["copy_last_l1_mean_1_9"]) for x in r])
+    mt = matches()["robojepa"]; assert mt["matches"] is True and len(r) == mt["clips"] == 60
+    red = lambda ii: float(1 - m[ii].mean() / c[ii].mean())  # noqa: E731
+    allr = red(np.arange(len(r)))
+    assert abs(m.mean() - mt["stored"]["model_true"]) < 1e-9 and abs(c.mean() - mt["stored"]["copy_last"]) < 1e-9 and abs(allr - mt["stored"]["reduction"]) < 1e-9
+    codes = {e: i for i, e in enumerate(sorted(set(ep.tolist())))}
+    v, n = boot_groups(np.array([codes[e] for e in ep]), red); lo, hi = pct(v)
+    assert n == mt["episodes"] == 25
+    return pack("C-003-1", "RoboJEPA 300M vs copy-last, 9-step latent L1 (reduction = 1 - model / copy-last; bar 0.15)", "episode", n,
+                round(float(m.mean()), 4), round(float(c.mean()), 4), round(allr, 4), (lo, hi), point_is="fraction below copy-last",
+                bar=0.15, bar_inside_interval=bool(lo <= 0.15 <= hi), n_clips=len(r), outcome_note="outcome = interval against 0; the bar 0.15 is reported beside it",
+                source_files=["road-to-robotics branch exp/robojepa-gate commit 20f820d, results/gateA/gateA_300m_300k_settinga.json (stored raw result, per_clip)",
+                              "repro/baseline-bootstrap/data/robojepa_rows.csv", "repro/baseline-bootstrap/data/robojepa_match.json"])
+
+
+NA = {}  # every comparison has rows now
 
 
 def compute():
     rows = {r["claim"]: r for r in [robometer(), aac(), g1b_w1(), hwm(), w1c()] + reused()}
     rows["C-002-1"], rows["C-001-1"], rows["C-008-1"] = g1b_w2(), sens_w1(), reap()  # Amendment 2
+    rows["C-003-1"] = robojepa()  # Amendment 3
     for c, (cmp_, need) in NA.items():
         rows[c] = {"claim": c, "comparison": cmp_, "outcome": NA_TXT, "needed_file": need}
     order = ["C-001-1", "C-001-2", "C-002-1", "C-003-1", "C-006-1", "C-008-1", "C-010-2", "C-016-2", "C-019-2", "C-020-1", "C-022-1"]

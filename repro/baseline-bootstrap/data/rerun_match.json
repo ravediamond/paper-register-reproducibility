@@ -307,7 +307,22 @@
   "matches": false
  },
  "robojepa": {
-  "matches": null,
-  "missing": "V-JEPA 2.1 ViT-G 384 encoder (vjepa2_1_vitG_384.pt) not on this machine; Gate A also ran on an A100"
+  "stored": {
+   "model_true": 0.3314183836954611,
+   "copy_last": 0.3758923751667694,
+   "reduction": 0.11831575847096343
+  },
+  "rerun": {
+   "model_true": 0.3314183836954611,
+   "copy_last": 0.3758923751667694,
+   "reduction": 0.11831575847096343
+  },
+  "clips": 60,
+  "episodes": 25,
+  "source": "stored raw Gate A result (not a re-run), raw sha256 6c19576e16702d2f",
+  "checkpoint_sha256": "19494381dd66b2340421d8732c64526a8d35f469ce50fa5c90a0974ae4ee0838",
+  "robo_jepa_commit": "f93106f5f4a451fd526d51778aa8ab7c852eb824",
+  "seed": 2026,
+  "matches": true
  }
 }
