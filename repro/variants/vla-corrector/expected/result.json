@@ -1,0 +1,177 @@
+{
+ "R1": {
+  "median": {
+   "caught": 1.0,
+   "fi": 3.0,
+   "auroc": 0.5297619047619048,
+   "auroc_shuffled": 0.4255952380952381,
+   "caught_shuffled": 0.0,
+   "fi_shuffled": 3.0,
+   "caught_cal": 2.0,
+   "fi_cal": 5.0,
+   "pass_bar": false,
+   "action_conditioned": true,
+   "pass_bar_cal": false
+  },
+  "per_seed": [
+   {
+    "caught": 1,
+    "fi": 6,
+    "auroc": 0.5297619047619048,
+    "auroc_shuffled": 0.39285714285714285,
+    "caught_shuffled": 0,
+    "fi_shuffled": 3,
+    "caught_cal": 2,
+    "fi_cal": 7
+   },
+   {
+    "caught": 1,
+    "fi": 2,
+    "auroc": 0.4732142857142857,
+    "auroc_shuffled": 0.5892857142857143,
+    "caught_shuffled": 0,
+    "fi_shuffled": 0,
+    "caught_cal": 1,
+    "fi_cal": 3
+   },
+   {
+    "caught": 0,
+    "fi": 3,
+    "auroc": 0.3601190476190476,
+    "auroc_shuffled": 0.4255952380952381,
+    "caught_shuffled": 0,
+    "fi_shuffled": 3,
+    "caught_cal": 1,
+    "fi_cal": 5
+   },
+   {
+    "caught": 2,
+    "fi": 1,
+    "auroc": 0.7053571428571429,
+    "auroc_shuffled": 0.6607142857142857,
+    "caught_shuffled": 0,
+    "fi_shuffled": 3,
+    "caught_cal": 4,
+    "fi_cal": 5
+   },
+   {
+    "caught": 1,
+    "fi": 4,
+    "auroc": 0.5416666666666666,
+    "auroc_shuffled": 0.41369047619047616,
+    "caught_shuffled": 0,
+    "fi_shuffled": 4,
+    "caught_cal": 3,
+    "fi_cal": 7
+   }
+  ]
+ },
+ "R2": {
+  "median": {
+   "caught": 5.0,
+   "fi": 16.0,
+   "auroc": 0.5922619047619048,
+   "auroc_shuffled": 0.42857142857142855,
+   "caught_shuffled": 4.0,
+   "fi_shuffled": 14.0,
+   "pass_bar": false,
+   "action_conditioned": true
+  },
+  "per_seed": [
+   {
+    "caught": 6,
+    "fi": 14,
+    "auroc": 0.6488095238095238,
+    "auroc_shuffled": 0.34523809523809523,
+    "caught_shuffled": 3,
+    "fi_shuffled": 17
+   },
+   {
+    "caught": 5,
+    "fi": 19,
+    "auroc": 0.5922619047619048,
+    "auroc_shuffled": 0.6934523809523809,
+    "caught_shuffled": 4,
+    "fi_shuffled": 14
+   },
+   {
+    "caught": 4,
+    "fi": 24,
+    "auroc": 0.38392857142857145,
+    "auroc_shuffled": 0.42857142857142855,
+    "caught_shuffled": 4,
+    "fi_shuffled": 30
+   },
+   {
+    "caught": 6,
+    "fi": 16,
+    "auroc": 0.6994047619047619,
+    "auroc_shuffled": 0.6845238095238095,
+    "caught_shuffled": 5,
+    "fi_shuffled": 13
+   },
+   {
+    "caught": 3,
+    "fi": 10,
+    "auroc": 0.5089285714285714,
+    "auroc_shuffled": 0.4166666666666667,
+    "caught_shuffled": 2,
+    "fi_shuffled": 14
+   }
+  ]
+ },
+ "R4": {
+  "median": {
+   "caught": 1.0,
+   "fi": 6.0,
+   "auroc": 0.5416666666666666,
+   "auroc_shuffled": 0.5565476190476191,
+   "caught_shuffled": 1.0,
+   "fi_shuffled": 5.0,
+   "pass_bar": false,
+   "action_conditioned": false
+  },
+  "per_seed": [
+   {
+    "caught": 1,
+    "fi": 11,
+    "auroc": 0.5535714285714286,
+    "auroc_shuffled": 0.5684523809523809,
+    "caught_shuffled": 1,
+    "fi_shuffled": 5
+   },
+   {
+    "caught": 1,
+    "fi": 6,
+    "auroc": 0.5,
+    "auroc_shuffled": 0.5565476190476191,
+    "caught_shuffled": 1,
+    "fi_shuffled": 2
+   },
+   {
+    "caught": 2,
+    "fi": 10,
+    "auroc": 0.5238095238095238,
+    "auroc_shuffled": 0.5565476190476191,
+    "caught_shuffled": 1,
+    "fi_shuffled": 8
+   },
+   {
+    "caught": 1,
+    "fi": 5,
+    "auroc": 0.5416666666666666,
+    "auroc_shuffled": 0.6517857142857143,
+    "caught_shuffled": 1,
+    "fi_shuffled": 4
+   },
+   {
+    "caught": 2,
+    "fi": 3,
+    "auroc": 0.6577380952380952,
+    "auroc_shuffled": 0.49702380952380953,
+    "caught_shuffled": 0,
+    "fi_shuffled": 10
+   }
+  ]
+ }
+}
