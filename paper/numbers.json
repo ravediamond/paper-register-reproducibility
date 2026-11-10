@@ -7,9 +7,37 @@
   "value": "7",
   "anchor": "data/datasets.json armnetbench.policies"
  },
+ "b_aac_ci": {
+  "value": "[−0.17, +0.06]",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-019-2 ci95"
+ },
+ "b_aac_n": {
+  "value": "20",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-019-2 n_units"
+ },
  "b_beat": {
   "value": "4",
   "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = beat"
+ },
+ "b_cg_b": {
+  "value": "0.82",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-006-1 baseline"
+ },
+ "b_cg_ci": {
+  "value": "[−0.24, −0.01]",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-006-1 ci95"
+ },
+ "b_cg_gap": {
+  "value": "0.12",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-006-1 point_difference"
+ },
+ "b_cg_m": {
+  "value": "0.70",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-006-1 method"
+ },
+ "b_dino_gap": {
+  "value": "10 to 28",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-002-1 per_d point_difference, points, min to max"
  },
  "b_len_own": {
   "value": "0.521",
@@ -19,9 +47,17 @@
   "value": "0.89",
   "anchor": "repro/register/expected/register.json claims, id C-001-1, ours"
  },
+ "b_lewm_gap": {
+  "value": "23 to 37",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-001-2 per_d point_difference, points, min to max"
+ },
  "b_lewm_pred": {
   "value": "0.31",
   "anchor": "repro/register/expected/register.json claims, id C-001-1, ours"
+ },
+ "b_lewm_top1": {
+  "value": "60 %",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, C-001-2 per_d method, max"
  },
  "b_lost": {
   "value": "5",

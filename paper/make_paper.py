@@ -122,6 +122,19 @@ def register():
     rj = next(c for c in bsj["claims"] if c["claim"] == "C-003-1"); assert rj["ci95"][1] < 0.15
     put("bs_rj", f"{rj['point_difference']*100:.1f} %", bsa + ", claim C-003-1 point_difference (fraction below copy-last)")
     put("bs_rj_lo", f"{rj['ci95'][0]*100:.1f}", bsa + ", claim C-003-1 ci95 low"); put("bs_rj_hi", f"{rj['ci95'][1]*100:.1f} %", bsa + ", claim C-003-1 ci95 high")
+    bsd = {c["claim"]: c for c in bsj["claims"]}
+    def gap(cid):
+        g = sorted(round(-v["point_difference"] * 100) for v in bsd[cid]["per_d"].values()); assert all(v["ci95"][1] < 0 for v in bsd[cid]["per_d"].values())
+        return f"{g[0]} to {g[-1]}"
+    put("b_lewm_top1", f"{max(v['method'] for v in bsd['C-001-2']['per_d'].values())*100:.0f} %", bsa + ", C-001-2 per_d method, max")
+    put("b_lewm_gap", gap("C-001-2"), bsa + ", C-001-2 per_d point_difference, points, min to max")
+    put("b_dino_gap", gap("C-002-1"), bsa + ", C-002-1 per_d point_difference, points, min to max")
+    cg, ac = bsd["C-006-1"], bsd["C-019-2"]
+    put("b_cg_m", f"{cg['method']:.2f}", bsa + ", C-006-1 method"); put("b_cg_b", f"{cg['baseline']:.2f}", bsa + ", C-006-1 baseline")
+    put("b_cg_gap", f"{-cg['point_difference']:.2f}", bsa + ", C-006-1 point_difference")
+    put("b_cg_ci", f"[{cg['ci95'][0]:.2f}, {cg['ci95'][1]:.2f}]".replace("-", "−"), bsa + ", C-006-1 ci95")
+    put("b_aac_ci", f"[{ac['ci95'][0]:.2f}, {ac['ci95'][1]:+.2f}]".replace("-", "−"), bsa + ", C-019-2 ci95")
+    put("b_aac_n", str(ac["n_units"]), bsa + ", C-019-2 n_units")
     for key, cid, field, text in (("b_lewm_pred", "C-001-1", "ours", "0.31"), ("b_lewm_cl", "C-001-1", "ours", "0.89"),
                                   ("b_len_own", "C-010-3", "note", "0.521")):
         assert text in by[cid][field], (cid, text)
