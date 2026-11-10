@@ -394,5 +394,13 @@
  "vla_ci": {
   "value": "60–98 %",
   "anchor": "Wilson score 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')"
+ },
+ "vla_hi": {
+  "value": "98%",
+  "anchor": "Wilson score 95 % interval for 9/10, upper end"
+ },
+ "vla_lo": {
+  "value": "60%",
+  "anchor": "Wilson score 95 % interval for 9/10, lower end"
  }
 }

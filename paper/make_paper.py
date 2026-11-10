@@ -143,6 +143,7 @@ def register():
     for cid in ("C-011-1", "C-013-1"):
         assert "9/10" in by[cid]["ours"] and "no numeric pass mark" in by[cid]["bar"], cid
     put("vla_ci", f"{100 * (c_ - h_):.0f}–{100 * (c_ + h_):.0f} %", "Wilson score 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')")
+    put("vla_lo", f"{100 * (c_ - h_):.0f}%", "Wilson score 95 % interval for 9/10, lower end"); put("vla_hi", f"{100 * (c_ + h_):.0f}%", "Wilson score 95 % interval for 9/10, upper end")
     for cid in ("C-019-3", "C-010-2", "C-001-2"):
         assert by[cid]["verdict"] == "fail" and not own(by[cid]), cid
     assert by["C-012-1"]["verdict"] == "withdrawn"

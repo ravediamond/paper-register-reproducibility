@@ -81,7 +81,7 @@ There are only 4 verdicts possible for each re-test: holds, meaning the bar is m
 - the limitation of our inference engine
 - or a task that goes outside the paper's scope
 
-We had 2 cases of weaker bar: for SmolVLA and VLA-JEPA, we had no numeric bar, so instead we launched 10 trials judged by a human. 9 out of 10 were a success, which means a true rate anywhere from 60–98 % (Wilson interval, 95%).
+We had 2 cases of weaker bar: for SmolVLA and VLA-JEPA, we had no numeric bar, so instead we launched 10 trials judged by a human. 9 out of 10 were a success, which means a true rate anywhere from 60% to 98% (Wilson interval, 95%).
 
 Table 1: The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.
 
