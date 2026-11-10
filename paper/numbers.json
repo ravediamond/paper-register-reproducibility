@@ -36,11 +36,11 @@
   "anchor": "repro/register/expected/register.json claims C-001-1, C-001-2, C-002-1, C-003-1, C-006-1, C-008-1, C-010-2, C-016-2, C-019-2, C-020-1, C-022-1 (compared with a cheap baseline; outcome by hand), outcome = under"
  },
  "bs_beats": {
-  "value": "3",
+  "value": "4",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = beats"
  },
  "bs_ci_c0011": {
-  "value": "rerun does not match the stored result (stored 0.31, re-run 0.32)",
+  "value": "+0.58 [+0.51, +0.66], beats, on the re-run (unit = window)",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-001-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0012": {
@@ -48,7 +48,7 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-001-2: point_difference, ci95, outcome"
  },
  "bs_ci_c0021": {
-  "value": "rerun does not match the stored result (d = 30: stored 0.59, re-run 0.60)",
+  "value": "worst case d = 15: −0.28 [−0.31, −0.25]; best case d = 5: −0.10 [−0.15, −0.04], loses, on the re-run",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-002-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0031": {
@@ -60,7 +60,7 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-006-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0081": {
-  "value": "rerun does not match the stored result (true actions: stored 0.789, re-run 0.786)",
+  "value": "+0.08 [−0.05, +0.20], unclear, on the re-run",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-008-1: point_difference, ci95, outcome"
  },
  "bs_ci_c0102": {
@@ -84,27 +84,31 @@
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claim C-022-1: point_difference, ci95, outcome"
  },
  "bs_have": {
-  "value": "7",
+  "value": "10",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with an interval"
  },
  "bs_loses": {
-  "value": "3",
+  "value": "4",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = loses"
  },
  "bs_na": {
-  "value": "4",
+  "value": "1",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims without an interval (re-run not matching, or no rows)"
  },
  "bs_navail": {
   "value": "1",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = rows not available"
  },
- "bs_nomatch": {
+ "bs_near": {
   "value": "3",
+  "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims bootstrapped on a re-run within 0.02 of the stored result (Amendment 2)"
+ },
+ "bs_nomatch": {
+  "value": "0",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = rerun does not match the stored result"
  },
  "bs_unclear": {
-  "value": "1",
+  "value": "2",
   "anchor": "repro/baseline-bootstrap/expected/bootstrap.json, claims with outcome = unclear"
  },
  "c_fail": {

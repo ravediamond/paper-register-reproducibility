@@ -5,29 +5,38 @@
  "interval": "percentile 95 %",
  "comparisons": 11,
  "counts": {
-  "beats": 3,
-  "loses": 3,
-  "unclear": 1,
-  "rerun does not match the stored result": 3,
+  "beats": 4,
+  "loses": 4,
+  "unclear": 2,
+  "rerun does not match the stored result": 0,
   "rows not available": 1
  },
  "claims": [
   {
    "claim": "C-001-1",
-   "comparison": "LeWorldModel vs copy-last, latent error at K = 30",
-   "outcome": "rerun does not match the stored result",
-   "compared": "mean squared latent error at K = 30 over 192 windows",
-   "stored": {
-    "model_mse_k30": 0.31331,
-    "copy_last_mse_k30": 0.89271
-   },
-   "rerun": {
-    "model_mse_k30": 0.31558,
-    "copy_last_mse_k30": 0.89891
+   "comparison": "LeWorldModel vs copy-last, latent error at K = 30 (positive = model lower)",
+   "unit": "window (episode ids not written by the re-run; narrower than an episode interval)",
+   "n_units": 192,
+   "method": 0.31558,
+   "baseline": 0.89891,
+   "point_difference": 0.58333,
+   "ci95": [
+    0.5089,
+    0.6595
+   ],
+   "outcome": "beats",
+   "near_match": {
+    "stored": {
+     "model_mse_k30": 0.31331,
+     "copy_last_mse_k30": 0.89271
+    },
+    "rerun": {
+     "model_mse_k30": 0.31558,
+     "copy_last_mse_k30": 0.89891
+    }
    },
    "source_files": [
-    "repro/baseline-bootstrap/data/rerun_match.json",
-    "repro/baseline-bootstrap/data/not_matched/"
+    "repro/baseline-bootstrap/data/not_matched/sens_rows_w1.csv (re-run WS-213)"
    ]
   },
   {
@@ -119,26 +128,104 @@
   {
    "claim": "C-002-1",
    "comparison": "DINO-WM ranking vs action-only, top-1",
-   "outcome": "rerun does not match the stored result",
-   "compared": "top-1 per target distance (H = d), cells equal 2 of 20",
-   "stored": {
-    "d5_Hd": 0.5832,
-    "d10_Hd": 0.6458,
-    "d15_Hd": 0.6302,
-    "d20_Hd": 0.6273,
-    "d30_Hd": 0.5903
+   "unit": "episode",
+   "n_units": 25,
+   "n_anchors": 703,
+   "per_d": {
+    "d5": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.5846,
+     "baseline": 0.6842,
+     "point_difference": -0.0996,
+     "ci95": [
+      -0.1549,
+      -0.0437
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d10": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6472,
+     "baseline": 0.8777,
+     "point_difference": -0.2304,
+     "ci95": [
+      -0.2754,
+      -0.1825
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d15": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6245,
+     "baseline": 0.9047,
+     "point_difference": -0.2802,
+     "ci95": [
+      -0.3135,
+      -0.2471
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d20": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6188,
+     "baseline": 0.9033,
+     "point_difference": -0.2845,
+     "ci95": [
+      -0.3237,
+      -0.2463
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    },
+    "d30": {
+     "unit": "episode",
+     "n_units": 25,
+     "method": 0.6017,
+     "baseline": 0.8734,
+     "point_difference": -0.2717,
+     "ci95": [
+      -0.3217,
+      -0.2197
+     ],
+     "outcome": "loses",
+     "n_anchors": 703
+    }
    },
-   "rerun": {
-    "d5_Hd": 0.5846,
-    "d10_Hd": 0.6472,
-    "d15_Hd": 0.6245,
-    "d20_Hd": 0.6188,
-    "d30_Hd": 0.6017
-   },
+   "worst_d": "d15",
+   "best_d": "d5",
+   "point_difference": -0.2802,
+   "ci95": [
+    -0.3135,
+    -0.2471
+   ],
+   "outcome": "loses",
    "source_files": [
-    "repro/baseline-bootstrap/data/rerun_match.json",
-    "repro/baseline-bootstrap/data/not_matched/"
-   ]
+    "repro/baseline-bootstrap/data/not_matched/g1b_rows_w2.csv (re-run WS-213)",
+    "repro/baseline-bootstrap/data/g1b_rows_w1.csv (action-only)"
+   ],
+   "near_match": {
+    "stored": {
+     "d5_Hd": 0.5832,
+     "d10_Hd": 0.6458,
+     "d15_Hd": 0.6302,
+     "d20_Hd": 0.6273,
+     "d30_Hd": 0.5903
+    },
+    "rerun": {
+     "d5_Hd": 0.5846,
+     "d10_Hd": 0.6472,
+     "d15_Hd": 0.6245,
+     "d20_Hd": 0.6188,
+     "d30_Hd": 0.6017
+    }
+   }
   },
   {
    "claim": "C-003-1",
@@ -167,19 +254,28 @@
   {
    "claim": "C-008-1",
    "comparison": "ReAP risk head vs shuffled actions, failure AUROC",
-   "outcome": "rerun does not match the stored result",
-   "compared": "median AUROC over 5 seeds, primary 50 rollouts",
-   "stored": {
-    "true": 0.7887,
-    "shuffled": 0.7083
-   },
-   "rerun": {
-    "true": 0.7857,
-    "shuffled": 0.7083
+   "unit": "rollout",
+   "n_units": 50,
+   "method": 0.7857,
+   "baseline": 0.7083,
+   "point_difference": 0.0774,
+   "ci95": [
+    -0.0532,
+    0.2024
+   ],
+   "outcome": "unclear",
+   "near_match": {
+    "stored": {
+     "true": 0.7887,
+     "shuffled": 0.7083
+    },
+    "rerun": {
+     "true": 0.7857,
+     "shuffled": 0.7083
+    }
    },
    "source_files": [
-    "repro/baseline-bootstrap/data/rerun_match.json",
-    "repro/baseline-bootstrap/data/not_matched/"
+    "repro/baseline-bootstrap/data/not_matched/reap_rows.csv (re-run WS-213)"
    ]
   },
   {

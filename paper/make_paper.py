@@ -92,6 +92,7 @@ def register():
         put(key, str(bso[o]), bsa + f", claims with outcome = {o}")
     put("bs_na", str(bso[NOM] + bso[NAV]), bsa + ", claims without an interval (re-run not matching, or no rows)")
     put("bs_have", str(sum("ci95" in c for c in bsj["claims"])), bsa + ", claims with an interval")
+    put("bs_near", str(sum("near_match" in c for c in bsj["claims"])), bsa + ", claims bootstrapped on a re-run within 0.02 of the stored result (Amendment 2)")
     sg = lambda v: ("+" if v > 0 else "−" if v < 0 else "") + f"{abs(v):.2f}"
     for c in bsj["claims"]:
         if "per_d" in c:   # a range of baselines: worst and best case over the target distance d
@@ -113,6 +114,10 @@ def register():
                 cell = f"{NOM} (true actions: stored {st['true']:.3f}, re-run {rr['true']:.3f})"
         else:
             cell = "rows not available"
+        if "near_match" in c:   # Amendment 2: bootstrapped on a re-run within 0.02 of the stored result
+            cell += ", on the re-run"
+            if c["unit"].startswith("window"):
+                cell += " (unit = window)"
         put("bs_ci_" + c["claim"].lower().replace("-", ""), cell, bsa + f", claim {c['claim']}: point_difference, ci95, outcome")
     for key, cid, field, text in (("b_lewm_pred", "C-001-1", "ours", "0.31"), ("b_lewm_cl", "C-001-1", "ours", "0.89"),
                                   ("b_len_own", "C-010-3", "note", "0.521")):

@@ -5,7 +5,7 @@ export SOURCE_DATE_EPOCH := 1761955200
 TECTONIC ?= tectonic
 check: l0 paper pdf
 l0:
-	@for d in repro/*/; do echo "== $$d"; (cd $$d && $(PY) l0_check.py | tail -1 | grep -q "L0 PASS") || { echo "L0 failed in $$d"; exit 1; }; done
+	@for f in $$(find repro -name l0_check.py | sort); do d=$$(dirname $$f); echo "== $$d"; (cd $$d && $(PY) l0_check.py | tail -1 | grep -q "L0 PASS") || { echo "L0 failed in $$d"; exit 1; }; done
 paper:
 	$(PY) paper/make_paper.py
 	git diff --exit-code -- paper/numbers.json paper/main.tex paper/DRAFT_4p.md paper/refs.bib
