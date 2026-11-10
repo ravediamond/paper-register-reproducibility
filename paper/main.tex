@@ -294,7 +294,7 @@ Two works evaluate policies on the same arm: a real-world VLA benchmark with a t
 \section{Conclusion}
 
 
-We re-tested 37 claims from 22 robot-learning papers on a rig of about €1,500, with under \$50 of cloud GPU. 12 held, and 7 failed with the authors' method on our data. The most useful part was the cheapest baseline: the same world model could pass one baseline and fail another, and 5 of the 11 methods we compared with one lost to a signal we had for free, although only two of these losses are clear so far. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
+We re-tested 37 claims from 22 robot-learning papers on a rig of about €1,500, with under \$50 of cloud GPU. 12 held, and 7 failed with the authors' method on our data. The most useful part was the cheapest baseline: the same world model could pass one baseline and fail another, and 5 of the 11 methods we compared with one lost to a signal we had for free, although only 3 of these losses have an interval below zero, and only LeWorldModel's is a clean case with the authors' method. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
 
 
 \bibliographystyle{plainnat}
