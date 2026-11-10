@@ -224,7 +224,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
  },
  "t_c_auth": {
-  "value": "8",
+  "value": "7",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = auth"
  },
  "t_c_eng": {
@@ -232,15 +232,19 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = eng"
  },
  "t_c_other": {
-  "value": "10",
-  "anchor": "t_c_var + t_c_eng"
+  "value": "11",
+  "anchor": "t_c_var + t_c_eng + t_c_scope"
+ },
+ "t_c_scope": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = scope"
  },
  "t_c_var": {
   "value": "8",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
  },
  "t_p_auth": {
-  "value": "6",
+  "value": "5",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"
  },
  "t_p_eng": {
@@ -248,8 +252,12 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = eng, weighted"
  },
  "t_p_other": {
-  "value": "8",
-  "anchor": "t_p_var + t_p_eng"
+  "value": "9",
+  "anchor": "t_p_var + t_p_eng + t_p_scope"
+ },
+ "t_p_scope": {
+  "value": "1",
+  "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = scope, weighted"
  },
  "t_p_var": {
   "value": "7",
@@ -313,6 +321,6 @@
  },
  "vla_ci": {
   "value": "60–98 %",
-  "anchor": "Wilson 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')"
+  "anchor": "Wilson score 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')"
  }
 }

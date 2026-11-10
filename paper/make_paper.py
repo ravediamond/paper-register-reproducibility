@@ -87,42 +87,46 @@ def register():
         assert text in by[cid][field], (cid, text)
         put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}")
     # the failed claims and papers, split by whose method failed (by hand, from Table 4 of the paper)
-    ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "auth", "C-010-1": "auth", "C-010-2": "auth",
+    ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "scope", "C-010-1": "auth", "C-010-2": "auth",
              "C-019-1": "auth", "C-019-2": "auth",
              "C-006-1": "var", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "var", "C-018-1": "var",
              "C-018-2": "var", "C-022-1": "var", "C-019-3": "eng", "C-020-2": "eng"}
     assert sorted(ctier) == sorted(c["id"] for c in cl if c["verdict"] == "fail"), "every failed claim needs a tier"
     ta = "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier)"
     tc = collections.Counter(ctier.values())
-    for k in ("auth", "var", "eng"):
+    for k in ("auth", "var", "eng", "scope"):
         put("t_c_" + k, str(tc[k]), ta + f", tier = {k}")
-    ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "auth", "Robometer": "auth",
+    ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "scope", "Robometer": "auth",
              "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "var", "FAIL-Detect and SAFE": "var", "ReAP": "var",
              "VLA-Corrector": "var", "SURVEYOR": "var", "REMORA": "var", "PACT-VLA": "eng"}
     assert sorted(ptier) == sorted(p["paper"] for p in papers if p["verdict"] == "fail"), "every failed paper needs a tier"
     tp = collections.Counter()
     for p in papers:
         if p["paper"] in ptier: tp[ptier[p["paper"]]] += wt(p)
-    for k in ("auth", "var", "eng"):
+    for k in ("auth", "var", "eng", "scope"):
         put("t_p_" + k, str(tp[k]), ta.replace("claims", "papers").replace("ctier", "ptier") + f", tier = {k}, weighted")
-    put("t_p_other", str(tp["var"] + tp["eng"]), "t_p_var + t_p_eng"); put("t_c_other", str(tc["var"] + tc["eng"]), "t_c_var + t_c_eng")
+    put("t_p_other", str(tp["var"] + tp["eng"] + tp["scope"]), "t_p_var + t_p_eng + t_p_scope"); put("t_c_other", str(tc["var"] + tc["eng"] + tc["scope"]), "t_c_var + t_c_eng + t_c_scope")
     # 9 of 10 trials, Wilson 95 % interval
     import math
     k_, n_, z = 9, 10, 1.96; c_ = (k_ + z * z / 2) / (n_ + z * z); h_ = z * math.sqrt(k_ * (n_ - k_) / n_ + z * z / 4) / (n_ + z * z)
     for cid in ("C-011-1", "C-013-1"):
         assert "9/10" in by[cid]["ours"] and "no numeric pass mark" in by[cid]["bar"], cid
-    put("vla_ci", f"{100 * (c_ - h_):.0f}–{100 * (c_ + h_):.0f} %", "Wilson 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')")
+    put("vla_ci", f"{100 * (c_ - h_):.0f}–{100 * (c_ + h_):.0f} %", "Wilson score 95 % interval for 9/10 (C-011-1, C-013-1 ours: '9/10')")
     for cid in ("C-019-3", "C-010-2", "C-001-2"):
         assert by[cid]["verdict"] == "fail" and not own(by[cid]), cid
     assert by["C-012-1"]["verdict"] == "withdrawn"
     rows = []
     for p in papers:
         cite = " ".join(f"[@{x.strip()}]" for x in p["arxiv"].split(",")) if re.fullmatch(r"[\d. ,]+", p["arxiv"]) else ""
-        name = p["paper"] + ((" " + cite) if cite else "") + (" (NeurIPS 2026 workshop)" if p["paper"] == "SURVEYOR" else "")
-        verdict = p["verdict"] + {"auth": " (authors' method)", "var": " (our variant)", "eng": " (our engine)"}.get(ptier.get(p["paper"]), "")
+        name = p["paper"] + ((" " + cite) if cite else "") + (" [@surveyor2026]" if p["paper"] == "SURVEYOR" else "")
+        verdict = p["verdict"] + {"auth": " (authors' method)", "var": " (our variant)", "eng": " (our engine)", "scope": " (outside the paper's regime)"}.get(ptier.get(p["paper"]), "")
+        if p["paper"] == "Adaptive Action Chunking (AAC)": verdict += "; the latency claim: our engine (no batched sampling)"
         if p["paper"] == "D-JEPA": verdict += " (proxy labels only)"
-        cells = [name, p["their_rig_cost_class"], p["claim_tested"], p["bar"].replace("no numeric pass mark registered", "no numeric bar"),
-                 p["ours"].replace("my data", "our data"), verdict]
+        bar_, ours_ = p["bar"], p["ours"]
+        for a_, b_ in {"VLA-JEPA": [("; for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency", ""), ("; reranking no-go (0.76, 1.84×)", "")]}.get(p["paper"], []):
+            assert a_ in bar_ + ours_, (p["paper"], a_); bar_, ours_ = bar_.replace(a_, b_), ours_.replace(a_, b_)
+        cells = [name, p["their_rig_cost_class"], p["claim_tested"], bar_.replace("no numeric pass mark registered", "no numeric bar"),
+                 ours_.replace("my data", "our data"), verdict]
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
     put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
@@ -209,6 +213,10 @@ def prereg():
 READ = {"2610.40026": ("RoboSeed: Multidimensional Evaluation of Vision-Language-Action and World-Action Models", "Ma, Xin and others")}
 
 
+EXTRA_BIB = {"surveyor2026": "@misc{surveyor2026,\n  title = {{SURVEYOR: Certified Speculative Plan Consumption for Latent World-Model Planning}},\n"
+                             "  year = {2026},\n  howpublished = {NeurIPS 2026 workshop},\n  note = {neurips.cc/virtual/2026/175857}\n}"}
+
+
 def bib(md):
     """refs.bib from the [@id] citations, titles and years from the papers mirror's index.json (absent on CI: keep the
     committed refs.bib and check it covers every cited id)."""
@@ -218,7 +226,11 @@ def bib(md):
         have = set(re.findall(r"eprint = \{(\d{4}\.\d{4,5})\}", (HERE / "refs.bib").read_text()))
         missing = [i for i in ids if i not in have]
         assert not missing, f"refs.bib lacks cited ids {missing}; regenerate it where the papers index exists"
-        return len(ids)
+        txt = (HERE / "refs.bib").read_text()
+        for k, e in EXTRA_BIB.items():
+            if f"[@{k}]" in md and "{" + k + "," not in txt: txt = txt.rstrip("\n") + "\n\n" + e + "\n"
+        (HERE / "refs.bib").write_text(txt)
+        return len(ids) + sum(f"[@{k}]" in md for k in EXTRA_BIB)
     idx = {r.get("arxiv"): r for r in json.loads(index.read_text())["papers"]}
     out = []
     for i in ids:
@@ -227,6 +239,7 @@ def bib(md):
         auth = f"  author = {{{READ[i][1]}}},\n" if i in READ else ""
         out.append(f"@misc{{arxiv{i.replace('.', '')},\n  title = {{{{{title}}}}},\n{auth}  year = {{{r.get('year') or '20' + i[:2]}}},\n"
                    f"  eprint = {{{i}}}, archivePrefix = {{arXiv}},\n  note = {{arXiv:{i}}}\n}}")
+    out += [e for k, e in EXTRA_BIB.items() if f"[@{k}]" in md]
     (HERE / "refs.bib").write_text("\n\n".join(out) + "\n")
     return len(out)
 
@@ -241,21 +254,12 @@ def figures():
     f = lambda k: int(N[k])  # noqa: E731
     tot, rep, fa_, fv = f("c_paper"), f("c_paper_repro"), f("t_c_auth"), f("t_c_other")
     other = tot - rep - fa_ - fv
-    fig, ax = plt.subplots(figsize=(7.0, 1.95)); ax.set_xlim(0, 100); ax.set_ylim(0, 24); ax.axis("off")
+    fig, ax = plt.subplots(figsize=(7.0, 0.85)); ax.set_xlim(0, 100); ax.set_ylim(13.5, 24); ax.axis("off")
     ax.text(1, 22.2, f"{tot} paper claims re-tested on a rig of about {N['rig_eur_round']} euros, by verdict", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
     x = 1.0; W = 98.0
-    for n, lab, c in [(rep, "reproduce", GREEN), (fa_, "fail: authors' method", RED), (fv, "fail: our variant or engine", AMBER), (other, "open", "#8A90A0")]:
+    for n, lab, c in [(rep, "reproduce", GREEN), (fa_, "fail: authors' method", RED), (fv, "fail: our variant, engine or scope", AMBER), (other, "open", "#8A90A0")]:
         wd = W * n / tot; ax.add_patch(FancyBboxPatch((x, 15.2), wd, 5.2, boxstyle="round,pad=0,rounding_size=0.8", fc=c, ec="white", lw=1.2))
         ax.text(x + wd / 2, 17.8, f"{n} {lab}", ha="center", va="center", fontsize=6.2, color="white", fontweight="bold"); x += wd
-    cls = [("A  the clock", "adaptive chunking: one decision\n{} on the edge GPU, budget {}".format(N["ex_a_ours"], N["ex_a_bar"]), RED),
-           ("B  a judge against episode length", "reward model AUROC {}, length alone {}\n(ArmnetBench; one case)".format(N["ex_b_ours"], N["ex_b_len"]), RED),
-           ("C  learned latents", "world model ranks the executed chunk\nfirst in {} of anchors, bar {}".format(N["ex_c_ours"], N["ex_c_bar"]), RED)]
-    ax.text(1, 12.2, "the failures fall into three classes", fontsize=6.6, fontweight="bold", color=sc.ACCENT)
-    bw, gap = 31.3, 2.05
-    for i, (h, b, c) in enumerate(cls):
-        xx = 1 + i * (bw + gap); ax.add_patch(FancyBboxPatch((xx, 1.0), bw, 9.4, boxstyle="round,pad=0,rounding_size=1.0", fc="white", ec=c, lw=1.7))
-        ax.text(xx + bw / 2, 8.0, h, ha="center", va="center", fontsize=6.3, fontweight="bold", color=c)
-        ax.text(xx + bw / 2, 4.1, b, ha="center", va="center", fontsize=5.5, linespacing=1.2)
     fig.subplots_adjust(0, 0, 1, 1); fig.savefig(FIG / "verdicts.pdf"); fig.savefig(FIG / "verdicts.png", dpi=200); plt.close(fig)
 
     # the chain that makes every number (same in all four papers)
@@ -283,7 +287,7 @@ def main():
     md = re.sub(r"\{\{(\w+)\}\}", lambda m: table if m.group(1) == "TABLE1" else N[m.group(1)], tpl)
     nb = bib(md)
     figures()
-    (HERE / "DRAFT_4p.md").write_text(re.sub(r"\[@(\d{4}\.\d{4,5})\]", r"[arXiv:\1]", md))
+    (HERE / "DRAFT_4p.md").write_text(re.sub(r"\[@(\d{4}\.\d{4,5})\]", r"[arXiv:\1]", md).replace("[@surveyor2026]", "[NeurIPS 2026 workshop]"))
     (HERE / "numbers.json").write_text(json.dumps({k: {"value": N[k], "anchor": A[k]} for k in sorted(N)}, indent=1, ensure_ascii=False) + "\n")
     (HERE / "main.tex").write_text(to_tex(md))
     print(f"{len(N)} numbers, {nb} references; DRAFT_4p.md, main.tex, numbers.json written")
@@ -299,7 +303,7 @@ def esc(s):
     for a, b in SUB:
         s = s.replace(a, b)
     s = re.sub(r"([\u3040-\u30ff\u4e00-\u9fff]+)", r"{\\jpfont \1}", s)  # Japanese (the lab's name)
-    s = re.sub(r"\[@(\d{4})\.(\d{4,5})\]", r"\\citep{arxiv\1\2}", s)
+    s = re.sub(r"\[@(\d{4})\.(\d{4,5})\]", r"\\citep{arxiv\1\2}", s).replace("[@surveyor2026]", r"\citep{surveyor2026}")
     s = re.sub(r"`([^`]*)`", r"\\texttt{\1}", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"\\textbf{\1}", s)
     return re.sub(r"\*([^*]+)\*", r"\\emph{\1}", s)
