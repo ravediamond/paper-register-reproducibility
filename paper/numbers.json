@@ -324,7 +324,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
  },
  "t_c_auth": {
-  "value": "9",
+  "value": "10",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = auth"
  },
  "t_c_eng": {
@@ -332,7 +332,7 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = eng"
  },
  "t_c_other": {
-  "value": "9",
+  "value": "8",
   "anchor": "t_c_var + t_c_eng + t_c_scope"
  },
  "t_c_scope": {
@@ -340,15 +340,15 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = scope"
  },
  "t_c_var": {
-  "value": "6",
+  "value": "5",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
  },
  "t_mon_var": {
-  "value": "5",
+  "value": "4",
   "anchor": "failed monitor papers whose tier is 'var' (weighted)"
  },
  "t_p_auth": {
-  "value": "7",
+  "value": "8",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"
  },
  "t_p_eng": {
@@ -356,7 +356,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = eng, weighted"
  },
  "t_p_other": {
-  "value": "7",
+  "value": "6",
   "anchor": "t_p_var + t_p_eng + t_p_scope"
  },
  "t_p_scope": {
@@ -364,7 +364,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = scope, weighted"
  },
  "t_p_var": {
-  "value": "5",
+  "value": "4",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = var, weighted"
  },
  "table1_rows": {
@@ -422,6 +422,26 @@
  "tv_swap": {
   "value": "0.020°",
   "anchor": "repro/register/expected/register.json claims, id C-012-1, ours: '0.020° on my data; LIBERO control 5.5°'"
+ },
+ "vc_auroc": {
+  "value": "0.53",
+  "anchor": "repro/variants/vla-corrector/expected/result.json R1.median.auroc"
+ },
+ "vc_caught": {
+  "value": "1",
+  "anchor": "repro/variants/vla-corrector/expected/result.json R1.median.caught"
+ },
+ "vc_fi": {
+  "value": "3",
+  "anchor": "repro/variants/vla-corrector/expected/result.json R1.median.fi"
+ },
+ "vc_r2_caught": {
+  "value": "5",
+  "anchor": "repro/variants/vla-corrector/expected/result.json R2.median.caught"
+ },
+ "vc_r2_fi": {
+  "value": "16",
+  "anchor": "repro/variants/vla-corrector/expected/result.json R2.median.fi"
  },
  "vla_ci": {
   "value": "60–98 %",

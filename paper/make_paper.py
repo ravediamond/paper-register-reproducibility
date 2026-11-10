@@ -128,7 +128,7 @@ def register():
     # ContactGuard: same recipe, 2 views and mixed policies; SURVEYOR's threshold claim: their rule on the same kind of latent.
     ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "scope", "C-010-1": "auth", "C-010-2": "auth",
              "C-019-1": "auth", "C-019-2": "auth",
-             "C-006-1": "auth", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "var", "C-018-1": "auth",
+             "C-006-1": "auth", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "auth", "C-018-1": "auth",
              "C-018-2": "var", "C-022-1": "var", "C-019-3": "eng", "C-020-2": "eng"}
     assert sorted(ctier) == sorted(c["id"] for c in cl if c["verdict"] == "fail"), "every failed claim needs a tier"
     ta = "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier)"
@@ -138,7 +138,7 @@ def register():
     fam_mon = ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"]
     ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "scope", "Robometer": "auth",
              "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "auth", "FAIL-Detect and SAFE": "var", "ReAP": "var",
-             "VLA-Corrector": "var", "SURVEYOR": "auth", "REMORA": "var", "PACT-VLA": "eng"}
+             "VLA-Corrector": "auth", "SURVEYOR": "auth", "REMORA": "var", "PACT-VLA": "eng"}
     assert sorted(ptier) == sorted(p["paper"] for p in papers if p["verdict"] == "fail"), "every failed paper needs a tier"
     tp = collections.Counter()
     for p in papers:
@@ -155,6 +155,10 @@ def register():
     put("fs_fp", f"{100 * pb['success_flagged']['median']:.1f} %", ca + "papers_band_eq2.success_flagged.median")
     put("fs_tp", f"{100 * pb['failure_flagged']['median']:.0f} %", ca + "papers_band_eq2.failure_flagged.median")
     put("fs_fp_old", f"{100 * sb['success_flagged']['median']:.1f} %", ca + "stored_band_replay.success_flagged.median")
+    vc = json.loads((ROOT / "repro" / "variants" / "vla-corrector" / "expected" / "result.json").read_text()); va = "repro/variants/vla-corrector/expected/result.json "
+    r1 = vc["R1"]["median"]; assert not r1["pass_bar"]
+    put("vc_caught", f"{r1['caught']:.0f}", va + "R1.median.caught"); put("vc_fi", f"{r1['fi']:.0f}", va + "R1.median.fi"); put("vc_auroc", f"{r1['auroc']:.2f}", va + "R1.median.auroc")
+    put("vc_r2_caught", f"{vc['R2']['median']['caught']:.0f}", va + "R2.median.caught"); put("vc_r2_fi", f"{vc['R2']['median']['fi']:.0f}", va + "R2.median.fi")
     nt = (ROOT / "repro" / "variants" / "faildetect-safe" / "NOTES.md").read_text(); assert "24 successes and 6 failures" in nt
     put("fs_refwd", "24", "repro/variants/faildetect-safe/NOTES.md: '24 successes and 6 failures'"); put("fs_refwd_f", "6", "same line")
     put("fs_tp_old", f"{100 * sb['failure_flagged']['median']:.0f} %", ca + "stored_band_replay.failure_flagged.median")

@@ -937,15 +937,16 @@
    "claim_tested": "A verifier on observable history flags a failing rollout early enough to correct it.",
    "bar": "≥ 5/8 failures at ≤ 1/20 false interventions.",
    "theirs": "54-feature GRU verifier AUROC 0.90",
-   "ours": "the paper's verifier family on my rollouts (a GRU on pooled RGB statistics and actions): 2/8 caught at 3/42 false interventions, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30",
+   "ours": "the paper's Learned Verifier on my rollouts, built and trained as the paper describes (54 RGB features per view, joint positions, executed actions, its labels, optimiser and gate): 1/8 caught at 3/42 false interventions, AUROC 0.53; the earlier run with the same input and our own training: 2/8 at 3/42, AUROC 0.59; cosine drift of the W1 latent 0/8, AUROC 0.30",
    "their_rig": "LIBERO and LIBERO-Plus (sim, Franka Panda); real robot not named",
    "their_rig_cost_class": "sim",
    "their_rig_source": "Experimental Setup",
    "n": "50 episodes, 8 failures",
-   "not_proven": "Their exact 54-feature verifier (with proprioceptive state) and its recovery prompt were not run here; my GRU uses pooled RGB statistics and actions.",
+   "not_proven": "Their stage head, rule-based teacher labels, 120-episode training set and recovery prompt were not run here; the verifier here has 30 training rollouts per fold and onset labels read from video.",
    "verdict": "fail",
    "gate_ids": [
-    "W1-A"
+    "W1-A",
+    "WS-215"
    ],
    "date_first": "2026-10-23",
    "date_updated": "2026-10-23",
@@ -980,33 +981,33 @@
      "conditions": {
       "robot": "SO-101",
       "setting": "50 rollouts (8 failures)",
-      "input": "pooled RGB statistics + actions"
+      "input": "2 x 54 pooled RGB features + joint positions + actions"
      },
      "stated_in": "§ Failure Detection and Recovery Analysis (AUROC 0.902); Fig. 4",
      "theirs": "AUROC 0.90",
-     "ours": "2/8 caught at 3/42, AUROC 0.59",
+     "ours": "1/8 caught at 3/42, AUROC 0.53",
      "bar": "≥ 5/8 failures at ≤ 1/20 false interventions",
      "verdict": "fail",
      "tested": true,
-     "gate": "exp-reap-v2",
-     "source_file": "2026-10-23-paper-vs-hardware-reap/expected/monitors_v2.json",
+     "gate": "ws-215-vla-corrector-verifier",
+     "source_file": "repro/variants/vla-corrector/expected/result.json",
      "checks": [
       {
-       "file": "2026-10-23-paper-vs-hardware-reap/expected/monitors_v2.json",
-       "json": "primary_50.gru_floor:true.caught",
-       "value": 2,
+       "file": "repro/variants/vla-corrector/expected/result.json",
+       "json": "R1.median.caught",
+       "value": 1,
        "tol": 0,
-       "shown": "2/8"
+       "shown": "1/8"
       },
       {
-       "file": "2026-10-23-paper-vs-hardware-reap/expected/monitors_v2.json",
-       "json": "primary_50.gru_floor:true.auroc",
-       "value": 0.5893,
+       "file": "repro/variants/vla-corrector/expected/result.json",
+       "json": "R1.median.auroc",
+       "value": 0.5298,
        "tol": 0.005,
-       "shown": "0.59"
+       "shown": "0.53"
       }
      ],
-     "note": "re-pointed 2026-10-31 (WS-068): the paper's verifier is a GRU on observable features, not latent drift; the earlier cosine-drift test (W1-A, 0/8) was a wrong borrowing"
+     "note": "re-run 2026-11-10 (WS-215): verifier built and trained as the paper describes, protocol repro/variants/vla-corrector/PROTOCOL.md frozen before any number; the earlier gate (exp-reap-v2, 2/8 at 3/42, AUROC 0.59) already had the joint positions, its training was ours (full batch, ramp target, calibrated threshold)"
     }
    ]
   },
