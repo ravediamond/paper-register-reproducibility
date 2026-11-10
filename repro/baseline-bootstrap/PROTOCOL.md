@@ -125,3 +125,21 @@ been computed on these rows.
 - C-001-1: the re-run did not write episode ids (all `-1`), so its unit is the window (192 windows at K = 30), not the
   episode. Windows of one episode are correlated, so this interval is narrower than an episode interval would be; it is
   marked as such in the output.
+
+## Amendment 3 (WS-220), 2026-11-10, before any interval of this amendment is computed
+
+Reason: section 4 lists the per-clip errors of C-003-1 as not stored. They are: the raw Gate A result
+`gateA_300m_300k_settinga.json` (60 clips, key `per_clip`, 25 episodes) is in the owner's repo `road-to-robotics`, branch
+`exp/robojepa-gate`, commit `20f820d`, path `projects/vla-jepa-world-model/robojepa_gate/results/gateA/`; the published
+`gateA_summary.json` was derived from it. No re-run, no GPU and no spend are needed, so the re-run of Amendment 1 is not done for this row.
+
+- Rows: one row per clip (clip index, episode, window start, mean over rollout steps 1 to 9 of the model L1 and of the copy-last L1,
+  and the step-9 values), copied from that file without recomputing a model value.
+- Statistic (the one the register states, 11.8 % below copy-last, bar 15 %): 1 minus the mean model L1 over the mean copy-last L1, both
+  means over the clips of the resampled episodes and over steps 1 to 9; unit = episode, 2,000 resamples, seed 0, percentile 95 %. This is
+  the `crit1_reduction_vs_copy_last` of `gateA_summary.json`, key `300m_300k_settinga`. Outcome rule: the interval is given against the bar 0.15
+  (unchanged, from the register) and against 0.
+- Match gate: the aggregates recomputed from the rows (mean model L1, mean copy-last L1, reduction) must equal the stored values
+  (`mean_1_9.model_true`, `mean_1_9.copy_last`, `crit1_reduction_vs_copy_last.value`) to 12 decimals; else `rerun does not match the stored result`.
+- The verdict of C-003-1 rests on the stored result and is unchanged.
+
