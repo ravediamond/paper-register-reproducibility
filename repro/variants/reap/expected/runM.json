@@ -1,0 +1,43 @@
+{
+ "protocol": "repro/variants/reap/PROTOCOL.md",
+ "steps": 5000,
+ "per_seed": [
+  {
+   "comb:true": {
+    "caught": 2,
+    "fi": 1,
+    "auroc": 0.7232142857142857
+   },
+   "det:true": {
+    "caught": 3,
+    "fi": 4,
+    "auroc": 0.7172619047619048
+   },
+   "pred:true": {
+    "caught": 2,
+    "fi": 2,
+    "auroc": 0.6875
+   },
+   "comb:shuffled": {
+    "caught": 2,
+    "fi": 1,
+    "auroc": 0.7202380952380952
+   },
+   "pred:shuffled": {
+    "caught": 1,
+    "fi": 1,
+    "auroc": 0.6696428571428571
+   },
+   "comb:zero": {
+    "caught": 2,
+    "fi": 1,
+    "auroc": 0.7351190476190477
+   },
+   "pred:zero": {
+    "caught": 0,
+    "fi": 0,
+    "auroc": 0.7083333333333334
+   }
+  }
+ ]
+}

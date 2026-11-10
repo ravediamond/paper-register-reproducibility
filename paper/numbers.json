@@ -255,6 +255,34 @@
   "value": "21",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, sum of papers"
  },
+ "reap_ab_caught": {
+  "value": "278",
+  "anchor": "repro/variants/reap/expected/results.json armnetbench_pooled.comb_true_caught"
+ },
+ "reap_ab_fail": {
+  "value": "1,532",
+  "anchor": "repro/variants/reap/expected/results.json armnetbench_pooled.failures"
+ },
+ "reap_ab_fi": {
+  "value": "24",
+  "anchor": "repro/variants/reap/expected/results.json armnetbench_pooled.comb_true_false_interventions"
+ },
+ "reap_ab_succ": {
+  "value": "515",
+  "anchor": "repro/variants/reap/expected/results.json armnetbench_pooled.successes"
+ },
+ "reap_auroc": {
+  "value": "0.72",
+  "anchor": "repro/variants/reap/expected/results.json main_set.seed0.comb:true.auroc"
+ },
+ "reap_caught": {
+  "value": "2",
+  "anchor": "repro/variants/reap/expected/results.json main_set.seed0.comb:true.caught"
+ },
+ "reap_fi": {
+  "value": "1",
+  "anchor": "repro/variants/reap/expected/results.json main_set.seed0.comb:true.fi"
+ },
  "rig_5to20k": {
   "value": "3",
   "anchor": "repro/register/expected/register.json papers with at least one paper claim (TurboVLA has none); a row citing two arXiv ids counts as two papers, their_rig_cost_class = $5–20k"
@@ -324,7 +352,7 @@
   "anchor": "repro/register/expected/register.json papers with at least one paper claim, rows"
  },
  "t_c_auth": {
-  "value": "10",
+  "value": "11",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = auth"
  },
  "t_c_eng": {
@@ -332,7 +360,7 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = eng"
  },
  "t_c_other": {
-  "value": "8",
+  "value": "7",
   "anchor": "t_c_var + t_c_eng + t_c_scope"
  },
  "t_c_scope": {
@@ -340,15 +368,15 @@
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = scope"
  },
  "t_c_var": {
-  "value": "5",
+  "value": "4",
   "anchor": "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier), tier = var"
  },
  "t_mon_var": {
-  "value": "4",
+  "value": "3",
   "anchor": "failed monitor papers whose tier is 'var' (weighted)"
  },
  "t_p_auth": {
-  "value": "8",
+  "value": "9",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = auth, weighted"
  },
  "t_p_eng": {
@@ -356,7 +384,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = eng, weighted"
  },
  "t_p_other": {
-  "value": "6",
+  "value": "5",
   "anchor": "t_p_var + t_p_eng + t_p_scope"
  },
  "t_p_scope": {
@@ -364,7 +392,7 @@
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = scope, weighted"
  },
  "t_p_var": {
-  "value": "4",
+  "value": "3",
   "anchor": "repro/register/expected/register.json failed paper papers, tier by hand in make_paper.py (ptier), tier = var, weighted"
  },
  "table1_rows": {

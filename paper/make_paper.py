@@ -128,7 +128,7 @@ def register():
     # ContactGuard: same recipe, 2 views and mixed policies; SURVEYOR's threshold claim: their rule on the same kind of latent.
     ctier = {"C-001-2": "auth", "C-002-1": "auth", "C-003-1": "auth", "C-004-1": "scope", "C-010-1": "auth", "C-010-2": "auth",
              "C-019-1": "auth", "C-019-2": "auth",
-             "C-006-1": "auth", "C-007-1": "var", "C-007-2": "var", "C-008-2": "var", "C-009-1": "auth", "C-018-1": "auth",
+             "C-006-1": "auth", "C-007-1": "var", "C-007-2": "var", "C-008-2": "auth", "C-009-1": "auth", "C-018-1": "auth",
              "C-018-2": "var", "C-022-1": "var", "C-019-3": "eng", "C-020-2": "eng"}
     assert sorted(ctier) == sorted(c["id"] for c in cl if c["verdict"] == "fail"), "every failed claim needs a tier"
     ta = "repro/register/expected/register.json failed paper claims, tier by hand in make_paper.py (ctier)"
@@ -137,7 +137,7 @@ def register():
         put("t_c_" + k, str(tc[k]), ta + f", tier = {k}")
     fam_mon = ["ContactGuard", "FAIL-Detect and SAFE", "ReAP", "VLA-Corrector", "Robometer", "SURVEYOR", "REMORA"]
     ptier = {"LeWorldModel": "auth", "DINO-WM": "auth", "RoboJEPA": "auth", "H-JEPA": "scope", "Robometer": "auth",
-             "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "auth", "FAIL-Detect and SAFE": "var", "ReAP": "var",
+             "Adaptive Action Chunking (AAC)": "auth", "ContactGuard": "auth", "FAIL-Detect and SAFE": "var", "ReAP": "auth",
              "VLA-Corrector": "auth", "SURVEYOR": "auth", "REMORA": "var", "PACT-VLA": "eng"}
     assert sorted(ptier) == sorted(p["paper"] for p in papers if p["verdict"] == "fail"), "every failed paper needs a tier"
     tp = collections.Counter()
@@ -162,6 +162,13 @@ def register():
     nt = (ROOT / "repro" / "variants" / "faildetect-safe" / "NOTES.md").read_text(); assert "24 successes and 6 failures" in nt
     put("fs_refwd", "24", "repro/variants/faildetect-safe/NOTES.md: '24 successes and 6 failures'"); put("fs_refwd_f", "6", "same line")
     put("fs_tp_old", f"{100 * sb['failure_flagged']['median']:.0f} %", ca + "stored_band_replay.failure_flagged.median")
+    # ReAP with its own Stage 1 (WS-217): numbers from repro/variants/reap/expected/results.json
+    rr = json.loads((ROOT / "repro" / "variants" / "reap" / "expected" / "results.json").read_text()); ra = "repro/variants/reap/expected/results.json "
+    rc = rr["main_set"]["seed0"]["comb:true"]; assert rr["main_set"]["pass_bar"] is False
+    put("reap_caught", str(rc["caught"]), ra + "main_set.seed0.comb:true.caught"); put("reap_fi", str(rc["fi"]), ra + "main_set.seed0.comb:true.fi")
+    put("reap_auroc", f"{rc['auroc']:.2f}", ra + "main_set.seed0.comb:true.auroc")
+    put("reap_ab_caught", str(rr["armnetbench_pooled"]["comb_true_caught"]), ra + "armnetbench_pooled.comb_true_caught"); put("reap_ab_fail", f"{rr['armnetbench_pooled']['failures']:,}", ra + "armnetbench_pooled.failures")
+    put("reap_ab_fi", str(rr["armnetbench_pooled"]["comb_true_false_interventions"]), ra + "armnetbench_pooled.comb_true_false_interventions"); put("reap_ab_succ", str(rr["armnetbench_pooled"]["successes"]), ra + "armnetbench_pooled.successes")
     # 9 of 10 trials, Wilson 95 % interval
     import math
     k_, n_, z = 9, 10, 1.96; c_ = (k_ + z * z / 2) / (n_ + z * z); h_ = z * math.sqrt(k_ * (n_ - k_) / n_ + z * z / 4) / (n_ + z * z)
@@ -180,6 +187,9 @@ def register():
         if p["paper"] == "Adaptive Action Chunking (AAC)": verdict += "; the latency claim: our engine (no batched sampling)"
         if p["paper"] == "D-JEPA": verdict += " (proxy labels only)"
         bar_, ours_ = p["bar"], p["ours"]
+        if p["paper"] == "ReAP":
+            old = "v2 0.789 vs 0.708 shuffled, 3/8 at 5/42"
+            assert old in ours_; ours_ = ours_.replace(old, f"v2 0.789 vs 0.708 shuffled, 3/8 at 5/42; with its Stage 1 (WS-217, one seed): {N['reap_caught']}/8 at {N['reap_fi']}/42")
         for a_, b_ in {"VLA-JEPA": [("; for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency", ""), ("; reranking no-go (0.76, 1.84×)", "")]}.get(p["paper"], []):
             assert a_ in bar_ + ours_, (p["paper"], a_); bar_, ours_ = bar_.replace(a_, b_), ours_.replace(a_, b_)
         cells = [name, p["their_rig_cost_class"], p["claim_tested"], bar_.replace("no numeric pass mark registered", "no numeric bar"),

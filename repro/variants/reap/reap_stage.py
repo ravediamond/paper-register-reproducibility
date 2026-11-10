@@ -4,7 +4,6 @@
 import argparse, glob, json, sys, time
 from pathlib import Path
 import numpy as np, torch, torch.nn as nn, torch.nn.functional as F
-from sklearn.model_selection import StratifiedKFold
 FEAT = Path("/s/feat"); dev = "cuda"
 FI_BAR, FI_UNION = 1 / 20, 1 / 40
 POL = ["act", "diffusion", "smolvla", "pi0", "pi0.5", "grootn1.7", "molmoact2"]
@@ -154,15 +153,15 @@ def main():
     if a.check:
         k = main[0]; print("check shapes", OU[k]["tok"].shape, OU[k]["act"].shape, OU[k]["n"], "ramp", [round(j / (OU[k]["n"] - 1), 3) for j in range(3)])
         keys = list(AB)[:2] + main[:2]; s1, s2 = train({**AB, **OU}, keys, 0, 300, log); print("ok"); return
-    Tc = 374; res = {"protocol": "repro/variants/reap/PROTOCOL.md", "steps": a.steps}
+    FOLDS = json.load(open('/s/folds.json')); Tc = 374; res = {"protocol": "repro/variants/reap/PROTOCOL.md", "steps": a.steps}
     if a.run in ("M", "T"):
         trbase = list(AB) + non if a.run == "M" else list(AB) + non
         E = {**AB, **OU}; yv = np.array([E[k]["fail"] for k in main]); T_of = lambda k: int((E[k]["idx"] < Tc).sum())
         per = []
         for seed in range(a.seeds):
             held = {}
-            for tr, te in StratifiedKFold(5, shuffle=True, random_state=seed).split(np.zeros(len(main)), yv):
-                trm, tem = [main[i] for i in tr], [main[i] for i in te]
+            for te_eps in FOLDS[str(seed)]:   # folds precomputed on the host with sklearn StratifiedKFold(5, shuffle=True, random_state=seed)
+                tem = [k for k in main if k[1] in te_eps]; trm = [k for k in main if k[1] not in te_eps]
                 s1, s2 = train(E, trbase + (trm if a.run == "M" else []), seed, a.steps, log)
                 o, t = monitor(s1, s2, E, trm, tem, seed, T_of); held.update(o); print("fold done", seed, t, f"{time.time()-t0:.0f}s", flush=True)
             r = summarize(held, main, E); per.append(r); print("seed", seed, {k: (v["caught"], v["fi"], round(v["auroc"], 3)) for k, v in r.items()}, flush=True)

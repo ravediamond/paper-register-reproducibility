@@ -103,6 +103,9 @@ target, a hand-computed threshold on a toy score list, and a one-batch overfit o
 
 1. 2026-11-10, before any number: section 4 item 9 says 24 feature steps for T_common 374; frames 0, 15, ..., 360 are 25 steps. The rule (steps with frame index below 374) is unchanged; 25 is the arithmetic result.
 
+2. 2026-11-10, after Run M seed 0 and before reading Run A: Run M was stopped after seed 0 of the 5 frozen seeds (one fit of both stages took 8 to 20 minutes on the Orin; 25 fits would have taken about four hours), so the reported value is seed 0, not a median over five. Run T was not run. Run A ran as frozen (one seed, 7 policies). Seeds 1 to 4 and Run T remain to be run if the owner wants them.
+3. 2026-11-10: a first start of Run M and Run A at the same time was killed after 1,229 s of the first fit to avoid sharing the GPU; Run M was restarted from seed 0 with the same settings and no change to any setting.
+
 ## 10. Exploratory
 
 Run T, the branch-alone numbers, any choice made after a number exists, and bootstrap intervals (episode as unit, 2,000
