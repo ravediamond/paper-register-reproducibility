@@ -73,3 +73,20 @@ bootstrap would be run at each target distance and the worst and best case given
 ## 8. Exploratory
 
 Nothing. All choices above are fixed before any number.
+
+## Amendment 1 (WS-213), 2026-11-10, before any number of this amendment
+
+Reason: section 4 lists seven rows as `rows not available` because the per-unit rows were never written. This amendment
+allows one thing: re-running a stored evaluation, with the same checkpoint, data split, seed and code revision as the
+stored result, only to write the per-unit rows (episode id, anchor or clip id, and the per-unit values of the method and
+of its baseline). Nothing is retrained and no setting is changed.
+
+- Match gate, per comparison: the aggregate recomputed from the new rows must equal the stored aggregate to its stored
+  precision (for example accuracy per cell to 4 decimals). If it does not, that comparison reads `rerun does not match the
+  stored result` with both values and is not bootstrapped. Nothing is adjusted to make it match.
+- Statistic, resamples (2,000), seed 0, percentile 95 % interval, paired episode unit and the outcome rule stay those of
+  sections 3 and 5. For C-001-2 and C-002-1 the paired difference (model top-1 minus action-only top-1) is bootstrapped at
+  each target distance d the paper reports; the worst case (lowest upper bound, then lowest point) and the best case are given.
+- A comparison whose re-run would take more than about an hour on the Orin, or whose checkpoint is not on this machine,
+  stays `rows not available` and the reason is written.
+- Offline, $0, no arm, no vast. Only small per-unit CSVs are written to data/.
