@@ -90,3 +90,20 @@ of its baseline). Nothing is retrained and no setting is changed.
 - A comparison whose re-run would take more than about an hour on the Orin, or whose checkpoint is not on this machine,
   stays `rows not available` and the reason is written.
 - Offline, $0, no arm, no vast. Only small per-unit CSVs are written to data/.
+
+Amendment 1, details fixed before any interval of this amendment is computed (the match-gate numbers exist, no
+bootstrap has been run):
+
+- Worst and best case over d (C-001-2, C-002-1): the worst case is the d whose interval has the lowest upper bound (ties:
+  lowest point difference), the best case the d whose interval has the highest lower bound (ties: highest point
+  difference). The outcome of the row is `loses` when the interval is below 0 at every d, `beats` when above 0 at every
+  d, `unclear` otherwise. The cell is the one with H = d (the ranking the paper reports); each d is bootstrapped with its
+  own `default_rng(0)`.
+- Statistics, sign positive = the method is better: C-016-2 mean cosine over the 700 anchors, learned minus displacement,
+  unit = episode; C-006-1 AUROC of the imagined-latent probe minus that of the current-latent probe, per seed on the
+  pooled out-of-fold scores of the resampled rollouts, mean over the 5 seeds (the stored aggregate), unit = rollout;
+  C-008-1 AUROC of the risk head with true actions minus with shuffled actions, per seed on the maximum risk score of
+  the resampled rollouts, median over the 5 seeds (the stored aggregate), unit = rollout; C-001-1, if its rows are
+  written: mean over windows of copy-last error minus model error (lower error is better), unit = episode.
+- Match gate precision: the stored value as printed in the stored file (4 decimals for accuracies, AUROCs and cosines;
+  5 decimals for the mean squared errors of C-001-1).
