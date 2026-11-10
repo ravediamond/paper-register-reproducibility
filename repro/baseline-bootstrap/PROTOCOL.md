@@ -107,3 +107,21 @@ bootstrap has been run):
   written: mean over windows of copy-last error minus model error (lower error is better), unit = episode.
 - Match gate precision: the stored value as printed in the stored file (4 decimals for accuracies, AUROCs and cosines;
   5 decimals for the mean squared errors of C-001-1).
+
+## Amendment 2, 2026-11-10, before any interval of this amendment is computed
+
+Reason: the owner judges that a re-run within rounding of the stored result is the same evaluation. Three re-runs of
+Amendment 1 missed the exact match gate by small amounts (C-001-1, C-002-1, C-008-1; both values in
+`data/rerun_match.json`); their per-unit rows are in `data/not_matched/`. The match-gate numbers exist; no interval has
+been computed on these rows.
+
+- Near-match gate: a comparison whose every re-run aggregate is within 0.02 (absolute) of the stored aggregate is
+  bootstrapped on the re-run rows. The interval is the re-run's; the row shows the stored and the re-run point values.
+  Larger gaps stay `rerun does not match the stored result`.
+- The claim verdicts and bars are unchanged: they rest on the stored results.
+- Statistics, resamples, seed, percentile and outcome rule as in sections 3, 5 and Amendment 1. C-002-1 as C-001-2 (per d,
+  worst and best case), with the action-only hits of `data/g1b_rows_w1.csv` joined on (episode, t, d), the same anchors.
+  C-008-1 as stated in Amendment 1, unit = rollout (50).
+- C-001-1: the re-run did not write episode ids (all `-1`), so its unit is the window (192 windows at K = 30), not the
+  episode. Windows of one episode are correlated, so this interval is narrower than an episode interval would be; it is
+  marked as such in the output.
