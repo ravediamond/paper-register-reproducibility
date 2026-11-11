@@ -483,6 +483,58 @@
   "value": "20",
   "anchor": "data/datasets.json timing.episodes"
  },
+ "tm_hwm10": {
+  "value": "238",
+  "anchor": "C-021-2 ours, rounded"
+ },
+ "tm_hwm2": {
+  "value": "196",
+  "anchor": "C-021-2 ours, rounded"
+ },
+ "tm_hwm_save": {
+  "value": "17 %",
+  "anchor": "repro/register/expected/register.json claims, id C-021-2, ours: 1 - 196.1/237.5"
+ },
+ "tm_pact": {
+  "value": "1,200 ms",
+  "anchor": "repro/register/expected/register.json papers, PACT-VLA, ours: 'offline −0.27° vs random and vs the stale residual (both CIs < 0); on the Orin 1,200 ms per cycle, 37 control ticks vs 8'"
+ },
+ "tm_pact_t": {
+  "value": "37",
+  "anchor": "repro/register/expected/register.json claims, id C-020-2, ours: '37 ticks vs 8'"
+ },
+ "tm_rj": {
+  "value": "526 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-003-2, ours: '526 ms'"
+ },
+ "tm_rj_bar": {
+  "value": "200 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-003-2, bar: '≤ 200 ms'"
+ },
+ "tm_rtc": {
+  "value": "0.4 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-015-1, ours: '71–73 % at +0.4 ms'"
+ },
+ "tm_smol_cpp": {
+  "value": "238 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-011-2, ours: '238 ms (vla.cpp + FA), 974 ms PyTorch'"
+ },
+ "tm_smol_pt": {
+  "value": "974 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-011-2, ours: '238 ms (vla.cpp + FA), 974 ms PyTorch'"
+ },
+ "tm_smol_x": {
+  "value": "4×",
+  "anchor": "C-011-2 ours: 974 / 238, rounded"
+ },
+ "tm_vis": {
+  "value": "151 ms",
+  "anchor": "repro/register/expected/register.json claims, id C-021-2, note: 'vision is 151 ms of every chunk'"
+ },
+ "tm_vjepa": {
+  "value": "355 ms",
+  "anchor": "repro/register/expected/register.json papers, VLA-JEPA, ours: '9/10 for ~$9.7; 355 ms per chunk on the Orin NX; reranking no-go (0.76, 1.84×)'"
+ },
  "tv_bug": {
   "value": "≥ 5°",
   "anchor": "repro/register/expected/register.json claims, id C-012-1, bar: 'task swap ≥ 5° → my port was the bug; < 1° → the data'"

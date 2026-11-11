@@ -151,9 +151,28 @@ Table 3: The paper claims we compared with a cheap baseline, on the same data.
 | PACT-VLA | a random pick (error of the executed window) | −0.27° against random | – | beat | +0.27 [+0.09, +0.44], beats |
 | REMORA | per-frame readout (readout flips) | 0.70 × per-frame | – | beat, under its bar of 0.5 × | ratio 0.70 [0.48, 0.94], beats |
 
-## 6. A testing order
+## 6. Can the model run on the hardware fast enough?
 
-The failures point to three checks, in this order. First, time the method on the target device: adaptive chunking needs 4,751 ms for one decision against a budget of 298 ms, partly because our engine samples without batching, and this is the cheapest failure to find. Second, compare it with the cheapest baseline on one's own data: this is where the world models fail, since the commanded joints already hold the arm's state on a short task, and it is also where a dataset can mislead, as episode length does on ArmnetBench. Only then is it worth checking the method against its bar. Of the three, only the learned-latent pattern rests on more than one case, so we offer this as a working order, not as a taxonomy of how methods fail.
+Time to generate a chunk is critical for real-world robotics. The generation of a chunk should at least be done before the previous chunk is executed, and that is the bare minimum. The problem is that when the paper is tested in sim or on a big GPU (cloud or desktop GPU), the latency numbers do not hold on small hardware.
+When testing papers we use our edge GPU (the Orin), which is also the main inference system, so a latency claim fails if the method cannot run on it fast enough.
+
+So what fits on our Orin, and what made it better?
+
+- SmolVLA: 974 ms in PyTorch (too slow), but 238 ms with vla.cpp, the inference engine we used in our tests, which was 4× faster than PyTorch. So the choice of the inference engine was really useful.
+- VLA-JEPA: 355 ms per chunk.
+- Fewer denoising steps (horizon × depth): 2 steps instead of 10 saves only 17 % (196 vs 238 ms), because the vision part alone takes 151 ms.
+- Real-time chunking: the smoothing trick costs only 0.4 ms.
+
+What did not fit?
+
+- RoboJEPA's encoder: 526 ms vs 200 ms required.
+- Methods that sample many chunks and pick one get expensive without batching, because our engine runs the samples one after another:
+  - Adaptive chunking: 4,751 ms per decision vs a 298 ms budget, since it pays for 20 full passes.
+  - PACT-VLA: about 1,200 ms per cycle (estimated) (37 control ticks vs 8).
+
+These two fail on our engine, not necessarily on the method: with batching, they might fit.
+
+So the lesson is that latency is one of the simplest checks, and it tells you cheaply whether there is a need to invest in a claim. And of course it is possible to improve it, for example by choosing the right inference engine, using batching or lowering the denoising steps, but the hard limit that needs to be met is the time to execute one chunk. And it is testable without any training.
 
 ## 7. Why they failed here: the method, our data, or our setup
 

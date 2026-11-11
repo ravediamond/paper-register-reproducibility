@@ -74,6 +74,20 @@ def register():
                                   ("tv_bug", "C-012-1", "bar", "≥ 5°"), ("tv_data", "C-012-1", "bar", "< 1°")):
         assert text in by[cid][field], f"{text!r} not in {cid}/{field}"
         put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}: '{by[cid][field]}'")
+    # Section 6 (timing on the Orin NX): claim-level fields, then paper-level "ours" for VLA-JEPA and PACT-VLA
+    for key, cid, field, text in (("tm_smol_pt", "C-011-2", "ours", "974 ms"), ("tm_smol_cpp", "C-011-2", "ours", "238 ms"),
+                                  ("tm_vis", "C-021-2", "note", "151 ms"), ("tm_rtc", "C-015-1", "ours", "0.4 ms"),
+                                  ("tm_rj", "C-003-2", "ours", "526 ms"), ("tm_rj_bar", "C-003-2", "bar", "200 ms"),
+                                  ("tm_pact_t", "C-020-2", "ours", "37")):
+        assert text in by[cid][field], f"{text!r} not in {cid}/{field}"
+        put(key, text, f"repro/register/expected/register.json claims, id {cid}, {field}: '{by[cid][field]}'")
+    tm_hwm = by["C-021-2"]["ours"]; a_, b_ = (float(x) for x in tm_hwm.replace(" ms", "").split(" vs "))
+    put("tm_hwm2", f"{a_:.0f}", "C-021-2 ours, rounded"); put("tm_hwm10", f"{b_:.0f}", "C-021-2 ours, rounded")
+    put("tm_hwm_save", f"{round((1 - a_ / b_) * 100)} %", f"repro/register/expected/register.json claims, id C-021-2, ours: 1 - {a_}/{b_}")
+    put("tm_smol_x", f"{round(974 / 238)}×", "C-011-2 ours: 974 / 238, rounded")
+    for key, needle, text in (("tm_vjepa", "VLA-JEPA", "355 ms"), ("tm_pact", "PACT-VLA", "1,200 ms")):
+        q = [q for q in allp if q["paper"].startswith(needle)]; assert len(q) == 1 and text in q[0]["ours"], (needle, text)
+        put(key, text, f"repro/register/expected/register.json papers, {needle}, ours: '{q[0]['ours']}'")
     # the cheapest-baseline comparisons among the paper claims, outcome read by hand from bar and ours (Table 5)
     base = {"C-001-1": "beat", "C-001-2": "lost", "C-002-1": "lost", "C-003-1": "under", "C-006-1": "lost", "C-008-1": "beat",
             "C-010-2": "lost", "C-016-2": "beat", "C-019-2": "lost", "C-020-1": "beat", "C-022-1": "under"}
