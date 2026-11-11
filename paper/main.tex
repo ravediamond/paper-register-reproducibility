@@ -200,7 +200,7 @@ Out of all claims, 11 had a baseline test and 5 lost to it, 4 of them with an in
 \begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
 \item LeWorldModel and DINO-WM vs actions alone. The goal is for the method to pick the chunk the robot really executed. The baseline just picks the chunk whose commanded joints are closest to the goal. LeWorldModel picks it at most 60 \% of the time and DINO-WM slightly more, but the baseline picks it 0.68--0.90 of the time (depending on how far ahead it is looking), a gap of 23 to 37 points for LeWorldModel and 10 to 28 for DINO-WM, at every distance. The baseline is strong because our arm goes almost exactly where it is commanded, so the commanded joints already say where it will end up.
 \item ContactGuard vs the current latent. The goal of the model is to predict failure from the imagined future latent. The baseline just uses the current latent to predict failure: 0.82 vs 0.70 AUROC. The gap is 0.12, and the interval [$-$0.24, $-$0.01] is below zero.
-\item Robometer vs episode length: the goal of the method is to judge the success or failure of the task. But it loses to the baseline, which only checks the duration of the episode (0.938 vs 0.818 on ArmnetBench). This is a problem we discovered on ArmnetBench, where the failed episodes run until the time limit.
+\item Robometer vs episode length: the goal of the method is to judge the success or failure of the task. But it loses to the baseline, which only checks the duration of the episode (0.938 vs 0.818 on ArmnetBench). This is a problem we discovered on ArmnetBench, where the operators stop a success when it is done but let a failure run on.
 \end{itemize}
 
 
@@ -213,7 +213,7 @@ As for ContactGuard's paper results, we found the opposite. The goal of ContactG
 One thing we discovered is that the choice of the baseline decides the verdict of the claims. For example, LeWorldModel predicts the next latent much better than the copy-last baseline (0.31 vs 0.89), so this claim holds. But on the test of picking the executed chunk, the model performs worse than the commanded-joints baseline. Basically, predicting well is not equal to planning well, and with just the first baseline we would have concluded that the claim was a pass.
 
 
-But baselines are not equal; some are extremely strong because of a quirk. For example, on ArmnetBench, failed episodes run until the time limit, so the episode length baseline is very strong. But on our own episodes, which do not have this quirk, it is near chance (0.521). This also means that analysing the baseline results rigorously is very important, as a baseline could be far too strong.
+But baselines are not equal; some are extremely strong because of a quirk. For example, on ArmnetBench, successes are stopped when they are done and failures run on, so the episode length baseline is very strong. But on our own episodes, which do not have this quirk, it is near chance (0.521). This also means that analysing the baseline results rigorously is very important, as a baseline could be far too strong.
 
 
 In our case, baselines were particularly strong because our tasks are short and simple (for any task only 1 or 2 joints usually move). On long-horizon tasks, a learned latent model has more to give. Where the papers report their own cheap baseline, the methods still beat it on our data: PACT-VLA (against a random pick) and HWM (against net joint displacement).
@@ -318,7 +318,7 @@ ContactGuard & authors' & AUROC 0.70, current latent 0.82 & mixed policies and 2
 FAIL-Detect and SAFE & our variant & 9.1 \% of successes flagged at α 5 \% (papers' band) & our score, not theirs; 11 + 11 successes to build the band \\
 ReAP & authors' method, reduced & 2 of 8 failures caught & Stage 1 and 2 rebuilt from the paper, smaller DINOv2, one camera, mostly other tasks; one seed of five; 8 failures \\
 VLA-Corrector & authors' & 1 of 8 caught at 3 of 42, AUROC 0.53 & 30 training rollouts per fold against their 120 episodes; our onset labels, no stage head; 8 failures \\
-Robometer & authors' & AUROC 0.818, length 0.938 & zero-shot only; ArmnetBench failures run to the time limit (on our rollouts length is near chance) \\
+Robometer & authors' & AUROC 0.818, length 0.938 & zero-shot only; on ArmnetBench failures run longer than successes (on our rollouts length is near chance) \\
 SURVEYOR & authors' (threshold); our variant (monitor) & threshold 1.249 against 0.20; 3 of 8 & their drafter not released; 8 failures \\
 REMORA & our variant & readout flips 0.70 of the per-frame readout & hand-written progress atoms \\
 Adaptive chunking & authors' (latency: our engine) & 4,751 ms per decision; length 2 in transport and at the grasp & sequential engine, no batching; task at ceiling for our policy \\
