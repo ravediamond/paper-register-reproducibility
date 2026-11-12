@@ -286,19 +286,43 @@ So the lesson is that latency is one of the simplest checks, and it tells you ch
 \section{Why they failed here: the method, our data, or our setup}
 
 
-For each failure, Table 4 says whose method failed and what on our side may explain it. Most failures have at least one such cause, so a failure here is a failure on this rig, with this data, and not a verdict on the method in general.
+In Table 4, you can see which method failed, and what could have provoked it on our side.
+In most of the failures, we have at least one cause on our side. So a fail just means a fail on our rig and on our data, which means that if a team has more data or a better rig, the paper may still work.
 
 
-Our data is small and simple. We have 157 training episodes of one short task, about 11 s each, where the papers use hours of varied data; HWM, for instance, uses about 130 h against our 0.6 h. On a short task with one arm, the commanded joints already hold most of the state, which leaves little for a latent to add. The task is also easy for our policy, since SmolVLA is at its ceiling on it, so there is little uncertainty for an entropy rule to read: the chunk length chosen by adaptive chunking sat at its minimum in 86 \% of decisions. For H-JEPA, our task lies outside the regime the paper targets, as there is no gap between slow and fast parts of the scene, so we count its failure as out of scope rather than a failure of the method.
+One of the limits of our data is its size and simplicity. It is 157 training episodes, with basically one task of about 11 s.
+Most of the papers use hours of varying tasks. For example, the Hierarchical World Model paper uses 130 h of data against our 0.6 h.
+Because the tasks are so simple, the learned latents cannot give much more than using the joint commands directly.
+For VLA-based papers, because our task was so simple, there was little uncertainty, the policy succeeded most of the time, and the optimization papers had little to work with (86 \% of chunk lengths at the minimal value for the adaptive chunking paper).
 
 
-We also have too few failures. Our policies mostly succeed, and the main rollout set has only 8 failures in 50 episodes. A bar such as five failures caught out of eight is coarse, and a single episode can change the verdict (ReAP, VLA-Corrector, SURVEYOR).
+Another problem is that we had too few failures, only 8 in 50 episodes, which makes verdicts on bars about catching failures (like 5 out of 8) very coarse.
 
 
-In 3 papers, and in the monitor claim of SURVEYOR, our version of the method is not exactly theirs. For FAIL-Detect and SAFE we used our world model's surprise as the score instead of their own scores; their code needs the internal features of the policy that ran each episode, and only 24 successes and 6 failures of ours could be re-run through it. Our first conformal band was also built wrong, calibrated on the same episodes it was fitted on; with the band built as the papers build it, 9.1 \% of successes are flagged at α = 5 \% (not 22.7 \%) and 24 \% of failures are caught, and both claims still fail. For SURVEYOR \citep{surveyor2026}, the drafter is not released, so its monitor claim ran with our own model's imagination, and REMORA's learned progress model was trained on 8 H200 GPUs, so we tested only its model-free readout, on three progress levels read from hand-written cues instead of its 201 learned bins. These are failures of our variants, and we do not claim that the authors' methods fail. Four more are counted as the authors' method, fitted to our rig: we kept their recipe and changed only what our rig or data forced. ContactGuard runs with two cameras instead of three and mixed policies, and the threshold claim of SURVEYOR uses its rule as written. VLA-Corrector keeps the paper's features, network, label window and gate, trained on 30 rollouts per fold instead of 120 episodes, with the failure onsets read from video and no stage head. ReAP's Stage 1 detector and Stage 2 predictor are rebuilt from the paper (no code is released), on a smaller DINOv2, one camera, and training data that is mostly other tasks (ArmnetBench); it caught 2 of 8 failures at 1 of 42 false interventions.
+One thing we needed for some papers was to adapt the paper's method to fit our rig or data. Of course we used the original one if possible. 4 methods were only fitted to our rig: ContactGuard, VLA-Corrector, ReAP and SURVEYOR's threshold. They count as the authors' method. The differences are in Table 4.
+3 retests had real variants:
 
 
-Our inference engine matters as well. vla.cpp samples sequentially and has no batching, so adaptive chunking pays for 20 full passes, while the paper's 106 ms was measured with batching on an A800. For PACT-VLA, the time of the check is projected rather than measured. Finally, several tests were offline only: planning ranked recorded chunks, and chunking measured smoothness on recorded episodes. None of these ran in closed loop on the arm.
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item FAIL-Detect and SAFE: their code needs the policy's internal features, and only 24 successes and 6 failures of ours could be re-run through it. So we used our world model's surprise as the score.
+\item SURVEYOR's monitor: the drafter isn't released, so we used our own model's imagination.
+\item REMORA: its progress model was trained on 8 H200 GPUs, so we tested only its readout.
+\end{itemize}
+
+
+In these cases, the failures are failures of our variant, on our rig and data, not in the context of the papers.
+
+
+Some retests we did only offline, not on the arm, as it was simpler and faster and we could still do a good retest. For example:
+
+
+\begin{itemize}\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}\footnotesize
+\item For planning: we ranked recorded chunks; the robot didn't execute the plan.
+\item For chunking: we measured smoothness on recorded episodes.
+\end{itemize}
+
+
+So for these, we can't say with full proof whether the robot would do the task better or worse.
 
 
 
