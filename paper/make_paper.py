@@ -311,7 +311,10 @@ READ = {"2610.40026": ("RoboSeed: Multidimensional Evaluation of Vision-Language
 
 
 EXTRA_BIB = {"surveyor2026": "@misc{surveyor2026,\n  title = {{SURVEYOR: Certified Speculative Plan Consumption for Latent World-Model Planning}},\n"
-                             "  year = {2026},\n  howpublished = {NeurIPS 2026 workshop},\n  note = {neurips.cc/virtual/2026/175857}\n}"}
+                             "  year = {2026},\n  howpublished = {NeurIPS 2026 workshop},\n  note = {neurips.cc/virtual/2026/175857}\n}",
+             "reprobridge2026": "@misc{reprobridge2026,\n  title = {{ReproBridge: Building Reproducibility into ML Research Artifacts}},\n"
+                                "  author = {Wang, Yubo and Meng, Rui and Nam, Jaehyun and Pfister, Tomas and Yoon, Jinsung},\n"
+                                "  year = {2026},\n  eprint = {2611.08452},\n  archivePrefix = {arXiv}\n}"}
 
 
 def bib(md):
@@ -384,7 +387,7 @@ def main():
     md = re.sub(r"\{\{(\w+)\}\}", lambda m: table if m.group(1) == "TABLE1" else N[m.group(1)], tpl)
     nb = bib(md)
     figures()
-    (HERE / "DRAFT_4p.md").write_text(re.sub(r"\[@(\d{4}\.\d{4,5})\]", r"[arXiv:\1]", md).replace("[@surveyor2026]", "[NeurIPS 2026 workshop]"))
+    (HERE / "DRAFT_4p.md").write_text(re.sub(r"\[@(\d{4}\.\d{4,5})\]", r"[arXiv:\1]", md).replace("[@surveyor2026]", "[NeurIPS 2026 workshop]").replace("[@reprobridge2026]", "[arXiv:2611.08452]"))
     (HERE / "numbers.json").write_text(json.dumps({k: {"value": N[k], "anchor": A[k]} for k in sorted(N)}, indent=1, ensure_ascii=False) + "\n")
     (HERE / "main.tex").write_text(to_tex(md))
     print(f"{len(N)} numbers, {nb} references; DRAFT_4p.md, main.tex, numbers.json written")
@@ -400,7 +403,7 @@ def esc(s):
     for a, b in SUB:
         s = s.replace(a, b)
     s = re.sub(r"([\u3040-\u30ff\u4e00-\u9fff]+)", r"{\\jpfont \1}", s)  # Japanese (the lab's name)
-    s = re.sub(r"\[@(\d{4})\.(\d{4,5})\]", r"\\citep{arxiv\1\2}", s).replace("[@surveyor2026]", r"\citep{surveyor2026}")
+    s = re.sub(r"\[@(\d{4})\.(\d{4,5})\]", r"\\citep{arxiv\1\2}", s).replace("[@surveyor2026]", r"\citep{surveyor2026}").replace("[@reprobridge2026]", r"\citep{reprobridge2026}")
     s = re.sub(r"`([^`]*)`", r"\\texttt{\1}", s)
     s = re.sub(r"\*\*([^*]+)\*\*", r"\\textbf{\1}", s)
     return re.sub(r"\*([^*]+)\*", r"\\emph{\1}", s)
