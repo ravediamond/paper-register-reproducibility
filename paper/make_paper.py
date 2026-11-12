@@ -223,7 +223,7 @@ def register():
         for a_, b_ in {"VLA-JEPA": [("; for reranking (H0): oracle / mean error ≤ ~0.7 and N = 8 ≤ 1.5× the latency", ""), ("; reranking no-go (0.76, 1.84×)", "")]}.get(p["paper"], []):
             assert a_ in bar_ + ours_, (p["paper"], a_); bar_, ours_ = bar_.replace(a_, b_), ours_.replace(a_, b_)
         cells = [name, p["their_rig_cost_class"], p["claim_tested"], bar_.replace("no numeric pass mark registered", "no numeric bar"),
-                 ours_.replace("my data", "our data").replace("my rollouts", "our rollouts").replace("my latents", "our latents"), verdict]
+                 ours_.replace("my data", "our data").replace("my rollouts", "our rollouts").replace("my latents", "our latents").replace(", see WS-214:", ":"), verdict]
         assert not any("|" in x for x in cells), p["paper"]
         rows.append("| " + " | ".join(cells) + " |")
     put("table1_rows", str(len(rows)), "repro/register/expected/register.json papers with a paper claim: paper (cited by its arXiv id), their_rig_cost_class, claim_tested, bar, ours, verdict (appendix table)")
