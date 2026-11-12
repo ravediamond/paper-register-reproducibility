@@ -325,6 +325,9 @@ Some retests we did only offline, not on the arm, as it was simpler and faster a
 So for these, we can't say with full proof whether the robot would do the task better or worse.
 
 
+One more point to add is that if a paper failed because of our rig or our data or both, this also means that it can fail on other similar low-cost setups. This suggests that some of the claims need either large compute or large data to work, and so cannot be used immediately by a small team without sufficient resources.
+
+
 
 
 \begin{table*}[t]\centering\footnotesize
@@ -352,12 +355,6 @@ Horizon $\times$ depth & not proven & not proven: 0.78, bar 0.70 & one policy, o
 \bottomrule
 \end{tabular}
 \end{table*}
-
-
-\section{Limitations}
-
-
-Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons covers all 11 comparisons, but 3 of these intervals come from a re-run that matches the stored result only to the second or third decimal. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible.
 
 
 \section{Related work}

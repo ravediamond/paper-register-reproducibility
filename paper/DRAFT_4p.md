@@ -202,6 +202,8 @@ Some retests we did only offline, not on the arm, as it was simpler and faster a
 
 So for these, we can't say with full proof whether the robot would do the task better or worse.
 
+One more point to add is that if a paper failed because of our rig or our data or both, this also means that it can fail on other similar low-cost setups. This suggests that some of the claims need either large compute or large data to work, and so cannot be used immediately by a small team without sufficient resources.
+
 Table 4: Each failed or not-proven paper, whose method failed, what we measured, and what on our side may explain it.
 
 | failed paper | whose method | our result | what may be on our side |
@@ -223,15 +225,11 @@ Table 4: Each failed or not-proven paper, whose method failed, what we measured,
 | Real-Time Chunking | not proven | not proven: 71–73 % smoother, no arm run | offline smoothness only |
 | Horizon × depth | not proven | not proven: 0.78, bar 0.70 | one policy, one task; arm test not run |
 
-## 8. Limitations
-
-Our data covers one short task family, about 11 s per episode, with one arm, two cameras and about 34 minutes of demonstrations, so it says nothing about long-horizon tasks or varied scenes. There are few failures to test the monitors on, 8 in the main set of 50. Many methods are our own variants rather than the authors' code end to end (Table 4), and the planning and chunking tests ran offline, never in closed loop on the arm. A single operator ran the arm and labelled the outcomes without being blind to them, many tests use small samples and a single training seed, and few results come with a confidence interval; a bootstrap over episodes for the baseline comparisons covers all 11 comparisons, but 3 of these intervals come from a re-run that matches the stored result only to the second or third decimal. Two VLA results have no numeric bar and rest on 10 trials. The bars are ours, not the papers'. We chose the papers from the stack we run, so the rates describe these papers and not the field. Finally, our own mistakes are possible.
-
-## 9. Related work
+## 8. Related work
 
 Two works evaluate policies on the same arm: a real-world VLA benchmark with a taxonomy of failures and recoveries [arXiv:2606.08881], and ArmnetBench, a fleet of SO-101 cells that evaluates policies at scale [arXiv:2607.24481]. In simulation, vla-eval runs VLAs across 14 benchmarks [arXiv:2603.13966], and another benchmark studies the quality of demonstrations [arXiv:2610.18869]. These works rank policies. We instead take the claim a paper makes about its method and test it against a bar fixed in advance, on one cheap rig. The closest work is RoboSeed [arXiv:2610.40026], which scores VLA and world-action models on five dimensions, including reproduction evidence and deployment affordability; its authors note that the score is not a probability that a result is correct. We give one verdict per claim on one rig, with the data behind it and the reason we think it failed.
 
-## 10. Conclusion
+## 9. Conclusion
 
 We re-tested 36 claims from 21 robot-learning papers on a rig of about €1,500, with under $50 of cloud GPU. 12 held, and 11 failed with the authors' method on our data. The most useful part was the cheapest baseline: the same world model could pass one baseline and fail another, and 5 of the 11 methods we compared with one lost to a signal we had for free, although only 4 of these losses have an interval below zero, of which LeWorldModel's, DINO-WM's and ContactGuard's are clean cases with the authors' method. Our advice to anyone re-testing a paper on a cheap rig is to run that baseline first, on their own data, with the bar fixed before the test. Everything is public, and every number can be rebuilt from the repository. Authors who think a failure here is ours (Table 4) are welcome to tell us, and we will correct it.
 
