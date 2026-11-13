@@ -227,8 +227,11 @@ Table 4: Each failed or not-proven paper, whose method failed, what we measured,
 
 ## 8. Related work
 
-Some works already evaluate policies on the same arm as ours. One is a real-world VLA benchmark that also lists the kinds of failures and recoveries [@2606.08881], and another is ArmnetBench, a fleet of SO-101 cells that evaluates policies at scale [@2607.24481]. In simulation, vla-eval runs VLAs across 14 benchmarks [@2603.13966], and another benchmark looks at the quality of the demonstrations [@2610.18869]. All of these rank policies against each other. What we do is different: we take the claim a paper makes about its method and test it against a bar fixed before the test, on one cheap rig.
-The closest work to ours is RoboSeed [@2610.40026], which scores VLA and world-action models on five dimensions, including reproduction evidence and how affordable the deployment is. But its authors say that the score is not a probability that a result is correct. On the reproduction side, ReproBridge [@reprobridge2026] has coding agents re-run 1,029 tasks from 36 papers with the papers' own code, and they succeed on about 76 % of them with the raw code and 93 % with a cleaned-up version of it. Their question is whether you get the same number with the same setup. Ours is whether the claim still holds on a different and cheap rig, and for each claim we give one verdict, the data behind it and why we think it failed.
+There are others who do similar work to ours, using the same SO-101 arm. For example, the SO-101 real-world VLA benchmark [@2606.08881] (which contains both failures and recoveries) and ArmnetBench [@2607.24481] (with SO-101 cells and at scale). Both of them give a ranking of policies.
+
+The difference with us is that first we do not only test VLAs, but also world models, monitor models and optimization tricks, and on a real edge GPU (the Jetson Orin), which resembles more something that could be used in real-world deployment. It differs also in our experiment protocol (bar from the paper, baseline, cheap rig, verdict per claim + reasons why it failed). We try to take the angle of a small team and then validate the claims.
+
+The real closest works are RoboSeed [@2610.40026], which scores VLA and world-action models on 5 dimensions, including the reproduction evidence and the deployment cost of the paper. But the score is not directly related to the probability of the claims being true. There is also ReproBridge [@reprobridge2026], where agents re-run about a thousand tasks from 36 papers with the papers' code, to see if the same setup gives the same number. But the difference is that we are opinionated on the rig and check if it works in our low-cost setup.
 
 ## 9. Conclusion
 
