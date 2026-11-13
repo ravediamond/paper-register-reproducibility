@@ -176,33 +176,33 @@ So the lesson is that latency is one of the simplest checks, and it tells you ch
 
 ## 7. Why they failed here: the method, our data, or our setup
 
-On the table 4, you can see which method failed, and what could have provoked it in our side.
-In most of the failures, we have at least one cause on our side. So a fail just means a fail on our rig and on our data, which means if the team has more data or better rig, there is a chance the paper would work.
+In Table 4, you can see which method failed, and what could have provoked it on our side.
+In most of the failures, we have at least one cause on our side. So a fail just means a fail on our rig and on our data, which means that if a team has more data or a better rig, the paper may still work.
 
-One of the limits of our data is the size and simplicity. It is {{tel_train}} training episodes, with basically 1 task about {{tel_ep_s}} s.
-Most of the papers use hours of varying tasks. For example the Hierarchical World Model paper use 130 h of data against our 0.6 h.
-Because the tasks are so simple, the learned latents cannot give much more than using directly the joints commands.
-For VLA based papers, because our task were so simple, there was little uncertainty and most of them gave good results and optimization paper were at their minimum of usage (86 % of chunk length at minimal value for the adaptive chunking paper).
+One of the limits of our data is its size and simplicity. It is {{tel_train}} training episodes, with basically one task of about {{tel_ep_s}} s.
+Most of the papers use hours of varying tasks. For example, the Hierarchical World Model paper uses 130 h of data against our 0.6 h.
+Because the tasks are so simple, the learned latents cannot give much more than using the joint commands directly.
+For VLA-based papers, because our task was so simple, there was little uncertainty, the policy succeeded most of the time, and the optimization papers had little to work with (86 % of chunk lengths at the minimal value for the adaptive chunking paper).
 
-One of the other problem is that we had too few failures, only {{ro_p_fail}} in {{ro_p_eps}} episodes which make verdict on bar about catching failures (like 5 / 8) very coarse.
+Another problem is that we had too few failures, only {{ro_p_fail}} in {{ro_p_eps}} episodes, which makes verdicts on bars about catching failures (like 5 out of 8) very coarse.
 
-One thing we needed for some papers is to adapt the papers method to fit our rig or data. Of course we used the original one if possible. 4 methods were only fitted to our rig: ContactGuard, VLA-Corrector, ReAP and SURVEYOR's threshold. They count as the authors' method. The differences are in Table 4.
+One thing we needed for some papers was to adapt the paper's method to fit our rig or data. Of course we used the original one if possible. 4 methods were only fitted to our rig: ContactGuard, VLA-Corrector, ReAP and SURVEYOR's threshold. They count as the authors' method. The differences are in Table 4.
 3 retests had real variants:
 
 - FAIL-Detect and SAFE: their code needs the policy's internal features, and only {{fs_refwd}} successes and {{fs_refwd_f}} failures of ours could be re-run through it. So we used our world model's surprise as the score.
 - SURVEYOR's monitor: the drafter isn't released, so we used our own model's imagination.
 - REMORA: its progress model was trained on 8 H200 GPUs, so we tested only its readout.
 
-And in these cases, the failure are failures on our variant and on our rig and data, not in the context of the papers.
+In these cases, the failures are failures of our variant, on our rig and data, not in the context of the papers.
 
-For some retests, we did only offline, not on the arm as it was simpler and faster and we could still do a good retest. For example:
+Some retests we did only offline, not on the arm, as it was simpler and faster and we could still do a good retest. For example:
 
 - For planning: we ranked recorded chunks; the robot didn't execute the plan.
 - For chunking: we measured smoothness on recorded episodes.
 
 So for these, we can't say with full proof whether the robot would do the task better or worse.
 
-One more point to add is that if a paper failed because of our rig or our data or both, this means also that it can fail on other similar low cost setup. This suggests that some of the claims needs either large compute or large data to work and so cannot be used immediately by small team unless with sufficient resources.
+One more point to add is that if a paper failed because of our rig or our data or both, this also means that it can fail on other similar low-cost setups. This suggests that some of the claims need either large compute or large data to work, and so cannot be used immediately by a small team without sufficient resources.
 
 Table 4: Each failed or not-proven paper, whose method failed, what we measured, and what on our side may explain it.
 
@@ -227,18 +227,18 @@ Table 4: Each failed or not-proven paper, whose method failed, what we measured,
 
 ## 8. Related work
 
-There are others who does similar work as us and using the same SO-101 arm. For example, the SO-101 real world VLA benchmark [@2606.08881] (which contains both failures and recoveries) and the ArmnetBench [@2607.24481] (with SO-101 cells and at scale). Both of them give a ranking of policies.
+There are others who does similar work as us and using the same SO-101 arm. For example, the SO-101 real world VLA benchmark [@2606.08881] (which contains both failures and recoveries) and the ArmnetBench [@2607.24481] (with SO101 cells and at scale). Both of them give a ranking of policies.
 
-The difference with us is that first we do not only test VLA, but also world models, monitor models, optimization tricks and on real edge GPU (the Jetson Orin) which resemble more something that could be used in real world deployment. It differ also on our experiment protocol (bar from the paper, baseline, cheap rig, verdict per claim + reasons on why it failed). We try to take the angle of a small team and then validate the claims.
+The difference with us is that first we do not only test vla, but also world models, monitor models, optmization tricks and on real edge gpu (the jetson orin) which ressemble more something that could be used in real world deployment. It differ also on our experiment protocol (bar from the paper, baseline, cheap rig, verdict per claim + reasons on why it failed). We try to take the angle of a small team and then validate the claims.
 
-The real closest works are RoboSeed [@2610.40026] which scores VLA and World Action models on 5 dimensions and propose all the reproduction evidence and deployment cost of the paper. But the score is not directly related to the probability of the claims being true. There is also ReproBridge [@reprobridge2026] where agents re-run a thousand task, on 36 papers with the papers code, with the same setup and same number. But the difference is that we are opinionated on the rig and check if it works in our low cost setup.
+The real closest works are RoboSeed [@2610.40026] which scores VLA and World Action models on 5 dimensions and porpose all the reproduction evidence and deployment cost of the paper. But the score is not directly realted to the problability of the claims being true. There is also ReproBridge [@reprobridge2026] where agents re-run a thousand task, on 36 paers with the papers code, with the same setup and same number. But the difference is that we are opiniated on the rig and check if it works in our low cost setup.
 
 ## 9. Conclusion
 
-In conclusion, we re-tested {{c_paper}} claims from {{papers}} papers, with our {{rig_eur_round}} euros rig and {{cost_round}}$ cloud GPU. The results: {{c_paper_repro}} claims held, {{c_paper_fail}} failed and the rest are uncertain. But the failure are failure on our specific rig and data, or even method variation, not the paper's failure. Some are because our data is too simple or short, other because our edge GPU is not powerful enough but these are the limitation any small teams with little resources will have.
-The advice that we can give then is to follow the experiment method we used in all our re-test, create a bar from only the paper and its code and find the cheapest baseline that can be tested on your data without any training and really fit what the paper show. Finally first test if the method pass the baseline (fast and cheap stop signal) and then see if it pass the bar.
-All our re-tests are public, every number can be rebuilt and tested from our repository.
-Author who think the failure are ours are welcome to tell us and we will gladly correct.
+In conclusion, we re-tested {{c_paper}} claims from {{papers}} papers, with our 1500 euros rig and {{cost_round}}$ cloud gpu. The results: {{c_paper_repro}} claims held, {{c_paper_fail}} failed and the rest are uncertain. But the failure are failure on our specific rig and data, our even method variation, not the paper's failure. Some are because our data is too simple or short, other because our edge GPU is not powerful enough but these are the limitation any small teams with little resouces will have.
+The advice that we can give then is to follow the experiment method we used in all our re-test, create a bar from only the paper and its code and find the cheapest baseline that can be tested on your data without any training and really fit what the paper show. Finally first test if the method pass the baseline (fast and cheap stop signal) and then see if it passe the bar.
+All our re-tests are public, eveyry number can be rebuilt and tested from our repository.
+Author who think the failure are ours are welcom to tell us and we will gladly correct.
 
 ## References
 
