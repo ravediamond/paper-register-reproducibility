@@ -223,6 +223,10 @@
   "value": "0.68–0.90",
   "anchor": "repro/register/expected/register.json claims, id C-001-2, ours: '0.60 vs 0.68–0.90 action-only'"
  },
+ "ex_c_base_pct": {
+  "value": "68–90 %",
+  "anchor": "repro/register/expected/register.json claims, id C-001-2, ours: '0.68–0.90' as a percentage"
+ },
  "ex_c_ours": {
   "value": "0.60",
   "anchor": "repro/register/expected/register.json claims, id C-001-2, ours: '0.60 vs 0.68–0.90 action-only'"

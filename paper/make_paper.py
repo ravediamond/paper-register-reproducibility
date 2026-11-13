@@ -144,6 +144,7 @@ def register():
     put("b_lewm_gap", gap("C-001-2"), bsa + ", C-001-2 per_d point_difference, points, min to max")
     put("b_dino_gap", gap("C-002-1"), bsa + ", C-002-1 per_d point_difference, points, min to max")
     cg, ac = bsd["C-006-1"], bsd["C-019-2"]
+    put("ex_c_base_pct", "68–90 %", "repro/register/expected/register.json claims, id C-001-2, ours: '0.68–0.90' as a percentage")
     put("b_cg_m", f"{cg['method']:.2f}", bsa + ", C-006-1 method"); put("b_cg_b", f"{cg['baseline']:.2f}", bsa + ", C-006-1 baseline")
     put("b_cg_gap", f"{-cg['point_difference']:.2f}", bsa + ", C-006-1 point_difference")
     put("b_cg_ci", f"[{cg['ci95'][0]:.2f}, {cg['ci95'][1]:.2f}]".replace("-", "−"), bsa + ", C-006-1 ci95")
