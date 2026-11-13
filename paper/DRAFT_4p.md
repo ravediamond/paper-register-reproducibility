@@ -1,10 +1,10 @@
-# What works on low-cost rig: re-testing 21 robotic papers claims with cheap hardware and little data
+# What works on a low-cost rig: re-testing the claims of 21 robotics papers with cheap hardware and little data
 
 *Ravindu Somawansa, Shisso Robotics. Draft, not submitted.*
 
 ## Abstract
 
-Most of the robotic papers are either tested in sim or on expensive rigs. From our tested papers, 16 out of 21 were done in simulation or on rigs above $20k, and only 1 on a rig under $5k. But the question is, does a claim still validate for smaller teams with cheaper hardware, less data and shorter tasks? This is what we want to answer in this paper. For that we re-tested 36 claims out of 21 papers on our cheap hardware, an Nvidia Jetson Orin NX 16GB and a robot arm SO-101 (about €1,500). We used the same protocol for each claim: a bar fixed before any testing, and the cheapest baseline tested first. Out of the 36 claims, only 11 had a cheap baseline to test against, and among them only 4 are worse than this baseline. Among those 4, LeWorldModel, DINO-WM and ContactGuard are clean fails, and Robometer's loss comes from how its dataset ends the episodes. The LeWorldModel and DINO-WM models lost to the baseline using only action commands to chose the chnuk the arm really executed, and so at every distance we tested. In the same way, ContactGuard model was worse than the baseline which using only the current latent to predict failures. Our results: 12 claims hold, 11 fail using the paper's method, 4 fail on our variation, 2 on our inference engine and 1 on a task outside the paper's regime. Most of the failures come as much from the papers' methods as from our short tasks, small data and our own variants, and for each we explain why. The code, data and all numbers are public and can be replicated.
+Most of the robotic papers are either tested in sim or on expensive rigs. From our tested papers, 16 out of 21 were done in simulation or on rigs above $20k, and only 1 on a rig under $5k. But the question is, does a claim still validate for smaller teams with cheaper hardware, less data and shorter tasks? This is what we want to answer in this paper. For that we re-tested 36 claims out of 21 papers on our cheap hardware, an Nvidia Jetson Orin NX 16GB and a robot arm SO-101 (about €1,500). We used the same protocol for each claim: a bar fixed before any testing, and the cheapest baseline tested first. Out of the 36 claims, only 11 had a cheap baseline to test against, and among them only 4 are worse than this baseline. Among those 4, LeWorldModel, DINO-WM and ContactGuard are clean fails, and Robometer's loss comes from how its dataset ends the episodes. The LeWorldModel and DINO-WM models lost to the baseline using only action commands to choose the chunk the arm really executed, and this at every distance we tested. In the same way, the ContactGuard model was worse than the baseline which uses only the current latent to predict failures. Our results: 12 claims hold, 11 fail using the paper's method, 4 fail on our variation, 2 on our inference engine and 1 on a task outside the paper's regime. Most of the failures come as much from the papers' methods as from our short tasks, small data and our own variants, and for each we explain why. The code, data and all numbers are public and can be replicated.
 
 ## 1. Introduction
 
@@ -83,7 +83,7 @@ There are only 4 verdicts possible for each re-test: holds, meaning the bar is m
 - the limitation of our inference engine
 - or a task that goes outside the paper's scope
 
-We had 2 cases where there were no numbers in the paper from which to take from: SmolVLA and VLA-JEPA. So what we did is 10 trials of each judged by an human. 9 out of 10 were successful, and this beasically means a true rate between 60% and 98% (Wilson interval at 95%).
+We had 2 cases where there were no numbers in the paper to take a bar from: SmolVLA and VLA-JEPA. So what we did is 10 trials of each, judged by a human. 9 out of 10 were successful, and this basically means a true rate between 60% and 98% (Wilson interval at 95%).
 
 Table 1: The four kinds of papers, what we test in each, the cheapest baseline we build for it, and the verdicts.
 
@@ -116,8 +116,8 @@ Table 2: Verdicts by paper and by claim. A paper fails if any of its claims fail
 
 ## 5. The cheapest baseline
 
-The cheapest baseline is a test we get for cheap or near nothing on the same data. No training is needed and it should run in a few minutes (see Table 1). For example copy-last (predict the next frame as the current one), episode length (use the episode length to determine the outcome of an episode) or the commanded joints (select the action chunk whose commanded joints are closest to the joints measured at the goal). For these re-tests, we do a paired boostrap where both the paper's mehod and the baseline are scored using the same samples. The episodes are resampled 2000 times and the score are computed with a confidence interval of 95%.
-From all the claims, we had 11 with a bseline tests, for which 5 lost to it and 4 of them had an interval below zero.
+The cheapest baseline is a test we get for cheap or near nothing on the same data. No training is needed and it should run in a few minutes (see Table 1). For example copy-last (predict the next frame as the current one), episode length (use the episode length to determine the outcome of an episode) or the commanded joints (select the action chunk whose commanded joints are closest to the joints measured at the goal). For these re-tests, we do a paired bootstrap where both the paper's method and the baseline are scored using the same samples. The episodes are resampled 2,000 times and the scores are computed with a confidence interval of 95%.
+From all the claims, we had 11 with a baseline test, of which 5 lost to it and 4 of them had an interval below zero:
 
 - LeWorldModel and DINO-WM vs actions alone. The goal is for the method to pick the chunk the robot really executed. The baseline just picks the chunk whose commanded joints are closest to the goal. LeWorldModel picks it at most 60 % of the time and DINO-WM slightly more, but the baseline picks it 68–90 % of the time (depending on how far ahead it is looking), a gap of 23 to 37 points for LeWorldModel and 10 to 28 for DINO-WM, at every distance. The baseline is strong because our arm goes almost exactly where it is commanded, so the commanded joints already say where it will end up.
 - ContactGuard vs the current latent. The goal of the model is to predict failure from the imagined future latent. The baseline just uses the current latent to predict failure: 0.82 vs 0.70 AUROC. The gap is 0.12, and the interval [−0.24, −0.01] is below zero.
@@ -227,18 +227,18 @@ Table 4: Each failed or not-proven paper, whose method failed, what we measured,
 
 ## 8. Related work
 
-There are others who does similar work as us and using the same SO-101 arm. For example, the SO-101 real world VLA benchmark [arXiv:2606.08881] (which contains both failures and recoveries) and the ArmnetBench [arXiv:2607.24481] (with SO101 cells and at scale). Both of them give a ranking of policies.
+There are others who do similar work to ours, using the same SO-101 arm. For example, the SO-101 real-world VLA benchmark [arXiv:2606.08881] (which contains both failures and recoveries) and ArmnetBench [arXiv:2607.24481] (with SO-101 cells and at scale). Both of them give a ranking of policies.
 
-The difference with us is that first we do not only test vla, but also world models, monitor models, optmization tricks and on real edge gpu (the jetson orin) which ressemble more something that could be used in real world deployment. It differ also on our experiment protocol (bar from the paper, baseline, cheap rig, verdict per claim + reasons on why it failed). We try to take the angle of a small team and then validate the claims.
+The difference with us is that first we do not only test VLAs, but also world models, monitor models and optimization tricks, and on a real edge GPU (the Jetson Orin), which resembles more something that could be used in real-world deployment. It differs also in our experiment protocol (bar from the paper, baseline, cheap rig, verdict per claim + reasons why it failed). We try to take the angle of a small team and then validate the claims.
 
-The real closest works are RoboSeed [arXiv:2610.40026] which scores VLA and World Action models on 5 dimensions and porpose all the reproduction evidence and deployment cost of the paper. But the score is not directly realted to the problability of the claims being true. There is also ReproBridge [arXiv:2611.08452] where agents re-run a thousand task, on 36 paers with the papers code, with the same setup and same number. But the difference is that we are opiniated on the rig and check if it works in our low cost setup.
+The real closest works are RoboSeed [arXiv:2610.40026], which scores VLA and world-action models on 5 dimensions, including the reproduction evidence and the deployment cost of the paper. But the score is not directly related to the probability of the claims being true. There is also ReproBridge [arXiv:2611.08452], where agents re-run about a thousand tasks from 36 papers with the papers' code, to see if the same setup gives the same number. But the difference is that we are opinionated on the rig and check if it works in our low-cost setup.
 
 ## 9. Conclusion
 
-In conclusion, we re-tested 36 claims from 21 papers, with our 1500 euros rig and 50$ cloud gpu. The results: 12 claims held, 18 failed and the rest are uncertain. But the failure are failure on our specific rig and data, our even method variation, not the paper's failure. Some are because our data is too simple or short, other because our edge GPU is not powerful enough but these are the limitation any small teams with little resouces will have.
-The advice that we can give then is to follow the experiment method we used in all our re-test, create a bar from only the paper and its code and find the cheapest baseline that can be tested on your data without any training and really fit what the paper show. Finally first test if the method pass the baseline (fast and cheap stop signal) and then see if it passe the bar.
-All our re-tests are public, eveyry number can be rebuilt and tested from our repository.
-Author who think the failure are ours are welcom to tell us and we will gladly correct.
+In conclusion, we re-tested 36 claims from 21 papers, with our €1,500 rig and under $50 of cloud GPU. The results: 12 claims held, 18 failed and the rest are uncertain. But the failures are failures on our specific rig and data, or even on our method variation, not the paper's failure. Some are because our data is too simple or short, others because our edge GPU is not powerful enough, but these are the limitations any small team with little resources will have.
+The advice that we can give then is to follow the experiment method we used in all our re-tests: create a bar from only the paper and its code, and find the cheapest baseline that can be tested on your data without any training and really fits what the paper shows. Then first test if the method passes the baseline (a fast and cheap stop signal), and then see if it passes the bar.
+All our re-tests are public, and every number can be rebuilt and tested from our repository.
+Authors who think the failures are ours are welcome to tell us, and we will gladly correct them.
 
 ## References
 
